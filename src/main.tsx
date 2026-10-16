@@ -8,10 +8,12 @@ import { DebtsProvider } from './hooks/useDebts.tsx';
 import { RulesProvider } from './hooks/useRules.tsx';
 import { PrivacyProvider } from './hooks/usePrivacy.tsx';
 import { LanguageProvider } from './i18n';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <ErrorBoundary>
     <LanguageProvider>
       <DailyLimitProvider>
         <BudgetsProvider>
@@ -27,5 +29,6 @@ createRoot(document.getElementById('root')!).render(
         </BudgetsProvider>
       </DailyLimitProvider>
     </LanguageProvider>
+    </ErrorBoundary>
   </StrictMode>
 );

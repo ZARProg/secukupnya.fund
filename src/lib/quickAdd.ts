@@ -249,7 +249,8 @@ function accountNeedles(selected: string[]): AccountNeedle[] {
   for (const [name, labels] of entries) {
     for (const label of labels) {
       const pattern = label.split(/\s+/).map(escapeRe).join('[\\s-]?');
-      out.push({ name, re: new RegExp(`(?<![\\p{L}\\p{N}])${pattern}(?![\\p{L}\\p{N}])`, 'iu') });
+      // Tanpa lookbehind `(?<!…)`: Safari di iOS < 16.4 melempar SyntaxError dan layar jadi kosong. Pembatas kiri ditangkap di grup 1.
+      out.push({ name, re: new RegExp(`(^|[^\\p{L}\\p{N}])(${pattern})(?![\\p{L}\\p{N}])`, 'iu') });
     }
   }
   return out;
@@ -294,7 +295,7 @@ export function parseQuickLine(line: string, hints: QuickHints): QuickRow {
   for (const n of accountNeedles(hints.accounts)) {
     const m = n.re.exec(s);
     if (!m) continue;
-    const cand = { start: m.index, end: m.index + m[0].length, name: n.name };
+    const cand = { start: m.index + m[1].length, end: m.index + m[0].length, name: n.name };
     if (!best || cand.start < best.start || (cand.start === best.start && cand.end > best.end)) best = cand;
   }
   if (best) {
