@@ -1,0 +1,217 @@
+import {
+  Copy, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, Plus, RefreshCw, Wallet, X, FileSpreadsheet, DatabaseZap, Download, type LucideIcon,
+} from 'lucide-react';
+import { AccountAvatar } from '@/components/AccountAvatar';
+import { LanguageSwitch } from '@/components/LanguageSwitch';
+import { rupiahSigned } from '@/lib/format';
+import { useT, type MessageKey } from '@/i18n';
+import type { AccountBalance } from '@/lib/summary';
+
+export type View = 'overview' | 'transactions' | 'report' | 'calendar' | 'plans' | 'debts' | 'rules' | 'activity' | 'conflicts' | 'achievements' | 'recap' | 'sources';
+
+const NAV: { view: View; label: MessageKey; icon: LucideIcon }[] = [
+  { view: 'overview', label: 'shell.nav.overview', icon: LayoutDashboard },
+  { view: 'transactions', label: 'shell.nav.transactions', icon: Receipt },
+  { view: 'report', label: 'shell.nav.report', icon: BarChart3 },
+  { view: 'calendar', label: 'nav.calendar', icon: CalendarDays },
+  { view: 'plans', label: 'nav.plans', icon: CalendarClock },
+  { view: 'debts', label: 'nav.debts', icon: Landmark },
+  { view: 'rules', label: 'nav.rules', icon: Wand2 },
+  { view: 'activity', label: 'nav.activity', icon: History },
+  { view: 'achievements', label: 'nav.achievements', icon: Trophy },
+  { view: 'recap', label: 'nav.recap', icon: Share2 },
+  { view: 'sources', label: 'shell.nav.sources', icon: DatabaseZap },
+];
+
+interface SidebarProps {
+  open: boolean;
+  view: View;
+  accounts: AccountBalance[];
+  activeAccount: string;
+  connected: boolean;
+  loading: boolean;
+  error: string | null;
+  /** Jumlah kemungkinan duplikat lintas sumber. Menu Tinjau duplikat hanya tampil kalau ada. */
+  conflictCount: number;
+  onNavigate: (view: View) => void;
+  onSelectAccount: (account: string) => void;
+  onManageAccounts: () => void;
+  onNewTransaction: () => void;
+  onImport: () => void;
+  onTemplate: () => void;
+  onRefresh: () => void;
+  onClose: () => void;
+}
+
+export function Sidebar({
+  open, view, accounts, activeAccount, connected, loading, error, conflictCount,
+  onNavigate, onSelectAccount, onManageAccounts, onNewTransaction, onImport, onTemplate, onRefresh, onClose,
+}: SidebarProps) {
+  const { t } = useT();
+  const statusLabel = !connected
+    ? t('shell.sidebar.status.disconnected')
+    : loading
+      ? t('shell.sidebar.status.syncing')
+      : error
+        ? t('shell.sidebar.status.error')
+        : t('shell.sidebar.status.connected');
+  const statusDot = !connected
+    ? 'bg-slate-400'
+    : loading
+      ? 'bg-amber-400 animate-pulse'
+      : error
+        ? 'bg-red-400'
+        : 'bg-emerald-400';
+
+  return (
+    <>
+      <div
+        className={`fixed inset-0 z-40 bg-ink/50 backdrop-blur-xs transition-opacity duration-200 lg:hidden ${
+          open ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      <aside
+        aria-label={t('shell.sidebar.nav')}
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-gradient-to-b from-[#34091a] to-ink text-white transition-[transform,visibility] duration-200 lg:visible lg:translate-x-0 ${
+          open ? 'translate-x-0' : 'invisible -translate-x-full'
+        }`}
+      >
+        <div className="flex items-center justify-between px-6 pt-6">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand shadow-sm ring-1 ring-white/20">
+              <Wallet className="h-5 w-5 text-white" />
+            </span>
+            <span className="text-lg font-bold tracking-tight text-white">Secukupnya.fund</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1.5 text-white/70 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
+            aria-label={t('shell.sidebar.close')}
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="mt-6 space-y-2 px-5">
+          <button
+            onClick={onNewTransaction}
+            aria-keyshortcuts="n"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-sm transition-all hover:bg-rose-50 active:scale-[0.98]"
+          >
+            <Plus className="h-4 w-4" />
+            {t('shell.action.record')}
+            <kbd aria-hidden="true" className="ml-1 hidden rounded border border-slate-300 px-1.5 text-[10px] font-bold text-slate-500 lg:inline">N</kbd>
+          </button>
+          <button
+            onClick={onImport}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-white/10 active:scale-[0.98]"
+          >
+            <FileSpreadsheet className="h-4 w-4" />
+            {t('shell.action.import')}
+          </button>
+          <button
+            onClick={onTemplate}
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium text-white/65 transition-colors hover:text-white"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {t('shell.sidebar.template')}
+          </button>
+        </div>
+
+        <div className="mt-4 flex-1 overflow-y-auto px-3 pb-4">
+          <nav aria-label={t('shell.sidebar.pages')} className="space-y-1 px-2">
+            {[...NAV, ...(conflictCount > 0 || view === 'conflicts' ? [{ view: 'conflicts' as View, label: 'nav.conflicts' as MessageKey, icon: Copy as LucideIcon }] : [])].map(({ view: v, label, icon: Icon }) => {
+              const active = v === view;
+              return (
+                <button
+                  key={v}
+                  onClick={() => onNavigate(v)}
+                  aria-current={active ? 'page' : undefined}
+                  className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
+                    active ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {t(label)}
+                  {v === 'conflicts' && conflictCount > 0 && (
+                    <span className="ml-auto rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-ink" data-testid="conflict-count">{conflictCount}</span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          <section className="mt-7 px-2" aria-labelledby="sidebar-accounts">
+            <div className="flex items-center justify-between px-3">
+              <h2 id="sidebar-accounts" className="text-sm font-semibold text-white/60">
+                {t('shell.accounts')}
+              </h2>
+              <button
+                onClick={onManageAccounts}
+                className="rounded-md px-1.5 py-0.5 text-xs font-medium text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                {t('shell.sidebar.manage')}
+              </button>
+            </div>
+            {accounts.length === 0 && <p className="px-3 pt-2 text-xs text-white/50">{t('accounts.pick.short')}</p>}
+            <ul className="mt-2 space-y-0.5">
+              {accounts.map(({ account, balance }) => {
+                const active = account === activeAccount;
+                return (
+                  <li key={account}>
+                    <button
+                      onClick={() => onSelectAccount(account)}
+                      aria-pressed={active}
+                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition-all ${
+                        active ? 'bg-white/10 font-medium text-white' : 'text-white/80 hover:bg-white/5'
+                      }`}
+                    >
+                      <AccountAvatar name={account} />
+                      <span className="min-w-0 flex-1 truncate">{account}</span>
+                      <span
+                        className={`shrink-0 text-xs font-semibold tabular-nums ${
+                          balance < 0 ? 'text-rose-300' : 'text-white/70'
+                        }`}
+                      >
+                        {rupiahSigned(balance)}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            {accounts.length > 0 && (
+              <p className="px-3 pt-3 text-[11px] leading-relaxed text-white/40">
+                {t('shell.sidebar.balanceNote')}
+              </p>
+            )}
+          </section>
+        </div>
+
+        <div className="border-t border-white/10 pt-3">
+          <LanguageSwitch />
+        </div>
+
+        <div className="flex items-center justify-between border-t border-white/10 px-6 py-4">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className={`h-2 w-2 shrink-0 rounded-full ${statusDot}`} aria-hidden="true" />
+            <span className="truncate text-xs font-medium text-white/70" role="status">
+              {statusLabel}
+            </span>
+          </div>
+          <button
+            onClick={onRefresh}
+            disabled={loading || !connected}
+            className="rounded-lg p-1.5 text-white/70 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-40"
+            aria-label={t('shell.sidebar.refresh')}
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+}
