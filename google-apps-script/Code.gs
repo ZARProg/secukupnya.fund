@@ -48,7 +48,7 @@ function doGet(e) {
 
 function readAll() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var timezone = ss.getSpreadsheetTimeZone();
+  var timezone = tzOf(ss);
   return {
     status: "success",
     version: SCRIPT_VERSION,
@@ -183,6 +183,16 @@ function readSheet(sheet, type, timezone) {
     .map(function (tx) { delete tx._hasDate; return tx; });
 }
 
+// Zona waktu spreadsheet; kalau kosong/tidak terbaca, pakai zona script lalu Asia/Jakarta,
+// supaya Utilities.formatDate tidak melempar "Invalid argument: timeZone".
+function tzOf(ss) {
+  var tz = "";
+  try { tz = ss.getSpreadsheetTimeZone(); } catch (err) { tz = ""; }
+  if (typeof tz === "string" && tz) return tz;
+  try { tz = Session.getScriptTimeZone(); } catch (err2) { tz = ""; }
+  return typeof tz === "string" && tz ? tz : "Asia/Jakarta";
+}
+
 // Helper untuk format tanggal yyyy-MM-dd
 function formatDate(dateVal, timezone) {
   if (!dateVal) return "";
@@ -199,7 +209,19 @@ function formatDate(dateVal, timezone) {
 // ==========================================
 // 2. WRITE API (Tambah, Impor Massal & Hapus)
 // ==========================================
+// Pembungkus: apa pun yang gagal (termasuk di blok finally) tetap dijawab sebagai JSON dan dicatat di
+// Executions → Cloud logs, bukan jadi halaman error Google tanpa header CORS yang membuat website
+// hanya melihat "Tidak bisa menghubungi Apps Script".
 function doPost(e) {
+  try {
+    return handlePost(e);
+  } catch (err) {
+    console.error("doPost gagal: " + (err && err.stack ? err.stack : err));
+    return jsonResponse({ status: "error", message: String(err && err.message ? err.message : err) });
+  }
+}
+
+function handlePost(e) {
   var lock = null;
   try {
     var data = JSON.parse(e.postData.contents);
@@ -243,7 +265,7 @@ function doPost(e) {
       if (!sheet) {
         throw new Error("Sheet '" + SHEETS[type] + "' tidak ditemukan!");
       }
-      return deleteRow(sheet, data, ss.getSpreadsheetTimeZone());
+      return deleteRow(sheet, data, tzOf(ss));
     }
 
     if (data.action === "update") {
@@ -256,17 +278,52 @@ function doPost(e) {
 
     // Tambah satu baris: Tanggal, Kategori, Account/Bank, Deskripsi, Total (Rp)
     var clean = cleanRow(data);
-    mergeSorted(getOrCreateSheet(ss, SHEETS[clean.type]), [clean.values], ss.getSpreadsheetTimeZone());
+    mergeSorted(getOrCreateSheet(ss, SHEETS[clean.type]), [clean.values], tzOf(ss));
 
     return jsonResponse({
       status: "success",
       message: "Transaksi " + SHEETS[clean.type] + " berhasil dicatat!"
     });
   } catch (err) {
+    if (!(err && err.code === "AUTH")) console.error("handlePost gagal: " + (err && err.stack ? err.stack : err));
     return jsonResponse({ status: "error", code: err && err.code ? err.code : undefined, message: String(err && err.message ? err.message : err) });
   } finally {
-    if (lock) lock.releaseLock();
+    if (lock) {
+      try { lock.releaseLock(); } catch (releaseErr) { console.error("releaseLock gagal: " + releaseErr); }
+    }
   }
+}
+
+// Diagnosis: jalankan fungsi ini dari editor Apps Script (pilih "selfTest" lalu Run). Hasilnya muncul di
+// Execution log. Tidak menambah transaksi: tahap "tulis" hanya menulis ulang isi yang sudah ada.
+function selfTest() {
+  var out = [];
+  function step(name, fn) {
+    try {
+      var r = fn();
+      out.push("OK     " + name + (r ? ": " + r : ""));
+    } catch (err) {
+      out.push("GAGAL  " + name + ": " + (err && err.stack ? err.stack : err));
+    }
+  }
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var tz = tzOf(ss);
+  step("zona waktu", function () { return tz; });
+  step("versi script", function () { return String(SCRIPT_VERSION); });
+  step("token", function () { return isSecured() ? "aktif" : "mati"; });
+  step("kunci (LockService)", function () { var l = LockService.getScriptLock(); l.waitLock(5000); l.releaseLock(); });
+  step("baca semua", function () { var d = readAll(); return d.expenses.length + " pengeluaran, " + d.incomes.length + " pemasukan"; });
+  step("validasi baris baru", function () { cleanRow({ type: "expense", date: Utilities.formatDate(new Date(), tz, "yyyy-MM-dd"), category: "Snacks", account: "BCA", description: "uji", total: 1 }); });
+  step("tulis ulang isi Expense", function () {
+    var sheet = getOrCreateSheet(ss, SHEETS.expense);
+    var used = readUsed(sheet);
+    writeRows(sheet, used.rows, used.lastUsed);
+    return used.rows.length + " baris";
+  });
+  step("rapikan urutan (mergeSorted tanpa baris baru)", function () { mergeSorted(getOrCreateSheet(ss, SHEETS.expense), [], tz); });
+  var text = out.join("\n");
+  console.log(text);
+  Logger.log(text);
 }
 
 // Batas harian dari website; 0 kalau belum pernah diatur.
@@ -395,8 +452,29 @@ function writeRows(sheet, rows, previousLast) {
   if (rows.length) {
     // Kolom teks (Kategori, Account, Deskripsi) diformat plain text supaya isi yang diawali
     // "=", "+", "-" atau "@" (mis. dari file Excel orang lain) tidak dijalankan sebagai rumus.
-    sheet.getRange(2, 2, rows.length, 3).setNumberFormat("@");
+    // Sheet yang diubah jadi "Table" punya kolom bertipe: di sana setNumberFormat ditolak
+    // ("You can't set the number format of cells in a typed column"), dan errornya bisa baru muncul saat
+    // flush, di luar try/catch. Karena itu dicoba di dalam try dan langsung di-flush. Kalau ditolak,
+    // isi yang berawalan = + - @ dinetralkan dengan awalan apostrof (bukan jadi rumus).
+    var plain = true;
+    try {
+      sheet.getRange(2, 2, rows.length, 3).setNumberFormat("@");
+      SpreadsheetApp.flush();
+    } catch (fmtErr) {
+      plain = false;
+      console.warn("setNumberFormat ditolak, memakai awalan apostrof: " + fmtErr);
+    }
+    if (!plain) {
+      rows = rows.map(function (r) {
+        var copy = r.slice();
+        for (var c = 1; c <= 3; c++) {
+          if (typeof copy[c] === "string" && /^[=+\-@]/.test(copy[c])) copy[c] = "'" + copy[c];
+        }
+        return copy;
+      });
+    }
     sheet.getRange(2, 1, rows.length, 5).setValues(rows);
+    SpreadsheetApp.flush();
   }
   if (previousLast > endRow) {
     sheet.getRange(endRow + 1, 1, previousLast - endRow, 5).clearContent();
@@ -428,7 +506,7 @@ function addMany(ss, data) {
     }
   }
 
-  var timezone = ss.getSpreadsheetTimeZone();
+  var timezone = tzOf(ss);
   if (grouped.expense.length) {
     mergeSorted(getOrCreateSheet(ss, SHEETS.expense), grouped.expense, timezone);
   }
@@ -479,7 +557,7 @@ function deleteRow(sheet, data, timezone) {
 // di posisi tanggalnya. Semua dalam satu kunci, jadi tidak ada yang melihat keadaan setengah jadi.
 // Data baru divalidasi dulu supaya baris lama tidak hilang kalau isian baru ditolak.
 function updateRow(ss, data) {
-  var timezone = ss.getSpreadsheetTimeZone();
+  var timezone = tzOf(ss);
   var type = isIncome(data.type) ? "income" : "expense";
   var sheet = ss.getSheetByName(SHEETS[type]);
   if (!sheet) {
@@ -519,7 +597,7 @@ function onOpen() {
 
 function sortAllNewestFirst() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var timezone = ss.getSpreadsheetTimeZone();
+  var timezone = tzOf(ss);
   [SHEETS.expense, SHEETS.income].forEach(function (name) {
     var sheet = ss.getSheetByName(name);
     if (sheet) sortNewestFirst(sheet, timezone);

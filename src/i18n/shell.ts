@@ -1,7 +1,7 @@
 // Teks kerangka aplikasi: App, Sidebar, Toast, SlideOver, Dashboard, daftar transaksi, dan grafik.
 export const id = {
   // Navigasi dan aksi bersama
-  'shell.nav.overview': 'Ringkasan',
+  'shell.nav.overview': 'Beranda',
   'shell.nav.transactions': 'Transaksi',
   'shell.nav.report': 'Laporan',
   'shell.nav.sources': 'Sumber data',
@@ -125,7 +125,7 @@ export const id = {
 } as const;
 
 export const en: Record<keyof typeof id, string> = {
-  'shell.nav.overview': 'Overview',
+  'shell.nav.overview': 'Home',
   'shell.nav.transactions': 'Transactions',
   'shell.nav.report': 'Report',
   'shell.nav.sources': 'Data sources',

@@ -6,7 +6,7 @@ import { todayISO } from '@/lib/date';
 import { PickAccountsBanner } from '@/components/PickAccountsBanner';
 import { DueBanner } from '@/components/DueBanner';
 import { CalendarPage } from '@/components/CalendarPage';
-import { PlansPage } from '@/components/PlansPage';
+import { GoalsPage, PlansPage } from '@/components/PlansPage';
 import { usePlans } from '@/hooks/usePlans';
 import { useBudgets } from '@/hooks/useBudgets';
 import { dueRules, monthKey, type Recurring } from '@/lib/plans';
@@ -17,6 +17,7 @@ import { RulesPage } from '@/components/RulesPage';
 import { DebtsPage } from '@/components/DebtsPage';
 import { SecurityBanner } from '@/components/SecurityBanner';
 import { DebtDueBanner } from '@/components/DebtDueBanner';
+import { BudgetsPage } from '@/components/BudgetsPage';
 import { ReportPage } from '@/components/ReportPage';
 import { TransactionsPage } from '@/components/TransactionsPage';
 import { SourcesPage } from '@/components/SourcesPage';
@@ -308,7 +309,11 @@ function App() {
         }
       : view === 'transactions'
         ? { title: t('shell.nav.transactions'), subtitle: t('shell.app.subtitle.transactions') }
-        : view === 'report'
+        : view === 'budgets'
+          ? { title: t('nav.budgets'), subtitle: t('budgets.subtitle') }
+          : view === 'goals'
+            ? { title: t('nav.goals'), subtitle: t('goals.page.subtitle') }
+            : view === 'report'
           ? { title: t('shell.nav.report'), subtitle: t('shell.app.subtitle.report') }
           : view === 'calendar'
             ? { title: t('nav.calendar'), subtitle: t('cal.subtitle') }
@@ -459,6 +464,8 @@ function App() {
           )}
           {view === 'calendar' && <CalendarPage transactions={listedTransactions} onRecord={handleRecordDue} onSkip={handleSkipDue} />}
           {view === 'plans' && <PlansPage accounts={selectedAccounts} />}
+          {view === 'goals' && <GoalsPage />}
+          {view === 'budgets' && <BudgetsPage transactions={listedTransactions} />}
           {view === 'debts' && (
             <DebtsPage
               accounts={selectedAccounts}

@@ -119,7 +119,7 @@ export function TransactionList({
                       {t('source.badge.sheet')}
                     </span>
                   )}
-                  {tx.source === 'local' && (
+                  {tx.source === 'local' && mixedSources && (
                     <span
                       className="shrink-0 rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500"
                       title={t('shell.list.localTitle')}
@@ -139,7 +139,7 @@ export function TransactionList({
                 <button
                   onClick={() => onEdit(tx)}
                   disabled={deletingId !== null}
-                  className="shrink-0 rounded-xl p-1.5 text-slate-300 sm:p-2 transition-all hover:bg-slate-100 hover:text-slate-700 focus-visible:text-slate-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-700 focus-visible:text-slate-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
                   aria-label={t('edit.aria', { name: tx.description || tx.category })}
                 >
                   <Pencil className="h-4 w-4" />
@@ -148,7 +148,7 @@ export function TransactionList({
               <button
                 onClick={() => handleDelete(tx)}
                 disabled={deletingId !== null}
-                className="-mr-1 shrink-0 rounded-xl p-1.5 text-slate-300 sm:mr-0 sm:p-2 transition-all hover:bg-rose-50 hover:text-rose-600 focus-visible:text-rose-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:text-slate-300 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
+                className="-mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 sm:mr-0 transition-all hover:bg-rose-50 hover:text-rose-600 focus-visible:text-rose-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
                 aria-label={t('shell.list.delete', { name: tx.description || tx.category })}
               >
                 {deletingId === tx.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}

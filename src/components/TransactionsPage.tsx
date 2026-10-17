@@ -107,10 +107,11 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
             ))}
           </div>
 
+          <div className="grid w-full grid-cols-2 gap-2 sm:contents">
           <select
             value={account}
             onChange={(e) => onAccountChange(e.target.value)}
-            className="form-input !w-auto"
+            className="form-input sm:!w-auto"
             aria-label={t('shell.tx.filterAccount')}
           >
             <option value="">{t('shell.tx.allAccounts')}</option>
@@ -124,7 +125,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
           <select
             value={month}
             onChange={(e) => setMonth(e.target.value)}
-            className="form-input !w-auto"
+            className="form-input sm:!w-auto"
             aria-label={t('shell.tx.filterMonth')}
           >
             <option value="">{t('shell.tx.allMonths')}</option>
@@ -138,7 +139,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="form-input !w-auto"
+            className="form-input col-span-2 sm:col-span-1 sm:!w-auto"
             aria-label={t('shell.tx.filterCategory')}
           >
             <option value="">{t('shell.tx.allCategories')}</option>
@@ -148,6 +149,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
               </option>
             ))}
           </select>
+          </div>
 
           <button
             onClick={() => setShowAdvanced((v) => !v)}

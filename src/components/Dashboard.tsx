@@ -9,6 +9,7 @@ import type { Engagement } from '@/hooks/useEngagement';
 import { SafeToSpendCard } from '@/components/SafeToSpendCard';
 import { InsightsPanel } from '@/components/InsightsPanel';
 import { todayISO } from '@/lib/date';
+import { monthLabel } from '@/lib/report';
 import { TransactionList } from '@/components/TransactionList';
 import { isDebtPaymentCategory, isTransferCategory } from '@/lib/categories';
 import { useT } from '@/i18n';
@@ -42,6 +43,9 @@ export function Dashboard({
   const listed = useMemo(() => transactions.filter((t) => !isTransferCategory(t.category)), [transactions]);
   // Grafik kategori hanya untuk konsumsi: pembayaran pokok utang tampil di daftar, tapi tidak di grafik.
   const spending = useMemo(() => listed.filter((t) => !isDebtPaymentCategory(t.category)), [listed]);
+  // Ringkasan kategori untuk bulan berjalan, sama dengan angka pemasukan/pengeluaran di kartu saldo.
+  const month = todayISO().slice(0, 7);
+  const spendingMonth = useMemo(() => spending.filter((t) => t.date.startsWith(month)), [spending, month]);
 
   if (!transactions.length && !loading) {
     return <GettingStarted onConnect={onConnect} onImport={onImport} onAdd={onAdd} onTemplate={onTemplate} />;
@@ -53,12 +57,12 @@ export function Dashboard({
         <StatsCards transactions={transactions} />
       </div>
 
-      <div className="rise" style={{ animationDelay: '60ms' }}>
-        <AccountStrip accounts={accounts} onSelect={onSelectAccount} onManage={onManageAccounts} />
+      <div className="rise" style={{ animationDelay: '40ms' }}>
+        <SafeToSpendCard transactions={transactions} accounts={accounts.map((a) => a.account)} />
       </div>
 
-      <div className="rise" style={{ animationDelay: '75ms' }}>
-        <SafeToSpendCard transactions={transactions} accounts={accounts.map((a) => a.account)} />
+      <div className="rise" style={{ animationDelay: '60ms' }}>
+        <AccountStrip accounts={accounts} onSelect={onSelectAccount} onManage={onManageAccounts} />
       </div>
 
       {engagement && onSeeAchievements && (
@@ -79,7 +83,7 @@ export function Dashboard({
 
       <div className="rise grid grid-cols-1 gap-5 lg:grid-cols-2" style={{ animationDelay: '180ms' }}>
         <Panel
-          title={t('shell.dashboard.byCategory')}
+          title={t('ux.cat.period', { month: monthLabel(month) })}
           action={
             <div className="flex gap-1 rounded-lg bg-slate-100 p-0.5" role="group" aria-label={t('shell.type.group')}>
               <TabButton active={chartTab === 'expense'} activeColor="text-brand" onClick={() => setChartTab('expense')}>
@@ -91,7 +95,7 @@ export function Dashboard({
             </div>
           }
         >
-          <CategoryChart transactions={spending} type={chartTab} />
+          <CategoryChart transactions={spendingMonth} type={chartTab} />
         </Panel>
 
         <Panel
@@ -115,8 +119,8 @@ export function Dashboard({
 function Panel({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
     <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="whitespace-nowrap text-base font-bold tracking-tight text-slate-900">{title}</h2>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <h2 className="text-base font-bold tracking-tight text-slate-900">{title}</h2>
         {action}
       </div>
       {children}

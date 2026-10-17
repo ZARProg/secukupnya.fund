@@ -4,6 +4,8 @@ import { useDailyLimit } from '@/hooks/useDailyLimit';
 import { usePrivacy } from '@/hooks/usePrivacy';
 import { rupiahLabel as plain } from '@/lib/format';
 import { computeStats } from '@/lib/summary';
+import { monthReport } from '@/lib/report';
+import { todayISO } from '@/lib/date';
 import { useT } from '@/i18n';
 import type { Transaction } from '@/lib/transactions';
 
@@ -17,6 +19,8 @@ export function StatsCards({ transactions }: StatsProps) {
   const { limit: DAILY_TARGET } = useDailyLimit();
   const { hidden, toggle, money: rupiahLabel } = usePrivacy();
   const stats = useMemo(() => computeStats(transactions), [transactions]);
+  // Pemasukan dan pengeluaran ditampilkan untuk bulan berjalan (sama dengan Laporan), bukan total sejak awal.
+  const month = useMemo(() => monthReport(transactions, todayISO().slice(0, 7)), [transactions]);
   const over = stats.todayExpense > DAILY_TARGET;
   const pct = Math.min(100, Math.round((stats.todayExpense / DAILY_TARGET) * 100));
   const monthPositive = stats.monthBalance >= 0;
@@ -72,12 +76,12 @@ export function StatsCards({ transactions }: StatsProps) {
 
         <dl className="grid grid-cols-2 gap-6 sm:gap-8">
           <div>
-            <dt className="text-xs font-medium text-white/65">{t('shell.stats.totalIncome')}</dt>
-            <dd className="mt-1 text-lg font-bold tabular-nums">{rupiahLabel(stats.totalIncome)}</dd>
+            <dt className="text-xs font-medium text-white/65">{t('ux.stats.monthIncome')}</dt>
+            <dd className="mt-1 text-lg font-bold tabular-nums">{rupiahLabel(month.income)}</dd>
           </div>
           <div>
-            <dt className="text-xs font-medium text-white/65">{t('shell.stats.totalExpense')}</dt>
-            <dd className="mt-1 text-lg font-bold tabular-nums">{rupiahLabel(stats.totalExpense)}</dd>
+            <dt className="text-xs font-medium text-white/65">{t('ux.stats.monthExpense')}</dt>
+            <dd className="mt-1 text-lg font-bold tabular-nums">{rupiahLabel(month.expense)}</dd>
           </div>
         </dl>
       </div>

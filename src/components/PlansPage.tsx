@@ -16,6 +16,14 @@ export function PlansPage({ accounts }: PlansPageProps) {
   return (
     <div className="space-y-5">
       <RecurringSection accounts={accounts} />
+    </div>
+  );
+}
+
+/** Halaman Target tabungan: hanya target; tagihan rutin ada di halaman Tagihan rutin. */
+export function GoalsPage() {
+  return (
+    <div className="space-y-5">
       <GoalsSection />
     </div>
   );

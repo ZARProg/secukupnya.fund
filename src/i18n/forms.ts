@@ -94,7 +94,7 @@ export const id = {
   // Pesan error (lib/ dan hooks/)
   'forms.err.noDoGet': 'Apps Script belum punya doGet. Deploy ulang Web App dengan versi terbaru.',
   'forms.err.notJson': 'Respons Apps Script bukan JSON. Cek akses deploy Web App ("Anyone").',
-  'forms.err.unreachable': 'Tidak bisa menghubungi Apps Script. Cek koneksi internet, dan pastikan akses Web App diatur ke "Anyone".',
+  'forms.err.unreachable': 'Tidak bisa menghubungi Apps Script. Cek koneksi internet dan pastikan akses Web App diatur ke "Anyone". Kalau baru memperbarui Code.gs, deploy ulang lewat Deploy → Manage deployments → New version, lalu jalankan fungsi selfTest di editor Apps Script untuk melihat pesan errornya.',
   'forms.err.noUrl': 'URL Web App belum diatur',
   'forms.err.fetchFailed': 'Gagal mengambil data dari spreadsheet',
   'forms.err.requestFailed': 'Permintaan ke spreadsheet gagal',
@@ -195,7 +195,7 @@ export const en: Record<keyof typeof id, string> = {
 
   'forms.err.noDoGet': 'Apps Script has no doGet yet. Redeploy the Web App with the latest version.',
   'forms.err.notJson': 'The Apps Script response is not JSON. Check the Web App deployment access ("Anyone").',
-  'forms.err.unreachable': 'Could not reach Apps Script. Check your internet connection and make sure the Web App access is set to "Anyone".',
+  'forms.err.unreachable': 'Could not reach Apps Script. Check your internet connection and make sure the Web App access is set to "Anyone". If you just updated Code.gs, redeploy via Deploy → Manage deployments → New version, then run the selfTest function in the Apps Script editor to see the error message.',
   'forms.err.noUrl': 'Web App URL is not set',
   'forms.err.fetchFailed': 'Could not fetch data from the spreadsheet',
   'forms.err.requestFailed': 'The request to the spreadsheet failed',

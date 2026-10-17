@@ -1,5 +1,5 @@
 import {
-  Copy, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, Plus, RefreshCw, Wallet, X, FileSpreadsheet, DatabaseZap, Download, type LucideIcon,
+  Copy, Gauge, PiggyBank, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, Plus, RefreshCw, Wallet, X, FileSpreadsheet, DatabaseZap, Download, type LucideIcon,
 } from 'lucide-react';
 import { AccountAvatar } from '@/components/AccountAvatar';
 import { LanguageSwitch } from '@/components/LanguageSwitch';
@@ -7,20 +7,49 @@ import { rupiahSigned } from '@/lib/format';
 import { useT, type MessageKey } from '@/i18n';
 import type { AccountBalance } from '@/lib/summary';
 
-export type View = 'overview' | 'transactions' | 'report' | 'calendar' | 'plans' | 'debts' | 'rules' | 'activity' | 'conflicts' | 'achievements' | 'recap' | 'sources';
+export type View = 'overview' | 'transactions' | 'budgets' | 'goals' | 'report' | 'calendar' | 'plans' | 'debts' | 'rules' | 'activity' | 'conflicts' | 'achievements' | 'recap' | 'sources';
 
-const NAV: { view: View; label: MessageKey; icon: LucideIcon }[] = [
-  { view: 'overview', label: 'shell.nav.overview', icon: LayoutDashboard },
-  { view: 'transactions', label: 'shell.nav.transactions', icon: Receipt },
-  { view: 'report', label: 'shell.nav.report', icon: BarChart3 },
-  { view: 'calendar', label: 'nav.calendar', icon: CalendarDays },
-  { view: 'plans', label: 'nav.plans', icon: CalendarClock },
-  { view: 'debts', label: 'nav.debts', icon: Landmark },
-  { view: 'rules', label: 'nav.rules', icon: Wand2 },
-  { view: 'activity', label: 'nav.activity', icon: History },
-  { view: 'achievements', label: 'nav.achievements', icon: Trophy },
-  { view: 'recap', label: 'nav.recap', icon: Share2 },
-  { view: 'sources', label: 'shell.nav.sources', icon: DatabaseZap },
+type NavItem = { view: View; label: MessageKey; icon: LucideIcon };
+
+// Lima halaman utama dulu (sesuai urutan kebutuhan harian), lalu perencanaan, alat, dan motivasi.
+const GROUPS: { id: string; label: MessageKey | null; items: NavItem[] }[] = [
+  {
+    id: 'main',
+    label: null,
+    items: [
+      { view: 'overview', label: 'shell.nav.overview', icon: LayoutDashboard },
+      { view: 'transactions', label: 'shell.nav.transactions', icon: Receipt },
+      { view: 'budgets', label: 'nav.budgets', icon: Gauge },
+      { view: 'goals', label: 'nav.goals', icon: PiggyBank },
+      { view: 'report', label: 'shell.nav.report', icon: BarChart3 },
+    ],
+  },
+  {
+    id: 'plan',
+    label: 'nav.group.plan',
+    items: [
+      { view: 'calendar', label: 'nav.calendar', icon: CalendarDays },
+      { view: 'plans', label: 'nav.plans', icon: CalendarClock },
+      { view: 'debts', label: 'nav.debts', icon: Landmark },
+    ],
+  },
+  {
+    id: 'tools',
+    label: 'nav.group.tools',
+    items: [
+      { view: 'rules', label: 'nav.rules', icon: Wand2 },
+      { view: 'activity', label: 'nav.activity', icon: History },
+      { view: 'sources', label: 'shell.nav.sources', icon: DatabaseZap },
+    ],
+  },
+  {
+    id: 'motivation',
+    label: 'nav.group.motivation',
+    items: [
+      { view: 'achievements', label: 'nav.achievements', icon: Trophy },
+      { view: 'recap', label: 'nav.recap', icon: Share2 },
+    ],
+  },
 ];
 
 interface SidebarProps {
@@ -122,24 +151,37 @@ export function Sidebar({
         </div>
 
         <div className="mt-4 flex-1 overflow-y-auto px-3 pb-4">
-          <nav aria-label={t('shell.sidebar.pages')} className="space-y-1 px-2">
-            {[...NAV, ...(conflictCount > 0 || view === 'conflicts' ? [{ view: 'conflicts' as View, label: 'nav.conflicts' as MessageKey, icon: Copy as LucideIcon }] : [])].map(({ view: v, label, icon: Icon }) => {
-              const active = v === view;
+          <nav aria-label={t('shell.sidebar.pages')} className="space-y-5 px-2">
+            {GROUPS.map((group) => {
+              const items: NavItem[] =
+                group.id === 'tools' && (conflictCount > 0 || view === 'conflicts')
+                  ? [...group.items, { view: 'conflicts', label: 'nav.conflicts', icon: Copy }]
+                  : group.items;
               return (
-                <button
-                  key={v}
-                  onClick={() => onNavigate(v)}
-                  aria-current={active ? 'page' : undefined}
-                  className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
-                    active ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {t(label)}
-                  {v === 'conflicts' && conflictCount > 0 && (
-                    <span className="ml-auto rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-ink" data-testid="conflict-count">{conflictCount}</span>
+                <div key={group.id} className="space-y-1" role="group" aria-label={group.label ? t(group.label) : t('nav.group.main')}>
+                  {group.label && (
+                    <p className="px-3.5 pb-1 text-[11px] font-semibold uppercase tracking-wider text-white/40">{t(group.label)}</p>
                   )}
-                </button>
+                  {items.map(({ view: v, label, icon: Icon }) => {
+                    const active = v === view;
+                    return (
+                      <button
+                        key={v}
+                        onClick={() => onNavigate(v)}
+                        aria-current={active ? 'page' : undefined}
+                        className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
+                          active ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {t(label)}
+                        {v === 'conflicts' && conflictCount > 0 && (
+                          <span className="ml-auto rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-ink" data-testid="conflict-count">{conflictCount}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               );
             })}
           </nav>

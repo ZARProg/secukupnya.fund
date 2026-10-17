@@ -79,16 +79,17 @@ Teks ada di `src/i18n/`; kuncinya bertipe, jadi kunci yang hilang di salah satu 
 ## Fitur tambahan
 
 - **Ubah transaksi**: ikon pensil di tiap baris. Jenis transaksi dan tujuan simpan (spreadsheet/browser) tidak bisa diganti. Di spreadsheet, fitur ini butuh Apps Script **versi 5** (deploy ulang `Code.gs`); baris lama diverifikasi dulu, dihapus, lalu versi baru disisipkan sesuai tanggalnya.
-- **Rencana** (menu sidebar):
-  - *Transaksi berulang*: tagihan atau pemasukan rutin per tanggal. Saat jatuh tempo, banner di Ringkasan menawarkan **Catat** atau **Lewati**; tidak ada yang dicatat otomatis. Hanya bulan berjalan yang ditawarkan (bulan yang terlewat tidak diisi ulang).
-  - *Target tabungan*: progres, sisa, dan setoran per bulan kalau ada tenggat. Dana yang ditambahkan hanya catatan, bukan transaksi.
-  - Keduanya disimpan di browser ini saja (`budgettracker.recurring.v1`, `budgettracker.goals.v1`).
+- **Navigasi** (sidebar, dikelompokkan): *Utama* (Beranda, Transaksi), *Rencana keuangan* (Anggaran, Target tabungan, Tagihan rutin), *Analisis* (Laporan, Kalender, Pencapaian, Rekap), *Alat* (Utang, Sumber data, dll).
+  - **Anggaran**: batas bulanan per kategori dengan pemilih bulan (dulunya di Laporan).
+  - **Target tabungan**: progres, sisa, dan setoran per bulan kalau ada tenggat. Dana yang ditambahkan hanya catatan, bukan transaksi.
+  - **Tagihan rutin**: tagihan atau pemasukan rutin per tanggal. Saat jatuh tempo, banner di Beranda menawarkan **Catat** atau **Lewati**; tidak ada yang dicatat otomatis. Hanya bulan berjalan yang ditawarkan.
+  - Semuanya disimpan di browser ini (`budgettracker.budgets.v1`, `budgettracker.recurring.v1`, `budgettracker.goals.v1`).
 - **Sembunyikan saldo**: ikon mata di kartu saldo menyamarkan saldo, total, dan saldo rekening (`budgettracker.hide.v1`).
 
 ## Fitur lanjutan
 
-- **Rekening kosong di awal**: pengguna baru memilih sendiri bank/e-wallet di Sumber data. Selama belum ada yang dipilih, Ringkasan menampilkan ajakan memilih dan form catat transaksi meminta rekening dulu (transfer butuh dua rekening).
-- **Wawasan keuangan** (Laporan, dan 3 teratas di Ringkasan): dihitung dengan aturan tetap di `src/lib/insights.ts`, bukan tebakan. Isinya: perbandingan dengan bulan lalu (bulan berjalan dibandingkan sampai tanggal yang sama), kategori terbesar, anggaran terlewati atau hampir habis, sisa pemasukan, perubahan pola per kategori (naik/turun minimal 30% dan Rp 50.000), serta saran sederhana dan proyeksi akhir bulan (diberi label proyeksi). Ambang batas ada sebagai konstanta di berkas itu. Ini bukan nasihat keuangan profesional.
+- **Rekening kosong di awal**: pengguna baru memilih sendiri bank/e-wallet di Sumber data. Selama belum ada yang dipilih, Beranda menampilkan ajakan memilih dan form catat transaksi meminta rekening dulu (transfer butuh dua rekening).
+- **Wawasan keuangan** (Laporan, dan 3 teratas di Beranda): dihitung dengan aturan tetap di `src/lib/insights.ts`, bukan tebakan. Isinya: perbandingan dengan bulan lalu (bulan berjalan dibandingkan sampai tanggal yang sama), kategori terbesar, anggaran terlewati atau hampir habis, sisa pemasukan, perubahan pola per kategori (naik/turun minimal 30% dan Rp 50.000), serta saran sederhana dan proyeksi akhir bulan (diberi label proyeksi). Ambang batas ada sebagai konstanta di berkas itu. Ini bukan nasihat keuangan profesional.
 - **Kalender keuangan** (menu Kalender): tampilan bulanan dengan penanda warna: hijau = pemasukan tercatat, merah = pengeluaran tercatat, kuning = transaksi berulang terjadwal (proyeksi), ungu = tenggat target. Pilih tanggal untuk melihat rinciannya. Transaksi tercatat, jadwal, dan target ditampilkan terpisah dan ringkasannya dipisah: terjadwal dan target **bukan transaksi** dan tidak memengaruhi saldo. Bulan yang sudah lewat hanya menampilkan transaksi tercatat. Ada daftar tagihan 7 hari ke depan (termasuk awal bulan depan) dan tombol Catat/Lewati untuk yang sudah jatuh tempo.
 - **Deteksi duplikat saat impor Excel**:
   - *Sama persis* (tanggal, jenis, kategori, rekening, keterangan, jumlah) dengan data di tujuan dilewati secara default; barisnya bisa dilihat dan centangnya bisa dimatikan.
@@ -187,3 +188,7 @@ Aplikasi ini situs statis (Vite). Tidak ada server sendiri; data ada di browser 
 3. Jangan mengisi `VITE_GOOGLE_WEB_APP_URL` di hosting publik: variabel `VITE_*` ikut tertanam di file JavaScript, sehingga siapa pun bisa membaca URL `/exec`-mu. Tempel URL lewat menu **Sumber data** di browser; URL itu tersimpan di browser tersebut saja.
 4. Apps Script: tempel `google-apps-script/Code.gs`, **Deploy → New deployment → Web app**, Execute as **Me**, access **Anyone**. Setelah mengubah kode, pakai **Manage deployments → Edit → New version**. Aktifkan token akses (lihat bawah); tanpa itu, siapa pun yang punya URL `/exec` bisa membaca, menambah, dan menghapus data.
 
+
+## Catatan UX
+
+Beranda menjawab tiga hal berurutan: saldo tersedia (kartu utama), pengeluaran bulan ini, dan jumlah aman dipakai sampai akhir bulan (kartu Aman dipakai). Grafik 14 hari punya sumbu Rp, periode, keterangan saat kosong, dan batang yang bisa diketuk. Teks antarmuka tambahan ada di `src/i18n/ux.ts`. Tes: `e2e_ux.py` di skrip uji.
