@@ -3,6 +3,7 @@ import { cleanEntries } from './activity';
 import { cleanDebts } from './debts';
 import { cleanSavedFilters } from './filters';
 import { cleanLocal } from './localStore';
+import { cleanHistory, cleanNetWorth, isEmptyNetWorth } from './networth';
 import { cleanBudgets, cleanGoals, cleanRecurring } from './plans';
 import { cleanMemory } from './quickMemory';
 import { cleanRules } from './rules';
@@ -28,12 +29,15 @@ const P = 'budgettracker.';
 /** Pengaturan yang ikut sinkron antar perangkat lewat spreadsheet. */
 export const SYNC_KEYS = [
   `${P}accounts.v1`, `${P}dailyLimit.v1`, `${P}budgets.v1`, `${P}recurring.v1`, `${P}goals.v1`,
-  `${P}debts.v1`, `${P}rules.v1`, `${P}safe.v1`, `${P}savedFilters.v1`,
+  `${P}debts.v1`, `${P}rules.v1`, `${P}safe.v1`, `${P}savedFilters.v1`, `${P}networth.v1`,
 ] as const;
+
+/** Kunci sinkron yang sudah ada sebelum Kekayaan bersih. Blob lama tanpa daftar `keys` hanya mencakup ini, jadi menarik blob lama tidak menghapus kunci yang lebih baru. */
+export const LEGACY_SYNC_KEYS: readonly string[] = SYNC_KEYS.filter((k) => k !== `${P}networth.v1`);
 
 /** Tambahan khusus backup: data yang hanya ada di browser ini. */
 const BACKUP_ONLY_KEYS = [
-  `${P}local.v1`, `${P}hide.v1`, `${P}lang.v1`, `${P}engage.v1`, `${P}quick.v1`, `${P}recordtab.v1`, `${P}activity.v1`, `${P}dupignore.v1`,
+  `${P}local.v1`, `${P}hide.v1`, `${P}lang.v1`, `${P}engage.v1`, `${P}quick.v1`, `${P}recordtab.v1`, `${P}activity.v1`, `${P}dupignore.v1`, `${P}nwhistory.v1`,
 ] as const;
 
 export const BACKUP_KEYS: readonly string[] = [...SYNC_KEYS, ...BACKUP_ONLY_KEYS];
@@ -120,6 +124,12 @@ export function cleanValue(key: string, raw: string): string | null {
     case 'recurring.v1': return list(cleanRecurring(v));
     case 'goals.v1': return list(cleanGoals(v));
     case 'debts.v1': return list(cleanDebts(v));
+    case 'networth.v1': {
+      // Riwayat disimpan di kunci sendiri (tidak ikut sinkron, supaya pencatatan harian tidak dianggap perubahan pengaturan).
+      const nw = { ...cleanNetWorth(v), history: [] };
+      return isEmptyNetWorth(nw) ? null : JSON.stringify(nw);
+    }
+    case 'nwhistory.v1': return list(cleanHistory(v));
     case 'rules.v1': return list(cleanRules(v));
     case 'savedFilters.v1': return list(cleanSavedFilters(v));
     case 'local.v1': return list(cleanLocal(v));
@@ -228,11 +238,13 @@ export interface SyncBlob {
   format: number;
   /** Waktu ISO saat dikirim dari perangkat. */
   pushedAt: string;
+  /** Daftar kunci yang dicakup blob ini (kunci yang ada di sini tapi tidak di `data` berarti kosong). Tidak ada di blob lama. */
+  keys?: string[];
   data: Record<string, string>;
 }
 
 export function buildSyncBlob(storage: StorageLike, now = new Date()): string {
-  const blob: SyncBlob = { app: APP_ID, format: BACKUP_FORMAT, pushedAt: now.toISOString(), data: collect(storage, SYNC_KEYS) };
+  const blob: SyncBlob = { app: APP_ID, format: BACKUP_FORMAT, pushedAt: now.toISOString(), keys: [...SYNC_KEYS], data: collect(storage, SYNC_KEYS) };
   return JSON.stringify(blob);
 }
 
@@ -249,7 +261,8 @@ export function parseSyncBlob(text: string): { ok: true; blob: SyncBlob } | { ok
     if (cleaned !== null) data[k] = cleaned;
   }
   const at = typeof o.pushedAt === 'string' && !Number.isNaN(Date.parse(o.pushedAt)) ? o.pushedAt : new Date(0).toISOString();
-  return { ok: true, blob: { app: APP_ID, format: BACKUP_FORMAT, pushedAt: at, data } };
+  const declared = Array.isArray(o.keys) ? o.keys.filter((k): k is string => typeof k === 'string' && allowed.has(k)) : null;
+  return { ok: true, blob: { app: APP_ID, format: BACKUP_FORMAT, pushedAt: at, keys: declared ?? [...LEGACY_SYNC_KEYS], data } };
 }
 
 /** Sidik jari sederhana isi pengaturan lokal, untuk tahu apakah ada perubahan sejak sinkron terakhir. */

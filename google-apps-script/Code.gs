@@ -230,20 +230,28 @@ function handlePost(e) {
     // tanpa token tidak bisa menahan kunci dan menghambat pengguna yang sah.
     requireToken(data);
 
-    lock = LockService.getScriptLock();
-    lock.waitLock(10000);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-
+    // Aksi BACA tidak memakai kunci: tidak mengubah apa pun, jadi tidak perlu antre di belakang penulisan yang lambat
+    // (sebelumnya menghubungkan dari HP bisa gagal "Batas waktu penguncian habis" kalau ada penulisan yang masih jalan).
     if (data.action === "read") {
       return jsonResponse(readAll());
     }
+    if (data.action === "getSettings") {
+      return getSettings(SpreadsheetApp.getActiveSpreadsheet());
+    }
+
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(25000);
+    } catch (lockErr) {
+      lock = null; // tidak memegang kunci, jangan dilepas di finally
+      var busy = new Error("Spreadsheet sedang sibuk menyimpan data lain. Tunggu sekitar 30 detik lalu coba lagi.");
+      busy.code = "BUSY";
+      throw busy;
+    }
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
 
     if (data.action === "putSettings") {
       return putSettings(ss, data);
-    }
-
-    if (data.action === "getSettings") {
-      return getSettings(ss);
     }
 
     if (data.action === "addMany") {

@@ -1,5 +1,5 @@
 import {
-  Copy, Gauge, PiggyBank, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, Plus, RefreshCw, Wallet, X, FileSpreadsheet, DatabaseZap, Download, type LucideIcon,
+  Copy, Gauge, PiggyBank, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, Plus, RefreshCw, Wallet, X, FileSpreadsheet, DatabaseZap, Download, Scale, type LucideIcon,
 } from 'lucide-react';
 import { AccountAvatar } from '@/components/AccountAvatar';
 import { LanguageSwitch } from '@/components/LanguageSwitch';
@@ -7,7 +7,7 @@ import { rupiahSigned } from '@/lib/format';
 import { useT, type MessageKey } from '@/i18n';
 import type { AccountBalance } from '@/lib/summary';
 
-export type View = 'overview' | 'transactions' | 'budgets' | 'goals' | 'report' | 'calendar' | 'plans' | 'debts' | 'rules' | 'activity' | 'conflicts' | 'achievements' | 'recap' | 'sources';
+export type View = 'overview' | 'transactions' | 'budgets' | 'goals' | 'report' | 'calendar' | 'plans' | 'debts' | 'networth' | 'rules' | 'activity' | 'conflicts' | 'achievements' | 'recap' | 'sources';
 
 type NavItem = { view: View; label: MessageKey; icon: LucideIcon };
 
@@ -31,6 +31,7 @@ const GROUPS: { id: string; label: MessageKey | null; items: NavItem[] }[] = [
       { view: 'calendar', label: 'nav.calendar', icon: CalendarDays },
       { view: 'plans', label: 'nav.plans', icon: CalendarClock },
       { view: 'debts', label: 'nav.debts', icon: Landmark },
+      { view: 'networth', label: 'nav.networth', icon: Scale },
     ],
   },
   {

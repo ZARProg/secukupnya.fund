@@ -18,6 +18,7 @@ import { DebtsPage } from '@/components/DebtsPage';
 import { SecurityBanner } from '@/components/SecurityBanner';
 import { DebtDueBanner } from '@/components/DebtDueBanner';
 import { BudgetsPage } from '@/components/BudgetsPage';
+import { NetWorthPage } from '@/components/NetWorthPage';
 import { ReportPage } from '@/components/ReportPage';
 import { TransactionsPage } from '@/components/TransactionsPage';
 import { SourcesPage } from '@/components/SourcesPage';
@@ -321,6 +322,8 @@ function App() {
               ? { title: t('nav.plans'), subtitle: t('plans.subtitle') }
               : view === 'debts'
                 ? { title: t('debt.title'), subtitle: t('debt.subtitle') }
+                : view === 'networth'
+                  ? { title: t('nw.title'), subtitle: t('nw.subtitle') }
                 : view === 'conflicts'
                   ? { title: t('conflicts.title'), subtitle: t('conflicts.subtitle') }
                 : view === 'rules'
@@ -466,6 +469,7 @@ function App() {
           {view === 'plans' && <PlansPage accounts={selectedAccounts} />}
           {view === 'goals' && <GoalsPage />}
           {view === 'budgets' && <BudgetsPage transactions={listedTransactions} />}
+          {view === 'networth' && <NetWorthPage balances={balances} transactions={transactions} ready={!loading} onToast={showToast} />}
           {view === 'debts' && (
             <DebtsPage
               accounts={selectedAccounts}

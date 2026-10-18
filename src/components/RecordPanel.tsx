@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useT } from '@/i18n';
 import { QuickAdd } from '@/components/QuickAdd';
 import { TransactionForm } from '@/components/TransactionForm';
+import { ReceiptScan } from '@/components/ReceiptScan';
 import type { Transaction, TransactionPayload } from '@/lib/transactions';
 import type { ToastState } from '@/components/Toast';
 import type { Destination } from '@/hooks/useTransactions';
 
 const TAB_KEY = 'budgettracker.recordtab.v1';
-type Tab = 'quick' | 'full';
+type Tab = 'quick' | 'full' | 'scan';
 
 function loadTab(): Tab {
   try {
@@ -53,6 +54,7 @@ export function RecordPanel(props: RecordPanelProps) {
 
   function pick(next: Tab) {
     setTab(next);
+    if (next === 'scan') return; // tab scan tidak jadi tab bawaan: foto selalu dipilih sengaja
     try {
       localStorage.setItem(TAB_KEY, next);
     } catch {
@@ -63,8 +65,8 @@ export function RecordPanel(props: RecordPanelProps) {
   return (
     <div className="flex flex-1 flex-col">
       <div className="px-6 pt-5">
-        <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1" role="group" aria-label={t('quick.tab.group')}>
-          {(['quick', 'full'] as const).map((k) => (
+        <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1" role="group" aria-label={t('quick.tab.group')}>
+          {(['quick', 'full', 'scan'] as const).map((k) => (
             <button
               key={k}
               type="button"
@@ -72,7 +74,7 @@ export function RecordPanel(props: RecordPanelProps) {
               aria-pressed={tab === k}
               className={`rounded-lg py-2 text-xs font-bold transition-all ${tab === k ? 'bg-white text-brand shadow-xs' : 'text-slate-500 hover:text-slate-700'}`}
             >
-              {t(k === 'quick' ? 'quick.tab.quick' : 'quick.tab.full')}
+              {t(k === 'quick' ? 'quick.tab.quick' : k === 'full' ? 'quick.tab.full' : 'scan.tab')}
             </button>
           ))}
         </div>
@@ -85,6 +87,16 @@ export function RecordPanel(props: RecordPanelProps) {
           batchReady={props.batchReady}
           onSave={props.onSave}
           onSaveMany={props.onSaveMany}
+          onToast={props.onToast}
+          onSubmitted={props.onSubmitted}
+          onManageAccounts={props.onManageAccounts}
+        />
+      ) : tab === 'scan' ? (
+        <ReceiptScan
+          accounts={props.accounts}
+          transactions={props.transactions}
+          sheetAvailable={props.sheetAvailable}
+          onSave={props.onSave}
           onToast={props.onToast}
           onSubmitted={props.onSubmitted}
           onManageAccounts={props.onManageAccounts}

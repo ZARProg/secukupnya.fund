@@ -79,7 +79,7 @@ Teks ada di `src/i18n/`; kuncinya bertipe, jadi kunci yang hilang di salah satu 
 ## Fitur tambahan
 
 - **Ubah transaksi**: ikon pensil di tiap baris. Jenis transaksi dan tujuan simpan (spreadsheet/browser) tidak bisa diganti. Di spreadsheet, fitur ini butuh Apps Script **versi 5** (deploy ulang `Code.gs`); baris lama diverifikasi dulu, dihapus, lalu versi baru disisipkan sesuai tanggalnya.
-- **Navigasi** (sidebar, dikelompokkan): *Utama* (Beranda, Transaksi), *Rencana keuangan* (Anggaran, Target tabungan, Tagihan rutin), *Analisis* (Laporan, Kalender, Pencapaian, Rekap), *Alat* (Utang, Sumber data, dll).
+- **Navigasi** (sidebar, dikelompokkan): grup utama (Beranda, Transaksi, Anggaran, Target tabungan, Laporan), *Perencanaan* (Kalender, Tagihan rutin, Utang, Kekayaan bersih), *Alat* (Aturan kategori, Riwayat, Sumber data), dan *Semangat* (Pencapaian, Rekap).
   - **Anggaran**: batas bulanan per kategori dengan pemilih bulan (dulunya di Laporan).
   - **Target tabungan**: progres, sisa, dan setoran per bulan kalau ada tenggat. Dana yang ditambahkan hanya catatan, bukan transaksi.
   - **Tagihan rutin**: tagihan atau pemasukan rutin per tanggal. Saat jatuh tempo, banner di Beranda menawarkan **Catat** atau **Lewati**; tidak ada yang dicatat otomatis. Hanya bulan berjalan yang ditawarkan.
@@ -192,3 +192,24 @@ Aplikasi ini situs statis (Vite). Tidak ada server sendiri; data ada di browser 
 ## Catatan UX
 
 Beranda menjawab tiga hal berurutan: saldo tersedia (kartu utama), pengeluaran bulan ini, dan jumlah aman dipakai sampai akhir bulan (kartu Aman dipakai). Grafik 14 hari punya sumbu Rp, periode, keterangan saat kosong, dan batang yang bisa diketuk. Teks antarmuka tambahan ada di `src/i18n/ux.ts`. Tes: `e2e_ux.py` di skrip uji.
+
+## Kekayaan bersih (Net Worth)
+
+Menu **Perencanaan → Kekayaan bersih**. Rumus: **kekayaan bersih = total aset − total kewajiban** (contoh: aset Rp15 juta − utang Rp4 juta = Rp11 juta).
+
+- **Aset**: saldo rekening (otomatis) + aset manual (tabungan, investasi, properti, kendaraan, piutang, dll.).
+- **Kewajiban**: sisa utang dari Pelacak Utang (otomatis, yang lunas tidak dihitung) + kewajiban manual.
+- **Label estimasi**: nilai manual yang tidak diperbarui lebih dari 30 hari (`STALE_DAYS` di `src/lib/networth.ts`) atau ditandai "perkiraan" diberi label *Estimasi*. Saldo rekening diberi label estimasi kalau belum ada **saldo awal** (saldo di aplikasi hanya selisih transaksi yang tercatat), belum ada transaksi, atau transaksi terakhirnya lebih dari 30 hari. Kalau ada estimasi, angka utama tampil dengan "≈", lencana Estimasi, dan persentase bagian yang masih estimasi.
+- **Hindari hitung ganda**: kalau menambah aset manual yang sama dengan saldo rekening, matikan "Hitung saldo rekening otomatis"; utang yang sudah ada di Pelacak Utang jangan ditambah lagi sebagai kewajiban manual.
+- **Riwayat**: satu catatan per hari, dibuat otomatis saat halaman dibuka setelah data selesai dimuat (hari yang terlewat tidak diisi). Grafik tampil setelah ada minimal 2 catatan.
+- Penyimpanan: `budgettracker.networth.v1` (aset, kewajiban, saldo awal; ikut backup dan sinkron pengaturan) dan `budgettracker.nwhistory.v1` (riwayat; hanya ikut backup, supaya pencatatan harian tidak dianggap perubahan pengaturan). Blob sinkron lama yang belum mengenal Kekayaan bersih tidak menghapus datanya.
+
+## Scan struk belanja
+
+Di panel **Catat transaksi** ada tab ketiga **Scan struk**: pilih atau potret struk, lalu aplikasi mencoba membaca total, tanggal, nama toko, dan barang.
+
+- **Foto tidak dikirim ke mana pun.** OCR (tesseract.js + data bahasa Indonesia) berjalan di browser, dan mesinnya disajikan dari situs sendiri (`/ocr`), bukan dari CDN. Unduhan sekitar 5 MB terjadi sekali saat pertama dipakai, lalu disimpan browser.
+- **Hasil wajib diperiksa.** Layar pemeriksaan menampilkan foto di samping total, tanggal, toko, kategori, dan rekening. Bidang yang kurang diyakini ditandai **Periksa**, ada peringatan spesifik (total ditebak, total berbeda dari jumlah barang, tanggal ambigu/masa depan, foto kurang jelas), dan tidak ada yang tersimpan sebelum menekan Simpan. Aplikasi tidak mengarang nilai: kalau tidak terbaca, bidangnya kosong. Kemungkinan duplikat (tanggal dan total sama) diberi peringatan.
+- Yang disimpan hanya total sebagai satu pengeluaran (barang hanya referensi; bisa ikut ke keterangan lewat centang). Kategori disarankan dari aturan kategori kamu, atau dari nama toko yang dikenal (Indomaret, Alfamart, Starbucks, SPBU, dll.), selain itu kamu yang memilih.
+- Batas: akurasi bergantung pada foto (tegak lurus, terang, tidak buram). Struk berbahasa Indonesia format umum paling baik; struk dengan tata letak tidak biasa bisa salah baca, karena itu ada pemeriksaan.
+- Teknis: `prebuild`/`predev` menjalankan `scripts/copy-ocr-assets.mjs` yang menyalin berkas OCR dari `node_modules` ke `public/ocr` (tidak di-commit). CSP di `vercel.json` memakai `'wasm-unsafe-eval'` untuk WebAssembly mesin OCR. Pembaca teks struk ada di `src/lib/receipt.ts` (tanpa regex lookbehind), pengolah foto dan OCR di `src/lib/receiptOcr.ts`.

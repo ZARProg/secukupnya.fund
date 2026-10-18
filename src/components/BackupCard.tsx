@@ -196,7 +196,7 @@ function SyncCard({ sheetUrl, sheetVersion, authRequired, onNotify }: BackupCard
       const sum = summarize(parsed.blob.data);
       const line = t('sync.line', { budgets: sum.budgets, goals: sum.goals, recurring: sum.recurring, debts: sum.debts, rules: sum.rules });
       if (!window.confirm(t('sync.confirmPull', { line }))) return;
-      applyData(localStorage, parsed.blob.data, SYNC_KEYS);
+      applyData(localStorage, parsed.blob.data, parsed.blob.keys ?? SYNC_KEYS);
       saveSyncMeta(localStorage, { remoteAt: r.at, fingerprint: settingsFingerprint(localStorage) });
       onNotify('success', t('sync.toast.pulled'));
       setTimeout(() => window.location.reload(), 700);
