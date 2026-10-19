@@ -22,5 +22,3 @@ dist-ssr
 *.sw?
 .env
 
-# Berkas OCR disalin dari node_modules oleh scripts/copy-ocr-assets.mjs
-public/ocr

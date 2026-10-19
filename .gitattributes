@@ -1,0 +1,2 @@
+# Berkas mesin OCR dipakai apa adanya: jangan diubah akhir barisnya oleh Git (bisa merusak .gz dan skrip WebAssembly).
+public/ocr/** -text
