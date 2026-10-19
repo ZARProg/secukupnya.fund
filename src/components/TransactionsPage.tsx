@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Bookmark, ChevronDown, Download, Search, X } from 'lucide-react';
 import { TransactionList } from '@/components/TransactionList';
-import { isDebtPaymentCategory } from '@/lib/categories';
+import { isNonSpendingCategory } from '@/lib/categories';
 import { formatRupiah, parseRupiah, rupiahLabel } from '@/lib/format';
 import { monthLabel, monthsWithData } from '@/lib/report';
 import {
@@ -88,7 +88,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
     let income = 0;
     let expense = 0;
     for (const tx of filtered) {
-      if (isDebtPaymentCategory(tx.category)) continue; // bukan konsumsi baru
+      if (isNonSpendingCategory(tx.category)) continue; // bukan konsumsi baru
       if (tx.type === 'income') income += tx.total;
       else expense += tx.total;
     }

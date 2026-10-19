@@ -34,7 +34,7 @@ export function StatsCards({ transactions }: StatsProps) {
       <svg
         aria-hidden="true"
         viewBox="0 0 400 400"
-        className="pointer-events-none absolute -right-24 -top-28 h-[26rem] w-[26rem] text-brand-300"
+        className="pointer-events-none absolute -right-24 -top-28 h-[26rem] w-[26rem] text-[#B2BD7E]"
         fill="none"
         stroke="currentColor"
       >
@@ -52,7 +52,7 @@ export function StatsCards({ transactions }: StatsProps) {
               aria-pressed={hidden}
               aria-label={t(hidden ? 'privacy.show' : 'privacy.hide')}
               title={t(hidden ? 'privacy.show' : 'privacy.hide')}
-              className="rounded-lg p-1.5 text-white transition-colors hover:bg-brand-800/30"
+              className="rounded-lg p-1.5 text-white transition-colors hover:bg-[#2E3826]/30"
             >
               {hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -63,7 +63,7 @@ export function StatsCards({ transactions }: StatsProps) {
           </p>
           <p
             className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-              monthPositive ? 'bg-brand-800/35 text-white' : 'bg-brand-900/50 text-amber-100'
+              monthPositive ? 'bg-[#2E3826]/35 text-white' : 'bg-[#1F2519]/50 text-[#FCF3D0]'
             }`}
           >
             {monthPositive ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
@@ -97,7 +97,7 @@ export function StatsCards({ transactions }: StatsProps) {
           </p>
         </div>
         <div
-          className="mt-2.5 h-2 overflow-hidden rounded-full bg-brand-900/35"
+          className="mt-2.5 h-2 overflow-hidden rounded-full bg-[#1F2519]/35"
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={DAILY_TARGET}
@@ -105,7 +105,7 @@ export function StatsCards({ transactions }: StatsProps) {
           aria-label={t('shell.stats.progress')}
         >
           <div
-            className={`h-full rounded-full transition-all duration-500 ${over ? 'bg-amber-200' : 'bg-paper'}`}
+            className={`h-full rounded-full transition-all duration-500 ${over ? 'bg-[#F8E69F]' : 'bg-[#FCF0DA]'}`}
             style={{ width: `${pct}%` }}
           />
         </div>

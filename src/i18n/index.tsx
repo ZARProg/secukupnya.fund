@@ -9,6 +9,7 @@ import * as extras from './extras';
 import * as engage from './engage';
 import * as quick from './quick';
 import * as debts from './debts';
+import * as safety from './safety';
 import * as rules from './rules';
 import * as ux from './ux';
 import * as wealth from './wealth';
@@ -20,10 +21,10 @@ export type Lang = 'id' | 'en';
 export const LANGS: Lang[] = ['id', 'en'];
 const STORAGE_KEY = 'budgettracker.lang.v1';
 
-const ID = { ...common.id, ...shell.id, ...sources.id, ...importer.id, ...forms.id, ...extras.id, ...engage.id, ...quick.id, ...debts.id, ...rules.id, ...ux.id, ...wealth.id, ...scan.id, ...tools.id, ...data.id };
+const ID = { ...common.id, ...shell.id, ...sources.id, ...importer.id, ...forms.id, ...extras.id, ...engage.id, ...quick.id, ...debts.id, ...rules.id, ...ux.id, ...wealth.id, ...scan.id, ...tools.id, ...data.id, ...safety.id };
 export type MessageKey = keyof typeof ID;
 const EN: Record<MessageKey, string> = {
-  ...common.en, ...shell.en, ...sources.en, ...importer.en, ...forms.en, ...extras.en, ...engage.en, ...quick.en, ...debts.en, ...rules.en, ...ux.en, ...wealth.en, ...scan.en, ...tools.en, ...data.en,
+  ...common.en, ...shell.en, ...sources.en, ...importer.en, ...forms.en, ...extras.en, ...engage.en, ...quick.en, ...debts.en, ...rules.en, ...ux.en, ...wealth.en, ...scan.en, ...tools.en, ...data.en, ...safety.en,
 };
 const MESSAGES: Record<Lang, Record<MessageKey, string>> = { id: ID, en: EN };
 

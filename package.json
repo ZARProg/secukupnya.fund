@@ -11,7 +11,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "theme": "node scripts/gen-theme-vars.mjs"
   },
   "dependencies": {
     "@tesseract.js-data/ind": "^1.0.0",

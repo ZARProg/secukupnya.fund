@@ -6,6 +6,8 @@ export type ToastKind = 'success' | 'error';
 export interface ToastState {
   kind: ToastKind;
   message: string;
+  /** Tombol aksi di toast, misalnya Urungkan. Toast bertahan lebih lama supaya sempat ditekan. */
+  action?: { label: string; run: () => void };
 }
 
 interface ToastProps {
@@ -17,7 +19,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
   const { t: tx } = useT();
   useEffect(() => {
     if (!toast) return;
-    const t = setTimeout(onDismiss, 3500);
+    const t = setTimeout(onDismiss, toast.action ? 7000 : 3500);
     return () => clearTimeout(t);
   }, [toast, onDismiss]);
 
@@ -42,6 +44,15 @@ export function Toast({ toast, onDismiss }: ToastProps) {
           )}
         </div>
         <p className="flex-1 text-xs font-semibold leading-snug">{toast.message}</p>
+        {toast.action && (
+          <button
+            data-testid="toast-action"
+            onClick={() => { const run = toast.action!.run; onDismiss(); run(); }}
+            className="min-h-9 shrink-0 rounded-lg px-3 text-xs font-bold text-brand-700 underline-offset-2 hover:bg-black/5 hover:underline"
+          >
+            {toast.action.label}
+          </button>
+        )}
         <button
           onClick={onDismiss}
           className={`rounded-lg p-1 transition-colors hover:bg-black/5 ${

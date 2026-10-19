@@ -244,3 +244,10 @@ Halaman selain Beranda dimuat saat pertama dibuka (`src/components/pages.ts`), d
 ## Tampilan & palet warna
 
 Tema memakai empat warna dasar: sage `#6A795D` (merek), olive `#8E9162`, lime `#B2BD7E`, dan krem `#FCF0DA` (latar). Warna turunan (gelap/terang) dibuat dari keempatnya agar teks kecil tetap lolos kontras WCAG AA — teks kecil memakai sage gelap `#505D44`, bukan sage murni. Pengeluaran ditampilkan netral dengan tanda −, pemasukan hijau. Font (Figtree & Bricolage Grotesque) di-host sendiri di `public/fonts` sehingga tetap tampil saat offline. Warna diatur di `tailwind.config.js`.
+
+## Keamanan, tema, dan penyesuaian saldo
+
+- **Kunci aplikasi (Pengaturan → Kunci aplikasi):** PIN 4–6 angka, disimpan sebagai hash PBKDF2 + salt acak (PIN tidak pernah tersimpan). Saat terkunci, aplikasi tidak dirender sama sekali. Setelah 5 kali salah ada jeda 30 detik yang berlipat (maks. 15 menit). **Lupa PIN** menghapus semua data lokal di perangkat itu (data di Google Sheets aman) setelah mengetik HAPUS. Batasan: ini menahan orang yang meminjam HP, bukan penyerang teknis, karena data di browser tidak dienkripsi.
+- **Mode gelap (Pengaturan → Tampilan):** Terang, Gelap, atau ikut perangkat; tersimpan per perangkat. Warna berbasis variabel CSS (`src/theme-vars.css`) yang dibuat dari `scripts/theme-palette.json`; setelah mengubah palet jalankan `npm run theme`. Skrip `public/theme-init.js` mencegah layar berkedip terang saat tema gelap.
+- **Urungkan hapus:** toast setelah menghapus transaksi punya tombol Urungkan (memakai pemulihan yang sama dengan halaman Riwayat).
+- **Cocokkan saldo (Beranda → Rekening):** isi saldo asli bank/e-wallet, aplikasi menampilkan selisih dan mencatat transaksi kategori *Balance Adjustment*. Kategori ini mengubah saldo rekening tetapi tidak masuk total pemasukan/pengeluaran, grafik, anggaran, laporan, batas harian, maupun hitungan kebiasaan mencatat. Bila selisih ternyata pengeluaran/pemasukan yang lupa dicatat, centang opsi untuk menghitungnya sebagai transaksi biasa (kategori Others).

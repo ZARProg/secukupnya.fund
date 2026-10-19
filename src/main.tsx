@@ -11,6 +11,8 @@ import { PrivacyProvider } from './hooks/usePrivacy.tsx';
 import { LanguageProvider } from './i18n';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { registerServiceWorker } from './lib/pwa.ts';
+import { LockGate } from './components/LockGate.tsx';
+import { applyTheme, getThemeMode, watchSystemTheme } from './lib/theme.ts';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -24,7 +26,9 @@ createRoot(document.getElementById('root')!).render(
               <NetWorthProvider>
                 <RulesProvider>
                   <PrivacyProvider>
-                    <App />
+                    <LockGate>
+                      <App />
+                    </LockGate>
                   </PrivacyProvider>
                 </RulesProvider>
               </NetWorthProvider>
@@ -37,4 +41,6 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 
+applyTheme(getThemeMode());
+watchSystemTheme();
 registerServiceWorker();

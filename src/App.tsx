@@ -1,3 +1,7 @@
+import { getEntries } from '@/lib/activityStore';
+import { ReconcileDialog } from '@/components/ReconcileDialog';
+import { readSafeSettings } from '@/hooks/useSafeSettings';
+import type { TransactionPayload } from '@/lib/transactions';
 import { Suspense, useState, useCallback, useEffect, useMemo } from 'react';
 import { Menu, Plus, TriangleAlert, Wallet } from 'lucide-react';
 import { Sidebar, type View } from '@/components/Sidebar';
@@ -14,7 +18,7 @@ import { DebtDueBanner } from '@/components/DebtDueBanner';
 import { Dashboard } from '@/components/Dashboard';
 import {
   AchievementsPage, ActivityPage, BudgetsPage, CalendarPage, ConflictsPage, DebtsPage, GoalsPage, ImportPanel, NetWorthPage,
-  PlansPage, RecapPage, ReportPage, RulesPage, SourcesPage, TransactionsPage,
+  PlansPage, RecapPage, ReportPage, RulesPage, SettingsPage, SourcesPage, TransactionsPage,
 } from '@/components/pages';
 import { PageFallback } from '@/components/PageFallback';
 import { PwaStatus } from '@/components/PwaStatus';
@@ -37,6 +41,8 @@ type Panel = 'none' | 'form' | 'import';
 function App() {
   const { t, tp } = useT();
   const [view, setView] = useState<View>('overview');
+  const [reconcileOpen, setReconcileOpen] = useState(false);
+  const [startingSet, setStartingSet] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
   const [panel, setPanel] = useState<Panel>('none');
   const [editing, setEditing] = useState<Transaction | null>(null);
@@ -158,15 +164,28 @@ function App() {
   const handleDelete = useCallback(async (tx: Transaction) => {
     try {
       await deleteTx(tx);
+      // Entri riwayat yang baru dibuat oleh hapus ini; dipakai tombol Urungkan (pemulihan yang sama dengan di Riwayat).
+      const entry = [...getEntries()].reverse().find((e) => e.action === 'delete' && !e.restoredAt);
       showToast({
         kind: 'success',
         message: tx.source === 'local' ? t('shell.app.toast.deletedLocal') : t('shell.app.toast.deletedSheet'),
+        action: entry
+          ? {
+              label: t('toast.undo'),
+              run: () => {
+                restoreEntry(entry).then(
+                  () => showToast({ kind: 'success', message: t('toast.undone') }),
+                  (err) => showToast({ kind: 'error', message: err instanceof Error ? err.message : t('shell.app.toast.deleteFailed') }),
+                );
+              },
+            }
+          : undefined,
       });
     } catch (err) {
       console.error('Error deleting transaction:', err);
       showToast({ kind: 'error', message: err instanceof Error ? err.message : t('shell.app.toast.deleteFailed') });
     }
-  }, [deleteTx, showToast, t]);
+  }, [deleteTx, restoreEntry, showToast, t]);
 
   const { recurring, markDone } = usePlans();
   const due = dueRules(recurring, todayISO());
@@ -184,6 +203,12 @@ function App() {
       showToast({ kind: 'error', message: t('due.toast.failed') });
     }
   }, [addOne, sheetConnected, markDone, showToast, t]);
+
+  const handleReconcile = useCallback(async (payloads: TransactionPayload[]) => {
+    for (const p of payloads) await addOne(p, sheetConnected ? 'sheet' : 'local');
+    setReconcileOpen(false);
+    showToast({ kind: 'success', message: t('recon.toast', { n: payloads.length }) });
+  }, [addOne, sheetConnected, showToast, t]);
 
   const handleSkipDue = useCallback((rule: Recurring) => {
     markDone(rule.id, monthKey(todayISO()));
@@ -327,10 +352,21 @@ function App() {
                       ? { title: t('ach.title'), subtitle: t('ach.subtitle') }
                       : view === 'recap'
                         ? { title: t('recap.title'), subtitle: t('recap.subtitle') }
-                        : { title: t('shell.nav.sources'), subtitle: t('shell.app.subtitle.sources') };
+                        : view === 'settings'
+                          ? { title: t('set.title'), subtitle: t('set.subtitle') }
+                          : { title: t('shell.nav.sources'), subtitle: t('shell.app.subtitle.sources') };
 
   return (
     <div className="min-h-screen bg-paper text-slate-900">
+      {reconcileOpen && (
+        <ReconcileDialog
+          accounts={balances}
+          toSheet={sheetConnected}
+          startingBalanceSet={startingSet}
+          onClose={() => setReconcileOpen(false)}
+          onSave={handleReconcile}
+        />
+      )}
       <Toast toast={toast} onDismiss={dismissToast} />
 
       <Sidebar
@@ -437,6 +473,7 @@ function App() {
               onTemplate={handleTemplate}
               onSelectAccount={selectAccount}
               onManageAccounts={manageAccounts}
+              onReconcile={() => { setStartingSet(readSafeSettings().adjust !== 0); setReconcileOpen(true); }}
               loading={loading}
               onDelete={handleDelete}
               onEdit={handleEdit}
@@ -489,6 +526,7 @@ function App() {
           {view === 'achievements' && <AchievementsPage eng={engagement} />}
           {view === 'recap' && <RecapPage transactions={listedTransactions} eng={engagement} onToast={notify} />}
           {view === 'report' && <ReportPage transactions={listedTransactions} />}
+          {view === 'settings' && <SettingsPage onToast={showToast} />}
           {view === 'sources' && (
             <SourcesPage
               sheetUrl={sheetUrl}

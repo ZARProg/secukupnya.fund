@@ -23,3 +23,22 @@ export function rupiahSigned(n: number): string {
 export function shortDate(iso: string): string {
   return parseISODate(iso).toLocaleDateString(locale(), { day: 'numeric', month: 'short', year: 'numeric' });
 }
+
+/** Format angka dengan tanda minus di depan (untuk saldo awal yang boleh negatif). */
+export function signedFormat(raw: string | number): string {
+  const s = String(raw);
+  const neg = s.trim().startsWith('-') || s.trim().startsWith('−');
+  const digits = s.replace(/\D/g, '');
+  if (!digits) return neg ? '-' : '';
+  return (neg ? '-' : '') + Number(digits).toLocaleString(locale());
+}
+
+export function parseSigned(raw: string): number | null {
+  const s = raw.trim();
+  if (!s || s === '-') return s === '-' ? null : 0;
+  const neg = s.startsWith('-') || s.startsWith('−');
+  const digits = s.replace(/\D/g, '');
+  if (!digits) return null;
+  const n = Number(digits);
+  return neg ? -n : n;
+}

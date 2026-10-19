@@ -5,7 +5,7 @@ import { useDebts } from '@/hooks/useDebts';
 import { useNetWorth } from '@/hooks/useNetWorth';
 import { usePrivacy } from '@/hooks/usePrivacy';
 import { todayISO } from '@/lib/date';
-import { formatRupiah, parseRupiah, rupiahSigned, shortDate } from '@/lib/format';
+import { formatRupiah, parseRupiah, parseSigned, rupiahSigned, shortDate, signedFormat } from '@/lib/format';
 import { MAX_AMOUNT } from '@/lib/plans';
 import {
   ASSET_KINDS, LIABILITY_KINDS, MAX_ITEMS, STALE_DAYS, computeNetWorth, netChange, snapshotOf,
@@ -426,25 +426,6 @@ function ItemRow({ row, list, onToast }: { row: NetRow; list: ListKey; onToast: 
       )}
     </li>
   );
-}
-
-/** Format angka dengan tanda minus di depan (untuk saldo awal yang boleh negatif). */
-function signedFormat(raw: string | number): string {
-  const s = String(raw);
-  const neg = s.trim().startsWith('-') || s.trim().startsWith('−');
-  const digits = s.replace(/\D/g, '');
-  if (!digits) return neg ? '-' : '';
-  return (neg ? '-' : '') + Number(digits).toLocaleString(locale());
-}
-
-function parseSigned(raw: string): number | null {
-  const s = raw.trim();
-  if (!s || s === '-') return s === '-' ? null : 0;
-  const neg = s.startsWith('-') || s.startsWith('−');
-  const digits = s.replace(/\D/g, '');
-  if (!digits) return null;
-  const n = Number(digits);
-  return neg ? -n : n;
 }
 
 // ---------- Tambah ----------

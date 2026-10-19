@@ -16,3 +16,4 @@ export const SourcesPage = lazyPage(() => import('./SourcesPage').then((m) => ({
 export const ImportPanel = lazyPage(() => import('./ImportPanel').then((m) => ({ default: m.ImportPanel })));
 export const RecapPage = lazyPage(() => import('./RecapPage').then((m) => ({ default: m.RecapPage })));
 export const AchievementsPage = lazyPage(() => import('./AchievementsPage').then((m) => ({ default: m.AchievementsPage })));
+export const SettingsPage = lazyPage(() => import('./SettingsPage').then((m) => ({ default: m.SettingsPage })));

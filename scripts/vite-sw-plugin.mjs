@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const STATIC = ['fonts/figtree-latin-wght.woff2', 'fonts/bricolage-grotesque-latin-wght.woff2', 'manifest.webmanifest', 'favicon.svg', 'favicon-32.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
+const STATIC = ['fonts/figtree-latin-wght.woff2', 'fonts/bricolage-grotesque-latin-wght.woff2', 'theme-init.js', 'manifest.webmanifest', 'favicon.svg', 'favicon-32.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
 export function swPrecache({ root }) {
   return {

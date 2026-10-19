@@ -11,7 +11,7 @@ import { InsightsPanel } from '@/components/InsightsPanel';
 import { todayISO } from '@/lib/date';
 import { monthLabel } from '@/lib/report';
 import { TransactionList } from '@/components/TransactionList';
-import { isDebtPaymentCategory, isTransferCategory } from '@/lib/categories';
+import { isNonSpendingCategory, isTransferCategory } from '@/lib/categories';
 import { useT } from '@/i18n';
 import type { AccountBalance } from '@/lib/summary';
 import type { Transaction } from '@/lib/transactions';
@@ -32,17 +32,18 @@ interface DashboardProps {
   onTemplate: () => void;
   onSelectAccount: (account: string) => void;
   onManageAccounts: () => void;
+  onReconcile?: () => void;
 }
 
 export function Dashboard({
-  transactions, accounts, loading, onDelete, onEdit, onSeeAll, onSeeInsights, engagement, onSeeAchievements, onConnect, onImport, onAdd, onTemplate, onSelectAccount, onManageAccounts,
+  transactions, accounts, loading, onDelete, onEdit, onSeeAll, onSeeInsights, engagement, onSeeAchievements, onConnect, onImport, onAdd, onTemplate, onSelectAccount, onManageAccounts, onReconcile,
 }: DashboardProps) {
   const { t } = useT();
   const [chartTab, setChartTab] = useState<'expense' | 'income'>('expense');
   // Transfer ikut menghitung saldo (kartu saldo dan rekening), tapi tidak tampil di daftar dan grafik kategori.
   const listed = useMemo(() => transactions.filter((t) => !isTransferCategory(t.category)), [transactions]);
   // Grafik kategori hanya untuk konsumsi: pembayaran pokok utang tampil di daftar, tapi tidak di grafik.
-  const spending = useMemo(() => listed.filter((t) => !isDebtPaymentCategory(t.category)), [listed]);
+  const spending = useMemo(() => listed.filter((t) => !isNonSpendingCategory(t.category)), [listed]);
   // Ringkasan kategori untuk bulan berjalan, sama dengan angka pemasukan/pengeluaran di kartu saldo.
   const month = todayISO().slice(0, 7);
   const spendingMonth = useMemo(() => spending.filter((t) => t.date.startsWith(month)), [spending, month]);
@@ -62,7 +63,7 @@ export function Dashboard({
       </div>
 
       <div className="rise" style={{ animationDelay: '60ms' }}>
-        <AccountStrip accounts={accounts} onSelect={onSelectAccount} onManage={onManageAccounts} />
+        <AccountStrip accounts={accounts} onSelect={onSelectAccount} onManage={onManageAccounts} onReconcile={onReconcile} />
       </div>
 
       {engagement && onSeeAchievements && (

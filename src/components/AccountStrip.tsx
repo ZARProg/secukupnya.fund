@@ -1,4 +1,4 @@
-import { Settings2 } from 'lucide-react';
+import { Scale, Settings2 } from 'lucide-react';
 import { AccountAvatar } from '@/components/AccountAvatar';
 import { getAccountMeta } from '@/lib/categories';
 import { usePrivacy } from '@/hooks/usePrivacy';
@@ -9,10 +9,11 @@ interface AccountStripProps {
   accounts: AccountBalance[];
   onSelect: (account: string) => void;
   onManage: () => void;
+  onReconcile?: () => void;
 }
 
 /** Deretan kartu rekening di dashboard. Klik kartu untuk melihat transaksi rekening itu. */
-export function AccountStrip({ accounts, onSelect, onManage }: AccountStripProps) {
+export function AccountStrip({ accounts, onSelect, onManage, onReconcile }: AccountStripProps) {
   const { t } = useT();
   const { moneySigned: rupiahSigned } = usePrivacy();
   if (!accounts.length) return null;
@@ -22,6 +23,17 @@ export function AccountStrip({ accounts, onSelect, onManage }: AccountStripProps
         <h2 id="strip-title" className="text-base font-bold tracking-tight text-slate-900">
           {t('shell.accounts')}
         </h2>
+        <div className="flex items-center gap-1">
+        {onReconcile && (
+          <button
+            data-testid="recon-open"
+            onClick={onReconcile}
+            className="flex min-h-9 items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
+          >
+            <Scale className="h-3.5 w-3.5" />
+            {t('recon.open')}
+          </button>
+        )}
         <button
           onClick={onManage}
           className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
@@ -29,6 +41,7 @@ export function AccountStrip({ accounts, onSelect, onManage }: AccountStripProps
           <Settings2 className="h-3.5 w-3.5" />
           {t('shell.strip.choose')}
         </button>
+        </div>
       </div>
 
       <ul className="-mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0">

@@ -1,4 +1,4 @@
-import { isDebtPaymentCategory, isNonSpendingCategory, isTransferCategory } from './categories';
+import { isBalanceAdjustCategory, isDebtPaymentCategory, isNonSpendingCategory, isTransferCategory } from './categories';
 import { monthOf, shiftMonth } from './report';
 import { parseISODate, toLocalISO } from './date';
 import { MAX_AMOUNT, type Goal } from './plans';
@@ -132,7 +132,7 @@ export interface DayInfo {
 export function dayMap(transactions: Transaction[]): Map<string, DayInfo> {
   const map = new Map<string, DayInfo>();
   for (const tx of transactions) {
-    if (!tx.date || isTransferCategory(tx.category)) continue;
+    if (!tx.date || isTransferCategory(tx.category) || isBalanceAdjustCategory(tx.category)) continue; // penyesuaian saldo bukan kebiasaan mencatat
     const d = map.get(tx.date) ?? { logged: true, expense: 0, boba: false };
     if (isDebtPaymentCategory(tx.category)) {
       map.set(tx.date, d); // tercatat, tetapi bukan konsumsi sehingga tidak masuk batas harian

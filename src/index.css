@@ -1,3 +1,4 @@
+@import './theme-vars.css';
 /* Font di-host sendiri (public/fonts, subset Latin, lisensi OFL): ikut tersimpan untuk mode offline dan tidak memanggil Google Fonts. */
 @font-face {
   font-family: 'Figtree';

@@ -1,8 +1,9 @@
 import {
   Film, UtensilsCrossed, ShoppingCart, Cookie, Bus, Wrench,
-  Briefcase, Gift, Coins, CircleDollarSign, ArrowLeftRight, CreditCard, Landmark,
+  Briefcase, Gift, Coins, CircleDollarSign, ArrowLeftRight, CreditCard, Landmark, Scale,
   type LucideIcon,
 } from 'lucide-react';
+import { tr } from '@/i18n';
 
 export interface CategoryMeta {
   label: string;
@@ -31,8 +32,18 @@ export const DEBT_PAYMENT_CATEGORY = 'Debt Payment';
 
 export const isDebtPaymentCategory = (category: string) => category.trim().toLowerCase() === 'debt payment';
 
-/** Bukan konsumsi: transfer antar rekening dan pembayaran pokok utang. */
-export const isNonSpendingCategory = (category: string) => isTransferCategory(category) || isDebtPaymentCategory(category);
+/**
+ * Penyesuaian saldo (rekonsiliasi): selisih antara saldo di aplikasi dan saldo asli di bank atau e-wallet yang penyebabnya
+ * tidak diketahui. Tampil di daftar dan menggeser saldo rekening, tetapi bukan pemasukan atau pengeluaran sungguhan, jadi
+ * tidak masuk total, grafik, anggaran, laporan, batas harian, maupun hitungan kebiasaan mencatat.
+ */
+export const BALANCE_ADJUST_CATEGORY = 'Balance Adjustment';
+
+export const isBalanceAdjustCategory = (category: string) => category.trim().toLowerCase() === 'balance adjustment';
+
+/** Bukan konsumsi: transfer antar rekening, pembayaran pokok utang, dan penyesuaian saldo. */
+export const isNonSpendingCategory = (category: string) =>
+  isTransferCategory(category) || isDebtPaymentCategory(category) || isBalanceAdjustCategory(category);
 
 /**
  * Rekening bayangan untuk pembelian yang dibayar dengan utang (paylater, cicilan, kartu kredit). Pembelian tetap dihitung
@@ -75,6 +86,7 @@ const TRANSFER_META: CategoryMeta = { label: 'Transfer', icon: ArrowLeftRight, c
 
 export function getCategoryMeta(category: string, type: 'expense' | 'income'): CategoryMeta {
   if (isTransferCategory(category)) return TRANSFER_META;
+  if (isBalanceAdjustCategory(category)) return { label: tr('recon.category'), icon: Scale, color: 'text-slate-700', bg: 'bg-slate-100' };
   if (isDebtPaymentCategory(category)) return DEBT_PAYMENT_META;
   if (type === 'expense') {
     return EXPENSE_CATEGORY_META[category] ?? { label: category, icon: CircleDollarSign, color: 'text-brand-700', bg: 'bg-brand-100' };
@@ -103,17 +115,17 @@ export interface AccountMeta {
 }
 
 export const ACCOUNT_CATALOG: AccountMeta[] = [
-  { name: 'BCA', kind: 'bank', mono: 'BCA', avatar: 'bg-blue-700 text-white', soft: 'bg-blue-50 text-blue-700', aliases: ['bankbca'] },
-  { name: 'MANDIRI', kind: 'bank', mono: 'MDR', avatar: 'bg-blue-900 text-yellow-300', soft: 'bg-indigo-50 text-indigo-800', aliases: ['bankmandiri'] },
-  { name: 'BNI', kind: 'bank', mono: 'BNI', avatar: 'bg-orange-700 text-white', soft: 'bg-orange-50 text-orange-700', aliases: ['bankbni'] },
-  { name: 'BRI', kind: 'bank', mono: 'BRI', avatar: 'bg-indigo-700 text-white', soft: 'bg-sky-50 text-sky-800', aliases: ['bankbri'] },
-  { name: 'SEABANK', kind: 'bank', mono: 'SEA', avatar: 'bg-teal-700 text-white', soft: 'bg-teal-50 text-teal-700', aliases: ['seabank', 'sea'] },
-  { name: 'BANK JAGO', kind: 'bank', mono: 'JGO', avatar: 'bg-amber-400 text-slate-900', soft: 'bg-amber-50 text-amber-800', aliases: ['jago', 'bankjago'] },
-  { name: 'KROM', kind: 'bank', mono: 'KRM', avatar: 'bg-fuchsia-700 text-white', soft: 'bg-fuchsia-50 text-fuchsia-700', aliases: ['krombank', 'bankkrom'] },
-  { name: 'DANA', kind: 'ewallet', mono: 'DNA', avatar: 'bg-sky-700 text-white', soft: 'bg-sky-50 text-sky-700', aliases: ['danaid'] },
-  { name: 'OVO', kind: 'ewallet', mono: 'OVO', avatar: 'bg-violet-600 text-white', soft: 'bg-violet-50 text-violet-700', aliases: [] },
-  { name: 'GOPAY', kind: 'ewallet', mono: 'GPY', avatar: 'bg-emerald-700 text-white', soft: 'bg-emerald-50 text-emerald-700', aliases: ['gopay'] },
-  { name: 'SHOPEEPAY', kind: 'ewallet', mono: 'SPY', avatar: 'bg-[#B93418] text-white', soft: 'bg-orange-50 text-orange-700', aliases: ['shopee', 'spay'] },
+  { name: 'BCA', kind: 'bank', mono: 'BCA', avatar: 'bg-[#3D5CA3] text-[#FFFFFF]', soft: 'bg-blue-50 text-blue-700', aliases: ['bankbca'] },
+  { name: 'MANDIRI', kind: 'bank', mono: 'MDR', avatar: 'bg-[#2F406A] text-[#F4E184]', soft: 'bg-indigo-50 text-indigo-800', aliases: ['bankmandiri'] },
+  { name: 'BNI', kind: 'bank', mono: 'BNI', avatar: 'bg-[#9C472B] text-[#FFFFFF]', soft: 'bg-orange-50 text-orange-700', aliases: ['bankbni'] },
+  { name: 'BRI', kind: 'bank', mono: 'BRI', avatar: 'bg-[#494F92] text-[#FFFFFF]', soft: 'bg-sky-50 text-sky-800', aliases: ['bankbri'] },
+  { name: 'SEABANK', kind: 'bank', mono: 'SEA', avatar: 'bg-[#3F6863] text-[#FFFFFF]', soft: 'bg-teal-50 text-teal-700', aliases: ['seabank', 'sea'] },
+  { name: 'BANK JAGO', kind: 'bank', mono: 'JGO', avatar: 'bg-[#F1C25B] text-[#1B180C]', soft: 'bg-amber-50 text-amber-800', aliases: ['jago', 'bankjago'] },
+  { name: 'KROM', kind: 'bank', mono: 'KRM', avatar: 'bg-[#834B88] text-[#FFFFFF]', soft: 'bg-fuchsia-50 text-fuchsia-700', aliases: ['krombank', 'bankkrom'] },
+  { name: 'DANA', kind: 'ewallet', mono: 'DNA', avatar: 'bg-[#3D6381] text-[#FFFFFF]', soft: 'bg-sky-50 text-sky-700', aliases: ['danaid'] },
+  { name: 'OVO', kind: 'ewallet', mono: 'OVO', avatar: 'bg-[#735FB0] text-[#FFFFFF]', soft: 'bg-violet-50 text-violet-700', aliases: [] },
+  { name: 'GOPAY', kind: 'ewallet', mono: 'GPY', avatar: 'bg-[#3F4B35] text-[#FFFFFF]', soft: 'bg-emerald-50 text-emerald-700', aliases: ['gopay'] },
+  { name: 'SHOPEEPAY', kind: 'ewallet', mono: 'SPY', avatar: 'bg-[#B93418] text-[#FFFFFF]', soft: 'bg-orange-50 text-orange-700', aliases: ['shopee', 'spay'] },
 ];
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -130,7 +142,7 @@ export function canonicalAccount(value: string): string {
   return value.trim();
 }
 
-const FALLBACK_AVATAR = 'bg-slate-500 text-white';
+const FALLBACK_AVATAR = 'bg-[#6F6B5D] text-[#FFFFFF]';
 const FALLBACK_SOFT = 'bg-slate-100 text-slate-600';
 
 /** Info tampilan sebuah rekening. Rekening di luar katalog (mis. "Cash") tetap dapat tampilan netral. */
@@ -138,7 +150,7 @@ export function getAccountMeta(name: string): AccountMeta {
   const known = CATALOG_BY_NAME.get(name);
   if (known) return known;
   if (isCreditAccount(name)) {
-    return { name, kind: 'bank', mono: 'KRD', avatar: 'bg-violet-600 text-white', soft: 'bg-violet-50 text-violet-700', aliases: [] };
+    return { name, kind: 'bank', mono: 'KRD', avatar: 'bg-[#735FB0] text-[#FFFFFF]', soft: 'bg-violet-50 text-violet-700', aliases: [] };
   }
   const trimmed = name.trim();
   return {

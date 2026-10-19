@@ -20,6 +20,9 @@ function load(): SafeSettings {
   }
 }
 
+/** Baca pengaturan terbaru tanpa berlangganan (dipakai saat dialog dibuka). */
+export const readSafeSettings = (): SafeSettings => load();
+
 export function useSafeSettings() {
   const [settings, setState] = useState<SafeSettings>(load);
   const update = useCallback((patch: Partial<SafeSettings>) => {
