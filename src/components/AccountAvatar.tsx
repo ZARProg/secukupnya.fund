@@ -12,7 +12,7 @@ export function AccountAvatar({ name, size = 'sm' }: { name: string; size?: keyo
   return (
     <span
       aria-hidden="true"
-      className={`inline-flex shrink-0 items-center justify-center font-extrabold tracking-tight ${SIZES[size]} ${meta.avatar}`}
+      className={`inline-flex shrink-0 items-center justify-center font-display font-bold tracking-tight ${SIZES[size]} ${meta.avatar}`}
     >
       {meta.mono}
     </span>

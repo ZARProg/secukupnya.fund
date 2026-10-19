@@ -136,7 +136,7 @@ export function SourcesPage({
             {!urlFromEnv && (
               <button
                 onClick={handleDisconnect}
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-card px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-700"
               >
                 <Link2Off className="h-3.5 w-3.5" />
                 {t('sources.sheets.disconnect')}
@@ -249,7 +249,7 @@ export function SourcesPage({
             </ol>
             <button
               onClick={copyScript}
-              className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              className="flex items-center gap-2 rounded-lg border border-slate-200 bg-card px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
             >
               {copied ? (
                 <>
@@ -296,15 +296,15 @@ export function SourcesPage({
                     className={`relative flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all ${
                       selected
                         ? 'border-brand bg-rose-50 ring-1 ring-brand'
-                        : 'border-slate-200 bg-white hover:border-slate-300'
+                        : 'border-slate-200 bg-card hover:border-slate-300'
                     }`}
                   >
                     <AccountAvatar name={a.name} size="md" />
                     <span className="min-w-0 flex-1">
-                      <span className={`block truncate text-sm font-semibold ${selected ? 'text-brand' : 'text-slate-800'}`}>
+                      <span className={`block truncate text-sm font-semibold ${selected ? 'text-brand-600' : 'text-slate-800'}`}>
                         {a.name}
                       </span>
-                      <span className="block text-xs text-slate-400">{used ? tp('sources.accounts.used', used) : t('sources.accounts.unused')}</span>
+                      <span className="block text-xs text-slate-500">{used ? tp('sources.accounts.used', used) : t('sources.accounts.unused')}</span>
                     </span>
                     {selected && (
                       <span className="absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full bg-brand text-white">
@@ -347,7 +347,7 @@ export function SourcesPage({
           </button>
           <button
             onClick={onImport}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-card px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
           >
             <FileSpreadsheet className="h-4 w-4" />
             {t('sources.importExcel')}
@@ -373,7 +373,7 @@ export function SourcesPage({
           </button>
           <button
             onClick={onExport}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-card px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
           >
             <Download className="h-4 w-4" />
             {t('sources.local.export')}
@@ -421,7 +421,7 @@ function LimitCard({ onChange, synced }: { onChange: (limit: number) => void; sy
       </p>
       <form onSubmit={handleSubmit} noValidate className="mt-4 flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
-          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">Rp</span>
           <input
             type="text"
             inputMode="numeric"
@@ -439,7 +439,7 @@ function LimitCard({ onChange, synced }: { onChange: (limit: number) => void; sy
           <button
             type="button"
             onClick={() => { reset(); setDraft(formatRupiah(String(DAILY_TARGET))); setSaved(true); setError(null); onChange(DAILY_TARGET); }}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+            className="rounded-lg border border-slate-200 bg-card px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
           >
             {t('sources.limit.reset', { amount: rupiahLabel(DAILY_TARGET) })}
           </button>

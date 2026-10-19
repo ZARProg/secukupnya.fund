@@ -55,19 +55,19 @@ export const EXPENSE_CATEGORIES: string[] = [
 export const INCOME_CATEGORIES: string[] = ['Salary', 'Bonus', 'Others'];
 
 export const EXPENSE_CATEGORY_META: Record<string, CategoryMeta> = {
-  Entertainment: { label: 'Entertainment', icon: Film, color: 'text-purple-600', bg: 'bg-purple-100' },
-  'Food & Drink': { label: 'Food & Drink', icon: UtensilsCrossed, color: 'text-orange-600', bg: 'bg-orange-100' },
-  Groceries: { label: 'Groceries', icon: ShoppingCart, color: 'text-green-600', bg: 'bg-green-100' },
-  Snacks: { label: 'Snacks', icon: Cookie, color: 'text-pink-600', bg: 'bg-pink-100' },
-  Transportation: { label: 'Transportation', icon: Bus, color: 'text-blue-600', bg: 'bg-blue-100' },
-  Service: { label: 'Service', icon: Wrench, color: 'text-cyan-600', bg: 'bg-cyan-100' },
-  Paylater: { label: 'Paylater', icon: CreditCard, color: 'text-indigo-600', bg: 'bg-indigo-100' },
+  Entertainment: { label: 'Entertainment', icon: Film, color: 'text-brand-700', bg: 'bg-brand-100' },
+  'Food & Drink': { label: 'Food & Drink', icon: UtensilsCrossed, color: 'text-brand-700', bg: 'bg-brand-100' },
+  Groceries: { label: 'Groceries', icon: ShoppingCart, color: 'text-brand-700', bg: 'bg-brand-100' },
+  Snacks: { label: 'Snacks', icon: Cookie, color: 'text-brand-700', bg: 'bg-brand-100' },
+  Transportation: { label: 'Transportation', icon: Bus, color: 'text-brand-700', bg: 'bg-brand-100' },
+  Service: { label: 'Service', icon: Wrench, color: 'text-brand-700', bg: 'bg-brand-100' },
+  Paylater: { label: 'Paylater', icon: CreditCard, color: 'text-brand-700', bg: 'bg-brand-100' },
 };
 
 export const INCOME_CATEGORY_META: Record<string, CategoryMeta> = {
-  Salary: { label: 'Salary', icon: Briefcase, color: 'text-emerald-600', bg: 'bg-emerald-100' },
-  Bonus: { label: 'Bonus', icon: Gift, color: 'text-teal-600', bg: 'bg-teal-100' },
-  Others: { label: 'Others', icon: Coins, color: 'text-amber-600', bg: 'bg-amber-100' },
+  Salary: { label: 'Salary', icon: Briefcase, color: 'text-brand-800', bg: 'bg-brand-200' },
+  Bonus: { label: 'Bonus', icon: Gift, color: 'text-brand-800', bg: 'bg-brand-200' },
+  Others: { label: 'Others', icon: Coins, color: 'text-brand-800', bg: 'bg-brand-200' },
 };
 
 const DEBT_PAYMENT_META: CategoryMeta = { label: 'Debt Payment', icon: Landmark, color: 'text-violet-600', bg: 'bg-violet-100' };
@@ -77,9 +77,9 @@ export function getCategoryMeta(category: string, type: 'expense' | 'income'): C
   if (isTransferCategory(category)) return TRANSFER_META;
   if (isDebtPaymentCategory(category)) return DEBT_PAYMENT_META;
   if (type === 'expense') {
-    return EXPENSE_CATEGORY_META[category] ?? { label: category, icon: CircleDollarSign, color: 'text-slate-600', bg: 'bg-slate-100' };
+    return EXPENSE_CATEGORY_META[category] ?? { label: category, icon: CircleDollarSign, color: 'text-brand-700', bg: 'bg-brand-100' };
   }
-  return INCOME_CATEGORY_META[category] ?? { label: category, icon: Coins, color: 'text-amber-600', bg: 'bg-amber-100' };
+  return INCOME_CATEGORY_META[category] ?? { label: category, icon: Coins, color: 'text-brand-800', bg: 'bg-brand-200' };
 }
 
 export const DAILY_TARGET = 50000;
@@ -103,17 +103,17 @@ export interface AccountMeta {
 }
 
 export const ACCOUNT_CATALOG: AccountMeta[] = [
-  { name: 'BCA', kind: 'bank', mono: 'BCA', avatar: 'bg-blue-600 text-white', soft: 'bg-blue-50 text-blue-700', aliases: ['bankbca'] },
+  { name: 'BCA', kind: 'bank', mono: 'BCA', avatar: 'bg-blue-700 text-white', soft: 'bg-blue-50 text-blue-700', aliases: ['bankbca'] },
   { name: 'MANDIRI', kind: 'bank', mono: 'MDR', avatar: 'bg-blue-900 text-yellow-300', soft: 'bg-indigo-50 text-indigo-800', aliases: ['bankmandiri'] },
-  { name: 'BNI', kind: 'bank', mono: 'BNI', avatar: 'bg-orange-500 text-white', soft: 'bg-orange-50 text-orange-700', aliases: ['bankbni'] },
-  { name: 'BRI', kind: 'bank', mono: 'BRI', avatar: 'bg-sky-700 text-white', soft: 'bg-sky-50 text-sky-800', aliases: ['bankbri'] },
-  { name: 'SEABANK', kind: 'bank', mono: 'SEA', avatar: 'bg-teal-500 text-white', soft: 'bg-teal-50 text-teal-700', aliases: ['seabank', 'sea'] },
+  { name: 'BNI', kind: 'bank', mono: 'BNI', avatar: 'bg-orange-700 text-white', soft: 'bg-orange-50 text-orange-700', aliases: ['bankbni'] },
+  { name: 'BRI', kind: 'bank', mono: 'BRI', avatar: 'bg-indigo-700 text-white', soft: 'bg-sky-50 text-sky-800', aliases: ['bankbri'] },
+  { name: 'SEABANK', kind: 'bank', mono: 'SEA', avatar: 'bg-teal-700 text-white', soft: 'bg-teal-50 text-teal-700', aliases: ['seabank', 'sea'] },
   { name: 'BANK JAGO', kind: 'bank', mono: 'JGO', avatar: 'bg-amber-400 text-slate-900', soft: 'bg-amber-50 text-amber-800', aliases: ['jago', 'bankjago'] },
   { name: 'KROM', kind: 'bank', mono: 'KRM', avatar: 'bg-fuchsia-700 text-white', soft: 'bg-fuchsia-50 text-fuchsia-700', aliases: ['krombank', 'bankkrom'] },
-  { name: 'DANA', kind: 'ewallet', mono: 'DNA', avatar: 'bg-sky-500 text-white', soft: 'bg-sky-50 text-sky-700', aliases: ['danaid'] },
+  { name: 'DANA', kind: 'ewallet', mono: 'DNA', avatar: 'bg-sky-700 text-white', soft: 'bg-sky-50 text-sky-700', aliases: ['danaid'] },
   { name: 'OVO', kind: 'ewallet', mono: 'OVO', avatar: 'bg-violet-600 text-white', soft: 'bg-violet-50 text-violet-700', aliases: [] },
-  { name: 'GOPAY', kind: 'ewallet', mono: 'GPY', avatar: 'bg-emerald-500 text-white', soft: 'bg-emerald-50 text-emerald-700', aliases: ['gopay'] },
-  { name: 'SHOPEEPAY', kind: 'ewallet', mono: 'SPY', avatar: 'bg-[#EE4D2D] text-white', soft: 'bg-orange-50 text-orange-700', aliases: ['shopee', 'spay'] },
+  { name: 'GOPAY', kind: 'ewallet', mono: 'GPY', avatar: 'bg-emerald-700 text-white', soft: 'bg-emerald-50 text-emerald-700', aliases: ['gopay'] },
+  { name: 'SHOPEEPAY', kind: 'ewallet', mono: 'SPY', avatar: 'bg-[#B93418] text-white', soft: 'bg-orange-50 text-orange-700', aliases: ['shopee', 'spay'] },
 ];
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');

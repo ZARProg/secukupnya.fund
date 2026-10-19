@@ -11,7 +11,7 @@ import { MAX_BUDGET } from '@/lib/plans';
 import type { Transaction } from '@/lib/transactions';
 
 const STATUS_STYLE: Record<BudgetStatus, { bar: string; text: string; label: MessageKey | null }> = {
-  none: { bar: 'bg-brand', text: 'text-slate-400', label: null },
+  none: { bar: 'bg-brand', text: 'text-slate-500', label: null },
   ok: { bar: 'bg-emerald-500', text: 'text-emerald-700', label: 'forms.budget.ok' },
   warn: { bar: 'bg-amber-500', text: 'text-amber-700', label: 'forms.budget.warn' },
   over: { bar: 'bg-red-600', text: 'text-red-700', label: 'forms.budget.over' },
@@ -29,7 +29,7 @@ export function BudgetsPage({ transactions }: { transactions: Transaction[] }) {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1 rounded-2xl border border-line bg-white p-1 shadow-xs" role="group" aria-label={t('forms.report.pickMonth')}>
+        <div className="flex items-center gap-1 rounded-2xl border border-line bg-card p-1 shadow-xs" role="group" aria-label={t('forms.report.pickMonth')}>
           <button
             onClick={() => setMonth((m) => shiftMonth(m, -1))}
             disabled={month <= earliest}
@@ -49,7 +49,7 @@ export function BudgetsPage({ transactions }: { transactions: Transaction[] }) {
           </button>
         </div>
         {month !== currentMonth && (
-          <button onClick={() => setMonth(currentMonth)} className="rounded-lg px-3 py-2 text-xs font-semibold text-brand transition-colors hover:bg-rose-50">
+          <button onClick={() => setMonth(currentMonth)} className="rounded-lg px-3 py-2 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50">
             {t('forms.report.backToCurrent')}
           </button>
         )}
@@ -61,7 +61,7 @@ export function BudgetsPage({ transactions }: { transactions: Transaction[] }) {
 
 function Panel({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6">
+    <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-base font-bold tracking-tight text-slate-900">{title}</h2>
         {action}
@@ -120,7 +120,7 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
             <Check className="h-3.5 w-3.5" /> {t('forms.budget.save')}
           </button>
         ) : (
-          <button onClick={startEdit} className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-brand transition-colors hover:bg-rose-50">
+          <button onClick={startEdit} className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50">
             <Pencil className="h-3.5 w-3.5" /> {t('forms.budget.edit')}
           </button>
         )
@@ -144,7 +144,7 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
       {editing && <p className="mb-4 text-sm text-slate-500">{t('forms.budget.editHint')}</p>}
 
       {visible.length === 0 ? (
-        <p className="py-4 text-center text-sm text-slate-400">{t('forms.budget.noSpending')}</p>
+        <p className="py-4 text-center text-sm text-slate-500">{t('forms.budget.noSpending')}</p>
       ) : (
         <ul className="space-y-4">
           {visible.map((name) => {
@@ -166,7 +166,7 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
                   </span>
                   {editing ? (
                     <div className="relative w-40">
-                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
+                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">Rp</span>
                       <input
                         type="text"
                         inputMode="numeric"

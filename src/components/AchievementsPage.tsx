@@ -15,13 +15,13 @@ export function AchievementsPage({ eng }: { eng: Engagement }) {
 
   return (
     <div className="space-y-5" data-testid="achievements">
-      <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6" aria-label={t('ach.title')}>
+      <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6" aria-label={t('ach.title')}>
         <div className="flex items-baseline justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t('ach.level', { n: level.level })}</p>
-            <h2 className="text-2xl font-extrabold tracking-tight text-slate-900" data-testid="level-name">{levelName(level.key)}</h2>
+            <h2 className="text-2xl font-display font-bold tracking-tight text-slate-900" data-testid="level-name">{levelName(level.key)}</h2>
           </div>
-          <p className="text-lg font-bold tabular-nums text-brand" data-testid="xp-total">{t('ach.xp', { n: eng.xp })}</p>
+          <p className="text-lg font-bold tabular-nums text-brand-600" data-testid="xp-total">{t('ach.xp', { n: eng.xp })}</p>
         </div>
         <div
           className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100"
@@ -32,7 +32,7 @@ export function AchievementsPage({ eng }: { eng: Engagement }) {
         <p className="mt-2 text-sm text-slate-600" data-testid="level-next">
           {next ? t('ach.toNext', { n: next.min - eng.xp, name: levelName(next.key) }) : t('ach.maxLevel')}
         </p>
-        <p className="mt-1 text-xs text-slate-400">{t('ach.since', { date: shortDate(eng.start) })}</p>
+        <p className="mt-1 text-xs text-slate-500">{t('ach.since', { date: shortDate(eng.start) })}</p>
 
         <details className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">
           <summary className="cursor-pointer font-semibold">{t('ach.how.title')}</summary>
@@ -57,7 +57,7 @@ export function AchievementsPage({ eng }: { eng: Engagement }) {
         </details>
       </section>
 
-      <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6" aria-labelledby="ch-title">
+      <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6" aria-labelledby="ch-title">
         <h2 id="ch-title" className="text-base font-bold tracking-tight text-slate-900">{t('ch.title')}</h2>
         <p className="mb-4 mt-1 text-sm text-slate-500">{t('ch.intro')}</p>
         <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
@@ -67,7 +67,7 @@ export function AchievementsPage({ eng }: { eng: Engagement }) {
         </ul>
       </section>
 
-      <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6" aria-labelledby="badge-title">
+      <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6" aria-labelledby="badge-title">
         <h2 id="badge-title" className="mb-4 text-base font-bold tracking-tight text-slate-900">{t('badge.title')}</h2>
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {BADGE_IDS.map((b) => {
@@ -83,7 +83,7 @@ export function AchievementsPage({ eng }: { eng: Engagement }) {
                 <div className="min-w-0">
                   <p className="font-semibold text-slate-900">{t(`badge.${b}.name` as MessageKey)}</p>
                   <p className="text-xs text-slate-600">{t(`badge.${b}.how` as MessageKey)}</p>
-                  <p className={`mt-1 flex items-center gap-1 text-xs font-medium ${date ? 'text-amber-700' : 'text-slate-400'}`}>
+                  <p className={`mt-1 flex items-center gap-1 text-xs font-medium ${date ? 'text-amber-700' : 'text-slate-500'}`}>
                     {date ? <CheckCircle2 className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
                     {date ? t('badge.earned', { date: shortDate(date) }) : t('badge.locked')}
                   </p>
@@ -110,16 +110,16 @@ function ChallengeCard({ id, eng }: { id: ChallengeId; eng: Engagement }) {
   const tone =
     status === 'done' ? 'border-emerald-200 bg-emerald-50/60'
     : status === 'failed' || status === 'missed' ? 'border-slate-200 bg-slate-50'
-    : 'border-line bg-white';
+    : 'border-line bg-card';
 
   return (
     <li className={`rounded-xl border p-4 ${tone}`} data-testid={`challenge-${id}`} data-status={status ?? 'idle'}>
       <div className="flex items-start justify-between gap-3">
         <p className="font-semibold text-slate-900">{t(`ch.${id}.name` as MessageKey)}</p>
-        <span className="shrink-0 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-bold text-brand">{t('ch.xp', { n: def.xp })}</span>
+        <span className="shrink-0 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-bold text-brand-600">{t('ch.xp', { n: def.xp })}</span>
       </div>
       <p className="mt-1 text-sm text-slate-600">{t(`ch.${id}.desc` as MessageKey)}</p>
-      <p className="mt-1 text-xs text-slate-400">{t(def.mode === 'auto' ? 'ch.mode.auto' : 'ch.mode.checkin')}</p>
+      <p className="mt-1 text-xs text-slate-500">{t(def.mode === 'auto' ? 'ch.mode.auto' : 'ch.mode.checkin')}</p>
 
       {res && (
         <div className="mt-3">

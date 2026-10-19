@@ -50,7 +50,7 @@ export function DueBanner({ due, onRecord, onSkip }: DueBannerProps) {
                 {rule.account ? ` · ${rule.account}` : ''}
               </p>
             </div>
-            <p className={`text-sm font-bold tabular-nums ${rule.type === 'expense' ? 'text-brand' : 'text-emerald-600'}`}>
+            <p className={`text-sm font-bold tabular-nums ${rule.type === 'expense' ? 'text-slate-900' : 'text-emerald-600'}`}>
               {rule.type === 'expense' ? '−' : '+'}{money(rule.total)}
             </p>
             <div className="flex gap-1.5">
@@ -67,7 +67,7 @@ export function DueBanner({ due, onRecord, onSkip }: DueBannerProps) {
                 onClick={() => onSkip(rule)}
                 disabled={busy !== null}
                 aria-label={t('due.skipAria', { name: rule.description })}
-                className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 transition-colors hover:bg-amber-100 disabled:opacity-50"
+                className="rounded-lg border border-amber-300 bg-card px-3 py-1.5 text-xs font-semibold text-amber-800 transition-colors hover:bg-amber-100 disabled:opacity-50"
               >
                 {t('due.skip')}
               </button>

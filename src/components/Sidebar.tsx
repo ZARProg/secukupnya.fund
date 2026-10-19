@@ -105,20 +105,20 @@ export function Sidebar({
 
       <aside
         aria-label={t('shell.sidebar.nav')}
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-gradient-to-b from-[#34091a] to-ink text-white transition-[transform,visibility] duration-200 lg:visible lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-line bg-paper text-slate-800 transition-[transform,visibility] duration-200 lg:visible lg:translate-x-0 ${
           open ? 'translate-x-0' : 'invisible -translate-x-full'
         }`}
       >
         <div className="flex items-center justify-between px-6 pt-6">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand shadow-sm ring-1 ring-white/20">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand">
               <Wallet className="h-5 w-5 text-white" />
             </span>
-            <span className="text-lg font-bold tracking-tight text-white">Secukupnya.fund</span>
+            <span className="font-display text-xl font-bold tracking-tight text-slate-900">Secukupnya.fund</span>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-white/70 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
+            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 lg:hidden"
             aria-label={t('shell.sidebar.close')}
           >
             <X className="h-5 w-5" />
@@ -129,22 +129,22 @@ export function Sidebar({
           <button
             onClick={onNewTransaction}
             aria-keyshortcuts="n"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-sm transition-all hover:bg-rose-50 active:scale-[0.98]"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
           >
             <Plus className="h-4 w-4" />
             {t('shell.action.record')}
-            <kbd aria-hidden="true" className="ml-1 hidden rounded border border-slate-300 px-1.5 text-[10px] font-bold text-slate-500 lg:inline">N</kbd>
+            <kbd aria-hidden="true" className="ml-1 hidden rounded border border-white/50 px-1.5 text-[10px] font-bold text-white lg:inline">N</kbd>
           </button>
           <button
             onClick={onImport}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-white/10 active:scale-[0.98]"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-card px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:border-brand-300 hover:text-brand-700 active:scale-[0.98]"
           >
             <FileSpreadsheet className="h-4 w-4" />
             {t('shell.action.import')}
           </button>
           <button
             onClick={onTemplate}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium text-white/65 transition-colors hover:text-white"
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium text-slate-500 transition-colors hover:text-slate-800"
           >
             <Download className="h-3.5 w-3.5" />
             {t('shell.sidebar.template')}
@@ -161,7 +161,7 @@ export function Sidebar({
               return (
                 <div key={group.id} className="space-y-1" role="group" aria-label={group.label ? t(group.label) : t('nav.group.main')}>
                   {group.label && (
-                    <p className="px-3.5 pb-1 text-[11px] font-semibold uppercase tracking-wider text-white/40">{t(group.label)}</p>
+                    <p className="px-3.5 pb-1 text-xs font-semibold text-slate-500">{t(group.label)}</p>
                   )}
                   {items.map(({ view: v, label, icon: Icon }) => {
                     const active = v === view;
@@ -171,7 +171,7 @@ export function Sidebar({
                         onClick={() => onNavigate(v)}
                         aria-current={active ? 'page' : undefined}
                         className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
-                          active ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                          active ? 'bg-brand-200 font-semibold text-brand-800' : 'text-slate-600 hover:bg-card hover:text-slate-900'
                         }`}
                       >
                         <Icon className="h-4 w-4" />
@@ -189,17 +189,17 @@ export function Sidebar({
 
           <section className="mt-7 px-2" aria-labelledby="sidebar-accounts">
             <div className="flex items-center justify-between px-3">
-              <h2 id="sidebar-accounts" className="text-sm font-semibold text-white/60">
+              <h2 id="sidebar-accounts" className="text-sm font-semibold text-slate-600">
                 {t('shell.accounts')}
               </h2>
               <button
                 onClick={onManageAccounts}
-                className="rounded-md px-1.5 py-0.5 text-xs font-medium text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+                className="rounded-md px-1.5 py-0.5 text-xs font-semibold text-brand-600 transition-colors hover:bg-brand-100 hover:text-brand-800"
               >
                 {t('shell.sidebar.manage')}
               </button>
             </div>
-            {accounts.length === 0 && <p className="px-3 pt-2 text-xs text-white/50">{t('accounts.pick.short')}</p>}
+            {accounts.length === 0 && <p className="px-3 pt-2 text-xs text-slate-500">{t('accounts.pick.short')}</p>}
             <ul className="mt-2 space-y-0.5">
               {accounts.map(({ account, balance }) => {
                 const active = account === activeAccount;
@@ -209,14 +209,14 @@ export function Sidebar({
                       onClick={() => onSelectAccount(account)}
                       aria-pressed={active}
                       className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition-all ${
-                        active ? 'bg-white/10 font-medium text-white' : 'text-white/80 hover:bg-white/5'
+                        active ? 'bg-card font-medium text-slate-900 ring-1 ring-line' : 'text-slate-700 hover:bg-card'
                       }`}
                     >
                       <AccountAvatar name={account} />
                       <span className="min-w-0 flex-1 truncate">{account}</span>
                       <span
                         className={`shrink-0 text-xs font-semibold tabular-nums ${
-                          balance < 0 ? 'text-rose-300' : 'text-white/70'
+                          balance < 0 ? 'text-rose-700' : 'text-slate-500'
                         }`}
                       >
                         {rupiahSigned(balance)}
@@ -227,28 +227,28 @@ export function Sidebar({
               })}
             </ul>
             {accounts.length > 0 && (
-              <p className="px-3 pt-3 text-[11px] leading-relaxed text-white/40">
+              <p className="px-3 pt-3 text-[11px] leading-relaxed text-slate-500">
                 {t('shell.sidebar.balanceNote')}
               </p>
             )}
           </section>
         </div>
 
-        <div className="border-t border-white/10 pt-3">
+        <div className="border-t border-line pt-3">
           <LanguageSwitch />
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/10 px-6 py-4">
+        <div className="flex items-center justify-between border-t border-line px-6 py-4">
           <div className="flex min-w-0 items-center gap-2">
             <span className={`h-2 w-2 shrink-0 rounded-full ${statusDot}`} aria-hidden="true" />
-            <span className="truncate text-xs font-medium text-white/70" role="status">
+            <span className="truncate text-xs font-medium text-slate-600" role="status">
               {statusLabel}
             </span>
           </div>
           <button
             onClick={onRefresh}
             disabled={loading || !connected}
-            className="rounded-lg p-1.5 text-white/70 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-40"
+            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40"
             aria-label={t('shell.sidebar.refresh')}
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />

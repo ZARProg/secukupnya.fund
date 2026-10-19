@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Bookmark, ChevronDown, Search, X } from 'lucide-react';
+import { Bookmark, ChevronDown, Download, Search, X } from 'lucide-react';
 import { TransactionList } from '@/components/TransactionList';
 import { isDebtPaymentCategory } from '@/lib/categories';
 import { formatRupiah, parseRupiah, rupiahLabel } from '@/lib/format';
@@ -10,6 +10,7 @@ import {
 } from '@/lib/filters';
 import { useBudgets } from '@/hooks/useBudgets';
 import { useSavedFilters } from '@/hooks/useSavedFilters';
+import { downloadCsv } from '@/lib/csv';
 import { useT, type MessageKey } from '@/i18n';
 import type { Transaction } from '@/lib/transactions';
 
@@ -45,6 +46,28 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
   const [naming, setNaming] = useState(false);
   const [presetName, setPresetName] = useState('');
   const { saved, save, remove, full } = useSavedFilters();
+  const [exportMsg, setExportMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  useEffect(() => {
+    if (!exportMsg) return;
+    const id = window.setTimeout(() => setExportMsg(null), 4000);
+    return () => window.clearTimeout(id);
+  }, [exportMsg]);
+
+  async function exportAs(kind: 'csv' | 'xlsx') {
+    if (!filtered.length) {
+      setExportMsg({ ok: false, text: t('export.empty') });
+      return;
+    }
+    try {
+      if (kind === 'csv') downloadCsv(filtered);
+      else await (await import('@/lib/excelFile')).downloadTransactions(filtered);
+      setExportMsg({ ok: true, text: t('export.done', { n: filtered.length }) });
+    } catch (err) {
+      console.error('Ekspor gagal:', err);
+      setExportMsg({ ok: false, text: t('export.failed') });
+    }
+  }
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
@@ -89,7 +112,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-white">
+    <div className="rounded-2xl border border-line bg-card">
       <div className="space-y-3 border-b border-slate-100 p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex gap-1 rounded-xl bg-slate-100 p-1" role="group" aria-label={t('shell.type.group')}>
@@ -99,7 +122,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
                 onClick={() => setType(tab.value)}
                 aria-pressed={type === tab.value}
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  type === tab.value ? 'bg-white text-brand shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  type === tab.value ? 'bg-card text-brand-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 {t(tab.label)}
@@ -165,7 +188,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
           {hasFilter && (
             <button
               onClick={() => { setF(EMPTY_FILTER); onAccountChange(''); }}
-              className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand transition-colors hover:bg-rose-50"
+              className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
             >
               {t('shell.tx.clear')}
             </button>
@@ -173,7 +196,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
         </div>
 
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
           <input
             type="search"
             value={query}
@@ -215,14 +238,14 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
             {problem && <p role="alert" className="text-xs font-medium text-amber-700">{t(problem === 'date' ? 'filter.problem.date' : 'filter.problem.amount')}</p>}
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-700">
               <label className="flex cursor-pointer items-start gap-2">
-                <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#800020]" checked={f.overBudget} onChange={(e) => setF((p) => ({ ...p, overBudget: e.target.checked }))} />
+                <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-brand" checked={f.overBudget} onChange={(e) => setF((p) => ({ ...p, overBudget: e.target.checked }))} />
                 <span>
                   {t('filter.overBudget')}
                   <span className="block text-xs text-slate-500">{t('filter.overBudget.hint')}</span>
                 </span>
               </label>
               <label className="flex cursor-pointer items-start gap-2">
-                <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#800020]" checked={f.noDescription} onChange={(e) => setF((p) => ({ ...p, noDescription: e.target.checked }))} />
+                <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-brand" checked={f.noDescription} onChange={(e) => setF((p) => ({ ...p, noDescription: e.target.checked }))} />
                 <span>{t('filter.noDescription')}</span>
               </label>
             </div>
@@ -233,11 +256,11 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
           <div className="flex flex-wrap items-center gap-2" aria-label={t('filter.saved.title')}>
             {saved.length > 0 && <span className="flex items-center gap-1 text-xs font-semibold text-slate-500"><Bookmark className="h-3.5 w-3.5" />{t('filter.saved.title')}</span>}
             {saved.map((s) => (
-              <span key={s.id} className="flex items-center rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-700">
-                <button onClick={() => applySaved(s.filter)} aria-label={t('filter.saved.apply', { name: s.name })} className="rounded-l-full py-1 pl-3 pr-1.5 hover:text-brand">
+              <span key={s.id} className="flex items-center rounded-full border border-slate-200 bg-card text-xs font-semibold text-slate-700">
+                <button onClick={() => applySaved(s.filter)} aria-label={t('filter.saved.apply', { name: s.name })} className="rounded-l-full py-1 pl-3 pr-1.5 hover:text-brand-700">
                   {s.name}
                 </button>
-                <button onClick={() => remove(s.id)} aria-label={t('filter.saved.delete', { name: s.name })} className="rounded-r-full py-1 pl-0.5 pr-2 text-slate-400 hover:text-rose-600">
+                <button onClick={() => remove(s.id)} aria-label={t('filter.saved.delete', { name: s.name })} className="rounded-r-full py-1 pl-0.5 pr-2 text-slate-500 hover:text-rose-600">
                   <X className="h-3 w-3" />
                 </button>
               </span>
@@ -247,7 +270,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
                 onClick={() => setNaming(true)}
                 disabled={full}
                 title={full ? t('filter.saved.full', { n: MAX_SAVED_FILTERS }) : undefined}
-                className="rounded-full border border-dashed border-slate-300 px-3 py-1 text-xs font-semibold text-brand hover:bg-rose-50 disabled:opacity-50"
+                className="rounded-full border border-dashed border-slate-300 px-3 py-1 text-xs font-semibold text-brand-600 hover:bg-rose-50 disabled:opacity-50"
               >
                 {t('filter.save')}
               </button>
@@ -259,7 +282,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
                   aria-label={t('filter.save.name')} placeholder={t('filter.save.name')} className="form-input !w-44 !py-1 text-xs"
                 />
                 <button type="submit" disabled={!presetName.trim()} className="rounded-lg bg-brand px-2.5 py-1.5 text-xs font-bold text-white disabled:opacity-50">{t('filter.save.confirm')}</button>
-                <button type="button" onClick={() => { setNaming(false); setPresetName(''); }} aria-label={t('forms.budget.cancel')} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"><X className="h-3.5 w-3.5" /></button>
+                <button type="button" onClick={() => { setNaming(false); setPresetName(''); }} aria-label={t('forms.budget.cancel')} className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100"><X className="h-3.5 w-3.5" /></button>
               </form>
             )}
           </div>
@@ -271,8 +294,20 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
             {t('shell.type.income')} <span className="font-semibold text-emerald-600 tabular-nums">+{rupiahLabel(totals.income)}</span>
           </span>
           <span>
-            {t('shell.type.expense')} <span className="font-semibold text-brand tabular-nums">−{rupiahLabel(totals.expense)}</span>
+            {t('shell.type.expense')} <span className="font-semibold text-brand-600 tabular-nums">−{rupiahLabel(totals.expense)}</span>
           </span>
+          <span className="ml-auto flex items-center gap-1.5" role="group" aria-label={t('export.title')}>
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            <button type="button" data-testid="export-csv" onClick={() => exportAs('csv')} disabled={!filtered.length} title={t('export.hint', { n: filtered.length })} className="rounded-md px-2 py-1 font-semibold text-brand-600 hover:bg-rose-50 disabled:opacity-40">
+              {t('export.csv')}
+            </button>
+            <button type="button" data-testid="export-xlsx" onClick={() => exportAs('xlsx')} disabled={!filtered.length} title={t('export.hint', { n: filtered.length })} className="rounded-md px-2 py-1 font-semibold text-brand-600 hover:bg-rose-50 disabled:opacity-40">
+              {t('export.xlsx')}
+            </button>
+          </span>
+          {exportMsg && (
+            <span role="status" data-testid="export-msg" className={`basis-full text-right font-medium ${exportMsg.ok ? 'text-emerald-700' : 'text-red-700'}`}>{exportMsg.text}</span>
+          )}
         </div>
       </div>
 
@@ -294,7 +329,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
         <div className="border-t border-slate-100 p-3 text-center">
           <button
             onClick={() => setVisible((v) => v + PAGE_SIZE)}
-            className="rounded-lg px-4 py-2 text-sm font-semibold text-brand transition-colors hover:bg-rose-50"
+            className="rounded-lg px-4 py-2 text-sm font-semibold text-brand-600 transition-colors hover:bg-rose-50"
           >
             {t('shell.tx.more', { n: Math.min(PAGE_SIZE, filtered.length - visible) })}
           </button>

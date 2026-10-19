@@ -10,6 +10,7 @@ import { RulesProvider } from './hooks/useRules.tsx';
 import { PrivacyProvider } from './hooks/usePrivacy.tsx';
 import { LanguageProvider } from './i18n';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+import { registerServiceWorker } from './lib/pwa.ts';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -35,3 +36,5 @@ createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </StrictMode>
 );
+
+registerServiceWorker();

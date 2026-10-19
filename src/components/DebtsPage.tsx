@@ -51,7 +51,7 @@ export function DebtsPage(props: DebtsPageProps) {
         <Stat label={t('debt.summary.active')} value={String(sum.active)} />
       </section>
 
-      <details className="rounded-2xl border border-line bg-white p-4 text-sm text-slate-700 shadow-card">
+      <details className="rounded-2xl border border-line bg-card p-4 text-sm text-slate-700 shadow-card">
         <summary className="cursor-pointer font-semibold text-slate-900">{t('debt.how.title')}</summary>
         <ul className="mt-2 list-disc space-y-1 pl-5">
           <li>{t('debt.how.purchase')}</li>
@@ -70,7 +70,7 @@ export function DebtsPage(props: DebtsPageProps) {
                 type="button"
                 onClick={() => setDestination(d)}
                 aria-pressed={destination === d}
-                className={`rounded-lg py-1.5 text-xs font-semibold ${destination === d ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'}`}
+                className={`rounded-lg py-1.5 text-xs font-semibold ${destination === d ? 'bg-card text-slate-900 shadow-xs' : 'text-slate-500'}`}
               >
                 {t(d === 'sheet' ? 'forms.dest.sheet' : 'forms.dest.local')}
               </button>
@@ -98,7 +98,7 @@ export function DebtsPage(props: DebtsPageProps) {
       )}
 
       {debts.length === 0 && !adding ? (
-        <p className="rounded-2xl border border-line bg-white p-6 text-sm text-slate-500" data-testid="debt-empty">{t('debt.empty')}</p>
+        <p className="rounded-2xl border border-line bg-card p-6 text-sm text-slate-500" data-testid="debt-empty">{t('debt.empty')}</p>
       ) : (
         <ul className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           {debts.map((d) => (
@@ -112,9 +112,9 @@ export function DebtsPage(props: DebtsPageProps) {
 
 function Stat({ label, value, strong, testId }: { label: string; value: string; strong?: boolean; testId?: string }) {
   return (
-    <div className="rounded-2xl border border-line bg-white p-4 shadow-card">
+    <div className="rounded-2xl border border-line bg-card p-4 shadow-card">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className={`mt-1 font-extrabold tabular-nums tracking-tight text-slate-900 ${strong ? 'text-2xl' : 'text-xl'}`} data-testid={testId}>{value}</p>
+      <p className={`mt-1 font-display font-bold tabular-nums tracking-tight text-slate-900 ${strong ? 'text-2xl' : 'text-xl'}`} data-testid={testId}>{value}</p>
     </div>
   );
 }
@@ -124,7 +124,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
     <label className="block">
       <span className="mb-1 block text-xs font-semibold text-slate-500">{label}</span>
       {children}
-      {hint && <span className="mt-1 block text-xs text-slate-400">{hint}</span>}
+      {hint && <span className="mt-1 block text-xs text-slate-500">{hint}</span>}
     </label>
   );
 }
@@ -198,7 +198,7 @@ function AddDebtForm({
   const n = total > 0 && m > 0 ? Math.ceil(total / m) : 0;
 
   return (
-    <form onSubmit={submit} className="space-y-4 rounded-2xl border border-line bg-white p-5 shadow-card" aria-label={t('debt.add')} data-testid="debt-add-form">
+    <form onSubmit={submit} className="space-y-4 rounded-2xl border border-line bg-card p-5 shadow-card" aria-label={t('debt.add')} data-testid="debt-add-form">
       <h2 className="text-base font-bold text-slate-900">{t('debt.add')}</h2>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label={t('debt.f.name')}>
@@ -293,7 +293,7 @@ function DebtCard({
   const payoff = payoffDate(debt, today);
 
   return (
-    <li className={`rounded-2xl border bg-white p-5 shadow-card ${due?.overdue ? 'border-red-200' : 'border-line'}`} data-testid={`debt-card-${debt.name}`}>
+    <li className={`rounded-2xl border bg-card p-5 shadow-card ${due?.overdue ? 'border-red-200' : 'border-line'}`} data-testid={`debt-card-${debt.name}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="flex items-center gap-2 font-bold text-slate-900">
@@ -307,7 +307,7 @@ function DebtCard({
         ) : (
           <div className="text-right">
             <p className="text-xs text-slate-500">{t('debt.remaining')}</p>
-            <p className="text-xl font-extrabold tabular-nums text-slate-900" data-testid="debt-remaining">{money(left)}</p>
+            <p className="text-xl font-display font-bold tabular-nums text-slate-900" data-testid="debt-remaining">{money(left)}</p>
           </div>
         )}
       </div>
@@ -356,7 +356,7 @@ function DebtCard({
               onToast({ kind: 'success', message: t('debt.toast.deleted') });
             }
           }}
-          className="ml-auto flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-400 hover:bg-red-50 hover:text-red-600"
+          className="ml-auto flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600"
           aria-label={`${t('debt.delete')} ${debt.name}`}
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -380,7 +380,7 @@ function DebtCard({
       <details className="mt-4 text-sm">
         <summary className="cursor-pointer text-xs font-semibold text-slate-600">{t('debt.history')} ({debt.payments.length})</summary>
         {debt.payments.length === 0 ? (
-          <p className="mt-2 text-xs text-slate-400">{t('debt.history.empty')}</p>
+          <p className="mt-2 text-xs text-slate-500">{t('debt.history.empty')}</p>
         ) : (
           <ul className="mt-2 space-y-1" data-testid="debt-history">
             {[...debt.payments].sort((a, b) => b.date.localeCompare(a.date)).map((p) => (
@@ -388,7 +388,7 @@ function DebtCard({
                 <span>
                   {shortDate(p.date)} · <span className="font-semibold tabular-nums">{money(p.amount)}</span>
                   {p.feePart > 0 && <> ({t('debt.pay.split', { principal: money(p.amount - p.feePart), fee: money(p.feePart) })})</>}
-                  {!p.recorded && <span className="ml-1 text-slate-400">· {t('debt.history.unrecorded')}</span>}
+                  {!p.recorded && <span className="ml-1 text-slate-500">· {t('debt.history.unrecorded')}</span>}
                 </span>
                 <button onClick={() => removePayment(debt.id, p.id)} aria-label={t('debt.history.remove', { date: shortDate(p.date) })} className="rounded p-1 text-slate-300 hover:bg-red-50 hover:text-red-600">
                   <Trash2 className="h-3 w-3" />
@@ -397,8 +397,8 @@ function DebtCard({
             ))}
           </ul>
         )}
-        <p className="mt-2 text-[11px] text-slate-400">{t('debt.history.note')}</p>
-        {feePaid(debt) > 0 && <p className="mt-1 text-[11px] text-slate-400">{t('debt.fee.known', { amount: money(feePaid(debt)) })}</p>}
+        <p className="mt-2 text-[11px] text-slate-500">{t('debt.history.note')}</p>
+        {feePaid(debt) > 0 && <p className="mt-1 text-[11px] text-slate-500">{t('debt.fee.known', { amount: money(feePaid(debt)) })}</p>}
       </details>
     </li>
   );
@@ -518,7 +518,7 @@ function Simulator({ debt, today }: { debt: Debt; today: string }) {
       </Field>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {sc.map((s, i) => (
-          <fieldset key={i} className="space-y-2 rounded-lg border border-line bg-white p-3">
+          <fieldset key={i} className="space-y-2 rounded-lg border border-line bg-card p-3">
             <legend className="px-1 text-xs font-semibold text-slate-600">{t(i === 0 ? 'debt.sim.a' : 'debt.sim.b')}</legend>
             <Field label={t('debt.sim.monthly')}>
               <input className="form-input tabular-nums" inputMode="numeric" value={s.monthly} data-testid={`debt-sim-monthly-${i}`}

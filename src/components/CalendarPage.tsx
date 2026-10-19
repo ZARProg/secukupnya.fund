@@ -80,17 +80,17 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
     <div className="space-y-5">
       <header className="flex flex-wrap items-center justify-end gap-3">
         <div className="flex items-center gap-1.5">
-          <button onClick={() => go(-1)} aria-label={t('cal.prev')} className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50">
+          <button onClick={() => go(-1)} aria-label={t('cal.prev')} className="rounded-xl border border-slate-200 bg-card p-2 text-slate-600 hover:bg-slate-50">
             <ChevronLeft className="h-4 w-4" />
           </button>
           <p className="min-w-36 text-center text-sm font-bold capitalize text-slate-800" aria-live="polite">{monthLabel(month)}</p>
-          <button onClick={() => go(1)} aria-label={t('cal.next')} className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50">
+          <button onClick={() => go(1)} aria-label={t('cal.next')} className="rounded-xl border border-slate-200 bg-card p-2 text-slate-600 hover:bg-slate-50">
             <ChevronRight className="h-4 w-4" />
           </button>
           <button
             onClick={() => { setMonth(thisMonth); setSelected(today); }}
             disabled={month === thisMonth && selected === today}
-            className="ml-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-brand hover:bg-rose-50 disabled:opacity-40"
+            className="ml-1 rounded-xl border border-slate-200 bg-card px-3 py-2 text-xs font-semibold text-brand-600 hover:bg-rose-50 disabled:opacity-40"
           >
             {t('cal.today')}
           </button>
@@ -98,8 +98,8 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
       </header>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-        <section className="rounded-2xl border border-line bg-white p-4 shadow-card sm:p-5" aria-label={t('cal.title')}>
-          <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+        <section className="rounded-2xl border border-line bg-card p-4 shadow-card sm:p-5" aria-label={t('cal.title')}>
+          <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wide text-slate-500">
             {names.map((n) => <span key={n}>{n}</span>)}
           </div>
           <div className="mt-1 space-y-1">
@@ -119,10 +119,10 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
                       aria-current={isToday ? 'date' : undefined}
                       data-date={date}
                       className={`flex aspect-square flex-col items-center justify-between rounded-xl border p-1 text-sm transition-colors sm:p-1.5 ${
-                        isSel ? 'border-brand bg-rose-50 text-brand' : 'border-transparent hover:bg-slate-50 text-slate-700'
+                        isSel ? 'border-brand bg-rose-50 text-brand-600' : 'border-transparent hover:bg-slate-50 text-slate-700'
                       } ${isToday ? 'ring-1 ring-brand/50' : ''}`}
                     >
-                      <span className={`text-xs sm:text-sm ${isToday ? 'font-extrabold' : 'font-semibold'}`}>{Number(date.slice(8))}</span>
+                      <span className={`text-xs sm:text-sm ${isToday ? 'font-display font-bold' : 'font-semibold'}`}>{Number(date.slice(8))}</span>
                       <span className="flex h-2 items-center gap-0.5" aria-hidden>
                         {d && d.income > 0 && <i className={`h-1.5 w-1.5 rounded-full ${DOT.income}`} data-kind="income" />}
                         {d && d.expense > 0 && <i className={`h-1.5 w-1.5 rounded-full ${DOT.expense}`} data-kind="expense" />}
@@ -143,20 +143,20 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-[11px] text-slate-400">{t('cal.legend.note')}</p>
+          <p className="mt-2 text-[11px] text-slate-500">{t('cal.legend.note')}</p>
         </section>
 
         <div className="space-y-5">
-          <section className="rounded-2xl border border-line bg-white p-5 shadow-card" aria-labelledby="cal-summary">
+          <section className="rounded-2xl border border-line bg-card p-5 shadow-card" aria-labelledby="cal-summary">
             <h2 id="cal-summary" className="text-base font-bold tracking-tight text-slate-900">{t('cal.summary.title')}</h2>
             <dl className="mt-3 space-y-3 text-sm">
               <div>
                 <dt className="text-xs font-semibold text-slate-500">{t('cal.summary.actual')}</dt>
                 <dd className="mt-1 flex justify-between"><span>{t('cal.summary.income')}</span><b className="tabular-nums text-emerald-600" data-testid="cal-actual-income">{money(cal.actualIncome)}</b></dd>
-                <dd className="flex justify-between"><span>{t('cal.summary.expense')}</span><b className="tabular-nums text-brand" data-testid="cal-actual-expense">{money(cal.actualExpense)}</b></dd>
+                <dd className="flex justify-between"><span>{t('cal.summary.expense')}</span><b className="tabular-nums text-brand-600" data-testid="cal-actual-expense">{money(cal.actualExpense)}</b></dd>
               </div>
               {isPast ? (
-                <p className="text-xs text-slate-400">{t('cal.summary.pastNote')}</p>
+                <p className="text-xs text-slate-500">{t('cal.summary.pastNote')}</p>
               ) : (
                 <div className="rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-3">
                   <dt className="text-xs font-semibold text-amber-800">{t('cal.summary.scheduled')}</dt>
@@ -168,9 +168,9 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
             </dl>
           </section>
 
-          <section className="rounded-2xl border border-line bg-white p-5 shadow-card" aria-labelledby="cal-bills">
+          <section className="rounded-2xl border border-line bg-card p-5 shadow-card" aria-labelledby="cal-bills">
             <h2 id="cal-bills" className="flex items-center gap-2 text-base font-bold tracking-tight text-slate-900">
-              <CalendarClock className="h-4 w-4 text-brand" />
+              <CalendarClock className="h-4 w-4 text-brand-600" />
               {t('cal.upcoming.title')}
             </h2>
             {bills.length === 0 ? (
@@ -185,7 +185,7 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
                         {parseISODate(date).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })} · {inDays === 0 ? t('cal.upcoming.today') : tp('cal.upcoming.in', inDays)}
                       </span>
                     </span>
-                    <b className="tabular-nums text-brand">−{money(rule.total)}</b>
+                    <b className="tabular-nums text-brand-600">−{money(rule.total)}</b>
                   </li>
                 ))}
               </ul>
@@ -194,7 +194,7 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
         </div>
       </div>
 
-      <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6" aria-labelledby="cal-day">
+      <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6" aria-labelledby="cal-day">
         <h2 id="cal-day" className="text-base font-bold tracking-tight text-slate-900">
           {t('cal.day.title', { date: parseISODate(activeDate).toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) })}
         </h2>
@@ -208,8 +208,8 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
                 <ul className="mt-1 divide-y divide-slate-100">
                   {day.actual.map((tx) => (
                     <li key={tx.id + tx.type} className="flex items-center justify-between gap-3 py-2 text-sm">
-                      <span className="min-w-0 truncate"><b className="font-semibold text-slate-800">{tx.description || tx.category}</b> <span className="text-xs text-slate-400">{tx.category}{tx.account ? ` · ${tx.account}` : ''}</span></span>
-                      <b className={`shrink-0 tabular-nums ${tx.type === 'expense' ? 'text-brand' : 'text-emerald-600'}`}>{tx.type === 'expense' ? '−' : '+'}{money(tx.total)}</b>
+                      <span className="min-w-0 truncate"><b className="font-semibold text-slate-800">{tx.description || tx.category}</b> <span className="text-xs text-slate-500">{tx.category}{tx.account ? ` · ${tx.account}` : ''}</span></span>
+                      <b className={`shrink-0 tabular-nums ${tx.type === 'expense' ? 'text-slate-900' : 'text-emerald-600'}`}>{tx.type === 'expense' ? '−' : '+'}{money(tx.total)}</b>
                     </li>
                   ))}
                 </ul>
@@ -225,7 +225,7 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
                         <span className="block truncate font-semibold text-slate-800">{item.rule.description}</span>
                         <span className="text-xs text-slate-500">{t(`cal.status.${item.status}` as const)}</span>
                       </span>
-                      <b className={`tabular-nums ${item.rule.type === 'expense' ? 'text-brand' : 'text-emerald-600'}`}>{item.rule.type === 'expense' ? '−' : '+'}{money(item.rule.total)}</b>
+                      <b className={`tabular-nums ${item.rule.type === 'expense' ? 'text-slate-900' : 'text-emerald-600'}`}>{item.rule.type === 'expense' ? '−' : '+'}{money(item.rule.total)}</b>
                       {item.status === 'due' && (
                         <span className="flex gap-1.5">
                           <button
@@ -241,7 +241,7 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
                             onClick={() => onSkip(item.rule)}
                             disabled={busy !== null}
                             aria-label={t('due.skipAria', { name: item.rule.description })}
-                            className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 disabled:opacity-50"
+                            className="rounded-lg border border-amber-300 bg-card px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 disabled:opacity-50"
                           >
                             {t('due.skip')}
                           </button>

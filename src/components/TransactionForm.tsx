@@ -11,6 +11,8 @@ import { useRules } from '@/hooks/useRules';
 import { matchRule } from '@/lib/rules';
 import { loadMemory, remember, saveMemory } from '@/lib/quickMemory';
 import { AccountAvatar } from '@/components/AccountAvatar';
+import { SplitBox } from '@/components/SplitBox';
+import { buildSplitPayloads, rowsToParts, splitProblem, type SplitRow } from '@/lib/split';
 import type { ToastState } from '@/components/Toast';
 import type { Transaction, TransactionPayload } from '@/lib/transactions';
 import type { Destination } from '@/hooks/useTransactions';
@@ -18,7 +20,7 @@ import type { Destination } from '@/hooks/useTransactions';
 type TxType = 'expense' | 'income' | 'transfer';
 
 const TABS: { id: TxType; labelKey: 'forms.tab.expense' | 'forms.tab.income' | 'forms.tab.transfer'; active: string }[] = [
-  { id: 'expense', labelKey: 'forms.tab.expense', active: 'text-brand' },
+  { id: 'expense', labelKey: 'forms.tab.expense', active: 'text-brand-600' },
   { id: 'income', labelKey: 'forms.tab.income', active: 'text-emerald-700' },
   { id: 'transfer', labelKey: 'forms.tab.transfer', active: 'text-slate-800' },
 ];
@@ -68,6 +70,9 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
   const toAccount = accounts.includes(toChoice) ? toChoice : (accounts.find((a) => a !== fromAccount) ?? '');
   const [feeDisplay, setFeeDisplay] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // Pisah ke beberapa kategori: hanya untuk pengeluaran baru (bukan ubah transaksi, bukan transfer).
+  const [splitOn, setSplitOn] = useState(false);
+  const [splitRows, setSplitRows] = useState<SplitRow[]>([]);
 
   const isTransfer = txType === 'transfer';
   const baseCategories = txType === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
@@ -80,12 +85,27 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
   const sameAccount = isTransfer && fromAccount === toAccount;
   const needTwoAccounts = isTransfer && accounts.length < 2;
   const needAccount = !editing && !isTransfer && accounts.length === 0;
-  const canSubmit = Boolean(totalAmount) && !sameAccount && !needTwoAccounts && !needAccount;
+  const canSplit = !editing && txType === 'expense';
+  const splitting = splitOn && canSplit;
+  const splitParts = useMemo(() => rowsToParts(splitRows), [splitRows]);
+  const splitBad = splitting && splitProblem(totalAmount, splitParts) !== null;
+  const canSubmit = Boolean(totalAmount) && !sameAccount && !needTwoAccounts && !needAccount && !splitBad;
+
+  function toggleSplit() {
+    if (splitOn) {
+      setSplitOn(false);
+      return;
+    }
+    const second = EXPENSE_CATEGORIES.find((c) => c !== category) ?? category;
+    setSplitRows([{ category, display: '' }, { category: second, display: '' }]);
+    setSplitOn(true);
+  }
 
   function switchType(next: TxType) {
     if (next === txType) return;
     setTxType(next);
     setRuleKw('');
+    if (next !== 'expense') setSplitOn(false);
     if (next !== 'transfer') {
       const last = mem.lastCategory[next];
       const list = next === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
@@ -164,6 +184,21 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
         onToast({ kind: 'success', message: t('edit.toast.saved') });
       } else if (isTransfer) {
         await handleTransfer();
+      } else if (splitting) {
+        const target: Destination = sheetAvailable ? destination : 'local';
+        const parts = buildSplitPayloads({ date, account, description: description.trim() }, splitParts);
+        if (target === 'sheet' && !batchReady) {
+          for (const part of parts) await onSave(part, target);
+        } else {
+          await onSaveMany(parts, target);
+        }
+        saveMemory(remember(loadMemory(), parts));
+        onToast({
+          kind: 'success',
+          message: t('split.toast', { n: parts.length, target: t(target === 'sheet' ? 'forms.saved.sheet' : 'forms.saved.local') }),
+        });
+        setSplitOn(false);
+        setSplitRows([]);
       } else {
         const target: Destination = sheetAvailable ? destination : 'local';
         await onSave(payload, target);
@@ -201,7 +236,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
       <div className="px-6 pt-5">
         <div className="relative grid grid-cols-3 gap-1 rounded-2xl bg-slate-100 p-1">
           <span
-            className="absolute inset-y-1 w-[calc((100%-1rem)/3)] rounded-xl bg-white shadow-xs transition-transform duration-200 ease-out"
+            className="absolute inset-y-1 w-[calc((100%-1rem)/3)] rounded-xl bg-card shadow-xs transition-transform duration-200 ease-out"
             style={{ transform: `translateX(calc(${TABS.findIndex((x) => x.id === txType)} * (100% + 0.25rem)))` }}
           />
           {TABS.map((tab) => (
@@ -245,7 +280,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
               <button
                 type="button"
                 onClick={swapAccounts}
-                className="mb-1 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition-colors hover:border-brand hover:text-brand"
+                className="mb-1 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-card text-slate-500 transition-colors hover:border-brand hover:text-brand-700"
                 aria-label={t('forms.swap.aria')}
                 title={t('forms.swap.title')}
               >
@@ -262,20 +297,22 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
             {needTwoAccounts ? (
               <p role="alert" className="text-xs font-medium text-amber-700">
                 {t('forms.transfer.needTwo')}{' '}
-                <button type="button" onClick={onManageAccounts} className="font-semibold text-brand underline">
+                <button type="button" onClick={onManageAccounts} className="font-semibold text-brand-600 underline">
                   {t('forms.transfer.addOption')}
                 </button>
               </p>
             ) : sameAccount ? (
               <p role="alert" className="text-xs font-medium text-amber-700">{t('forms.transfer.sameAccount')}</p>
             ) : (
-              <p className="text-xs leading-relaxed text-slate-400">
+              <p className="text-xs leading-relaxed text-slate-500">
                 {t('forms.transfer.hint', { from: fromAccount, to: toAccount })}
               </p>
             )}
           </div>
         ) : (
           <>
+        {!splitting && (
+        <>
         <Field label={t('forms.field.category')} icon={<Tag className="h-4 w-4" />}>
             <select value={category} onChange={(e) => { setCategory(e.target.value); setCatTouched(true); setRuleKw(''); }} className="form-input">
               {categories.map((c) => (
@@ -287,11 +324,13 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
           </Field>
           {ruleKw && <p className="text-xs font-medium text-violet-700" data-testid="rule-suggest">{t('rules.form.suggest', { kw: ruleKw })}</p>}
           {!editing && category === 'Paylater' && <p className="text-xs text-violet-700" data-testid="paylater-hint">{t('debt.formHint')}</p>}
+        </>
+        )}
 
           {needAccount && (
             <p role="alert" className="text-xs font-medium text-amber-700">
               {t('accounts.pick.formHint')}{' '}
-              <button type="button" onClick={onManageAccounts} className="font-semibold text-brand underline">
+              <button type="button" onClick={onManageAccounts} className="font-semibold text-brand-600 underline">
                 {t('accounts.pick.button')}
               </button>
             </p>
@@ -305,7 +344,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
               <button
                 type="button"
                 onClick={onManageAccounts}
-                className="rounded-md px-1.5 py-0.5 font-semibold text-brand hover:bg-rose-50"
+                className="rounded-md px-1.5 py-0.5 font-semibold text-brand-600 hover:bg-rose-50"
               >
                 {t('forms.account.edit')}
               </button>
@@ -321,8 +360,8 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
                     aria-pressed={selected}
                     className={`flex items-center gap-2.5 rounded-xl border px-2.5 py-2 text-left text-sm font-semibold transition-all ${
                       selected
-                        ? 'border-brand bg-rose-50 text-brand ring-1 ring-brand'
-                        : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                        ? 'border-brand bg-rose-50 text-brand-600 ring-1 ring-brand'
+                        : 'border-slate-200 bg-card text-slate-700 hover:border-slate-300'
                     }`}
                   >
                     <AccountAvatar name={a} />
@@ -348,7 +387,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
 
         <Field label={t(isTransfer ? 'forms.field.amountTransfer' : 'forms.field.amount')} icon={<DollarSign className="h-4 w-4" />}>
           <div className="relative">
-            <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+            <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">
               Rp
             </span>
             <input
@@ -363,10 +402,25 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
           </div>
         </Field>
 
+        {canSplit && (
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={toggleSplit}
+              aria-pressed={splitting}
+              data-testid="split-toggle"
+              className="text-xs font-semibold text-brand-600 hover:underline"
+            >
+              {t(splitting ? 'split.toggle.off' : 'split.toggle')}
+            </button>
+            {splitting && <SplitBox total={totalAmount} rows={splitRows} categories={EXPENSE_CATEGORIES} onChange={setSplitRows} />}
+          </div>
+        )}
+
         {isTransfer && (
           <Field label={t('forms.field.fee')} icon={<Receipt className="h-4 w-4" />}>
             <div className="relative">
-              <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+              <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">
                 Rp
               </span>
               <input
@@ -378,7 +432,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
                 className="form-input pl-10 tabular-nums"
               />
             </div>
-            <p className="mt-1.5 text-xs text-slate-400">{t('forms.fee.hint')}</p>
+            <p className="mt-1.5 text-xs text-slate-500">{t('forms.fee.hint')}</p>
           </Field>
         )}
 
@@ -393,7 +447,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
                   onClick={() => setDestination(d)}
                   aria-pressed={destination === d}
                   className={`rounded-lg py-2 text-xs font-semibold transition-all ${
-                    destination === d ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-700'
+                    destination === d ? 'bg-card text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
                   {t(d === 'sheet' ? 'forms.dest.sheet' : 'forms.dest.local')}
@@ -420,7 +474,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
         )}
       </div>
 
-      <div className="sticky bottom-0 border-t border-slate-100 bg-white/95 backdrop-blur-md px-6 py-4">
+      <div className="sticky bottom-0 border-t border-slate-100 bg-card/95 backdrop-blur-md px-6 py-4">
         <button
           type="submit"
           disabled={submitting || !canSubmit}
@@ -438,11 +492,11 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
               {t('forms.saving')}
             </>
           ) : (
-            <>{editing ? t('edit.save') : t(txType === 'expense' ? 'forms.save.expense' : txType === 'income' ? 'forms.save.income' : 'forms.save.transfer')}</>
+            <>{editing ? t('edit.save') : splitting ? t('split.save', { n: splitRows.length }) : t(txType === 'expense' ? 'forms.save.expense' : txType === 'income' ? 'forms.save.income' : 'forms.save.transfer')}</>
           )}
         </button>
         {totalAmount > 0 && (
-          <p className="mt-2 text-center text-xs text-slate-400">
+          <p className="mt-2 text-center text-xs text-slate-500">
             {t(isTransfer && feeAmount > 0 ? 'forms.total.outgoing' : 'forms.total.amount')}
             <span className="font-semibold text-slate-700">{rupiahLabel(isTransfer ? totalAmount + feeAmount : totalAmount)}</span>
           </p>

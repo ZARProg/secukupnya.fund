@@ -45,7 +45,7 @@ export function SlideOver({ open, title, onClose, wide = false, children }: Slid
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className={`absolute inset-y-0 right-0 flex w-full flex-col bg-white shadow-2xl outline-none animate-[panelIn_0.2s_ease-out] ${
+        className={`absolute inset-y-0 right-0 flex w-full flex-col bg-card shadow-2xl outline-none animate-[panelIn_0.2s_ease-out] ${
           wide ? 'max-w-xl' : 'max-w-md'
         }`}
       >
@@ -53,7 +53,7 @@ export function SlideOver({ open, title, onClose, wide = false, children }: Slid
           <h2 className="text-lg font-bold tracking-tight text-slate-900">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
             aria-label={t('shell.slideOver.close')}
           >
             <X className="h-5 w-5" />

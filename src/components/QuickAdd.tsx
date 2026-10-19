@@ -178,7 +178,7 @@ export function QuickAdd({
             data-testid="quick-input"
           />
           <p className="mt-1.5 text-xs text-slate-500">{t('quick.input.hint')}</p>
-          <p className="mt-1 text-xs text-slate-400">{t('quick.examples')}</p>
+          <p className="mt-1 text-xs text-slate-500">{t('quick.examples')}</p>
         </div>
 
         <section aria-label={t('quick.fav.title')}>
@@ -187,7 +187,7 @@ export function QuickAdd({
             <>
               <ul className="flex flex-wrap gap-2" data-testid="quick-chips">
                 {chips.map((c) => (
-                  <li key={c.id} className="flex items-center overflow-hidden rounded-full border border-line bg-white text-xs font-semibold text-slate-700">
+                  <li key={c.id} className="flex items-center overflow-hidden rounded-full border border-line bg-card text-xs font-semibold text-slate-700">
                     <button
                       type="button"
                       onClick={() => appendLine(c.line)}
@@ -202,7 +202,7 @@ export function QuickAdd({
                         type="button"
                         onClick={() => updateMem(removeFavorite(mem, c.fav?.id ?? ''))}
                         aria-label={t('quick.fav.remove', { name: c.label })}
-                        className="border-l border-line px-2 py-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                        className="border-l border-line px-2 py-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -210,17 +210,17 @@ export function QuickAdd({
                   </li>
                 ))}
               </ul>
-              <p className="mt-1.5 text-xs text-slate-400">{t('quick.fav.hint')}</p>
+              <p className="mt-1.5 text-xs text-slate-500">{t('quick.fav.hint')}</p>
             </>
           ) : (
-            <p className="text-xs text-slate-400">{t('quick.fav.empty')}</p>
+            <p className="text-xs text-slate-500">{t('quick.fav.empty')}</p>
           )}
         </section>
 
         <section aria-label={t('quick.preview.title')}>
           <h3 className="mb-2 text-xs font-semibold text-slate-500">{t('quick.preview.title')}</h3>
           {rows.length === 0 ? (
-            <p className="rounded-xl bg-slate-50 p-4 text-xs text-slate-400">{t('quick.empty')}</p>
+            <p className="rounded-xl bg-slate-50 p-4 text-xs text-slate-500">{t('quick.empty')}</p>
           ) : (
             <ul className="space-y-3" data-testid="quick-rows">
               {rows.map(({ key, row, excluded, guess, byRule }) => (
@@ -228,7 +228,7 @@ export function QuickAdd({
                   key={key}
                   data-testid="quick-row"
                   data-ok={row.ok ? '1' : '0'}
-                  className={`rounded-xl border p-3 ${excluded ? 'border-slate-200 bg-slate-50 opacity-60' : row.ok ? 'border-line bg-white' : 'border-amber-300 bg-amber-50/50'}`}
+                  className={`rounded-xl border p-3 ${excluded ? 'border-slate-200 bg-slate-50 opacity-60' : row.ok ? 'border-line bg-card' : 'border-amber-300 bg-amber-50/50'}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -298,7 +298,7 @@ export function QuickAdd({
                         onClick={() => favorite(row)}
                         aria-label={t('quick.fav.add')}
                         title={t('quick.fav.add')}
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-amber-50 hover:text-amber-500"
+                        className="rounded-lg p-1.5 text-slate-500 hover:bg-amber-50 hover:text-amber-500"
                       >
                         <Star className="h-4 w-4" />
                       </button>
@@ -320,7 +320,7 @@ export function QuickAdd({
                   type="button"
                   onClick={() => setDestination(d)}
                   aria-pressed={destination === d}
-                  className={`rounded-lg py-2 text-xs font-semibold transition-all ${destination === d ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-700'}`}
+                  className={`rounded-lg py-2 text-xs font-semibold transition-all ${destination === d ? 'bg-card text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                   {t(d === 'sheet' ? 'forms.dest.sheet' : 'forms.dest.local')}
                 </button>
@@ -328,10 +328,10 @@ export function QuickAdd({
             </div>
           </fieldset>
         )}
-        <p className="text-xs text-slate-400">{t('quick.shortcut')}</p>
+        <p className="text-xs text-slate-500">{t('quick.shortcut')}</p>
       </div>
 
-      <div className="sticky bottom-0 border-t border-slate-100 bg-white/95 px-6 py-4 backdrop-blur-md">
+      <div className="sticky bottom-0 border-t border-slate-100 bg-card/95 px-6 py-4 backdrop-blur-md">
         {showFix && hasProblem && <p className="mb-2 text-center text-xs font-medium text-amber-800" role="alert">{t('quick.save.fix')}</p>}
         <button
           type="button"

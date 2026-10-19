@@ -88,7 +88,7 @@ export function BackupCard({ sheetUrl, sheetVersion, authRequired, onNotify }: B
           <p className="text-sm leading-relaxed text-slate-600">{t('backup.intro')}</p>
           <p className="mt-2 text-xs text-slate-500">{t('backup.contents')}</p>
           <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
-            <input type="checkbox" checked={includeConn} onChange={(e) => setIncludeConn(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#800020]" data-testid="backup-conn" />
+            <input type="checkbox" checked={includeConn} onChange={(e) => setIncludeConn(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-brand" data-testid="backup-conn" />
             <span>
               {t('backup.includeConn')}
               <span className="block text-xs text-amber-700">{t('backup.includeConn.hint')}</span>
@@ -98,7 +98,7 @@ export function BackupCard({ sheetUrl, sheetVersion, authRequired, onNotify }: B
             <button onClick={download} className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark" data-testid="backup-download">
               <Download className="h-4 w-4" /> {t('backup.download')}
             </button>
-            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-card px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
               <Upload className="h-4 w-4" /> {t('backup.restore.pick')}
               <input ref={input} type="file" accept="application/json,.json" onChange={pick} className="sr-only" data-testid="backup-file" />
             </label>
@@ -111,12 +111,12 @@ export function BackupCard({ sheetUrl, sheetVersion, authRequired, onNotify }: B
               <p className="text-xs">{t('backup.restore.line', { tx: sum.transactions, accounts: sum.accounts, budgets: sum.budgets, goals: sum.goals, recurring: sum.recurring, debts: sum.debts, rules: sum.rules, activity: sum.activity })}</p>
               <p className="text-xs font-semibold">{t('backup.restore.warn')}</p>
               <label className="flex cursor-pointer items-start gap-2 text-xs">
-                <input type="checkbox" checked={safety} onChange={(e) => setSafety(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#800020]" data-testid="backup-safety" />
+                <input type="checkbox" checked={safety} onChange={(e) => setSafety(e.target.checked)} className="mt-0.5 h-4 w-4 accent-brand" data-testid="backup-safety" />
                 {t('backup.restore.safety')}
               </label>
               {sum.hasConnection && (
                 <label className="flex cursor-pointer items-start gap-2 text-xs">
-                  <input type="checkbox" checked={withConn} onChange={(e) => setWithConn(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#800020]" data-testid="backup-restore-conn" />
+                  <input type="checkbox" checked={withConn} onChange={(e) => setWithConn(e.target.checked)} className="mt-0.5 h-4 w-4 accent-brand" data-testid="backup-restore-conn" />
                   {t('backup.restore.conn')}
                 </label>
               )}
@@ -223,7 +223,7 @@ function SyncCard({ sheetUrl, sheetVersion, authRequired, onNotify }: BackupCard
             {remote?.at && <p className="text-xs text-slate-500">{t('sync.lastRemote', { at: fmt(remote.at) })}</p>}
             <div className="mt-3 flex flex-wrap gap-2">
               <button onClick={push} disabled={busy} className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-50" data-testid="sync-push">{t('sync.push')}</button>
-              <button onClick={pull} disabled={busy || !remote?.blob} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50" data-testid="sync-pull">{t('sync.pull')}</button>
+              <button onClick={pull} disabled={busy || !remote?.blob} className="rounded-lg border border-slate-200 bg-card px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50" data-testid="sync-pull">{t('sync.pull')}</button>
               <button onClick={check} disabled={busy} className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 disabled:opacity-50">{t('sync.check')}</button>
             </div>
           </>

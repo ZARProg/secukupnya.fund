@@ -213,3 +213,34 @@ Di panel **Catat transaksi** ada tab ketiga **Scan struk**: pilih atau potret st
 - Yang disimpan hanya total sebagai satu pengeluaran (barang hanya referensi; bisa ikut ke keterangan lewat centang). Kategori disarankan dari aturan kategori kamu, atau dari nama toko yang dikenal (Indomaret, Alfamart, Starbucks, SPBU, dll.), selain itu kamu yang memilih.
 - Batas: akurasi bergantung pada foto (tegak lurus, terang, tidak buram). Struk berbahasa Indonesia format umum paling baik; struk dengan tata letak tidak biasa bisa salah baca, karena itu ada pemeriksaan.
 - Teknis: `prebuild`/`predev` menjalankan `scripts/copy-ocr-assets.mjs` yang menyalin berkas OCR dari `node_modules` ke `public/ocr` (tidak di-commit). CSP di `vercel.json` memakai `'wasm-unsafe-eval'` untuk WebAssembly mesin OCR. Pembaca teks struk ada di `src/lib/receipt.ts` (tanpa regex lookbehind), pengolah foto dan OCR di `src/lib/receiptOcr.ts`.
+
+## Pisah transaksi ke beberapa kategori
+
+Di **Catat transaksi → Form lengkap → Pengeluaran**, tautan **Pisah ke beberapa kategori** membuka rincian 2 sampai 6 bagian (kategori + jumlah). Cocok untuk satu struk yang isinya beda kategori. Jumlah semua bagian **harus sama dengan total** (sisa atau kelebihan ditampilkan; tombol Simpan nonaktif sampai pas). Tiap bagian tersimpan sebagai transaksi sendiri dengan tanggal, rekening, dan keterangan yang sama, jadi laporan, anggaran, dan saldo tidak berubah cara hitungnya. Tidak tersedia untuk pemasukan, transfer, atau saat mengubah transaksi yang sudah ada. Riwayat aktivitas mencatatnya sebagai satu entri "impor" berisi jumlah baris. Logika di `src/lib/split.ts`.
+
+## Ekspor hasil filter (CSV dan Excel)
+
+Di halaman **Transaksi**, tombol **CSV** dan **Excel** di baris ringkasan mengunduh **persis transaksi yang tampil menurut filter saat ini** (bukan seluruh data). Menu Sumber data tetap punya ekspor semua transaksi.
+
+- CSV: UTF-8 dengan BOM, pemisah koma, kolom `Date, Type, Category, Account, Description, Total (Rp)`, terbaru di atas. Keterangan yang diawali `= + - @` diberi tanda kutip tunggal di depan supaya Excel/Sheets tidak menjalankannya sebagai rumus. Kalau Excel versi Indonesia membuka CSV jadi satu kolom (pemisah daftar di Windows kadang titik koma), pakai tombol **Excel** atau impor lewat Data → From Text/CSV.
+- Excel: format sama dengan template, jadi bisa diimpor kembali.
+- Transfer antar rekening tidak ikut karena memang tidak tampil di daftar transaksi.
+
+## Pasang di HP dan jalan offline (PWA)
+
+Situs bisa dipasang sebagai aplikasi (Chrome Android: menu → Pasang aplikasi / Tambahkan ke layar utama; Safari iPhone: Bagikan → Tambah ke Layar Utama). Setelah dibuka sekali online:
+
+- Aplikasi dan semua halamannya terbuka walau offline, dan catatan di browser tetap bisa dipakai. Sinkron Google Sheets menunggu internet; pemberitahuan "offline" muncul di pojok.
+- **Scan struk** juga jalan offline setelah pernah dipakai sekali (mesin OCR disimpan setelah unduhan pertama).
+- Saat online, halaman selalu diambil dari jaringan (versi terbaru); salinan tersimpan hanya cadangan kalau jaringan gagal atau lebih dari 4 detik.
+- **Versi baru tidak dipasang diam-diam.** Kalau ada versi baru, muncul kartu "Versi baru tersedia" dengan tombol **Muat ulang**. Ditunda pun tidak apa-apa; isian formulir yang belum disimpan tidak hilang tiba-tiba.
+- Service worker tidak menyentuh permintaan ke Google (Sheets/Apps Script) dan tidak menyimpan data transaksi, hanya berkas aplikasi.
+- Teknis: `sw.js` dibuat saat build oleh `scripts/vite-sw-plugin.mjs` dari `scripts/sw-template.js` (daftar berkas + versi otomatis); didaftarkan di `src/lib/pwa.ts` hanya pada build produksi (tidak aktif saat `npm run dev`). `vercel.json` menandai `/sw.js` tanpa cache HTTP supaya pembaruan terdeteksi. Kalau perlu mencabut paksa dari browser: DevTools → Application → Service Workers → Unregister, lalu Clear site data.
+
+## Performa
+
+Halaman selain Beranda dimuat saat pertama dibuka (`src/components/pages.ts`), dan pustaka Excel hanya dimuat saat impor/ekspor. Bundel awal turun dari ±800 kB (225 kB gzip) menjadi ±495 kB (148 kB gzip). Setelah rilis baru, tab lama yang masih terbuka otomatis dimuat ulang sekali kalau berkas halamannya sudah diganti (`src/lib/lazyPage.ts`).
+
+## Tampilan & palet warna
+
+Tema memakai empat warna dasar: sage `#6A795D` (merek), olive `#8E9162`, lime `#B2BD7E`, dan krem `#FCF0DA` (latar). Warna turunan (gelap/terang) dibuat dari keempatnya agar teks kecil tetap lolos kontras WCAG AA — teks kecil memakai sage gelap `#505D44`, bukan sage murni. Pengeluaran ditampilkan netral dengan tanda −, pemasukan hijau. Font (Figtree & Bricolage Grotesque) di-host sendiri di `public/fonts` sehingga tetap tampil saat offline. Warna diatur di `tailwind.config.js`.

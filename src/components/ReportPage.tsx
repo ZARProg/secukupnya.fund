@@ -37,7 +37,7 @@ export function ReportPage({ transactions }: ReportPageProps) {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1 rounded-2xl border border-line bg-white p-1 shadow-xs" role="group" aria-label={t('forms.report.pickMonth')}>
+        <div className="flex items-center gap-1 rounded-2xl border border-line bg-card p-1 shadow-xs" role="group" aria-label={t('forms.report.pickMonth')}>
           <button
             onClick={() => setMonth((m) => shiftMonth(m, -1))}
             disabled={!canPrev}
@@ -61,7 +61,7 @@ export function ReportPage({ transactions }: ReportPageProps) {
         {month !== currentMonth && (
           <button
             onClick={() => setMonth(currentMonth)}
-            className="rounded-lg px-3 py-1.5 text-xs font-semibold text-brand transition-colors hover:bg-rose-50"
+            className="rounded-lg px-3 py-1.5 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
           >
             {t('forms.report.backToCurrent')}
           </button>
@@ -70,7 +70,7 @@ export function ReportPage({ transactions }: ReportPageProps) {
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Tile label={t('forms.report.income')} value={rupiahLabel(report.income)} tone="text-emerald-600" change={incomeChange} goodWhen="up" />
-        <Tile label={t('forms.report.expense')} value={rupiahLabel(report.expense)} tone="text-brand" change={expenseChange} goodWhen="down" />
+        <Tile label={t('forms.report.expense')} value={rupiahLabel(report.expense)} tone="text-brand-600" change={expenseChange} goodWhen="down" />
         <Tile
           label={t('forms.report.net')}
           value={rupiahSigned(report.net)}
@@ -86,7 +86,7 @@ export function ReportPage({ transactions }: ReportPageProps) {
       </div>
 
       {empty && (
-        <p className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-8 text-center text-sm text-slate-500">
+        <p className="rounded-2xl border border-dashed border-slate-200 bg-card px-4 py-8 text-center text-sm text-slate-500">
           {t('forms.report.empty', { month: monthLabel(month) })}
         </p>
       )}
@@ -100,7 +100,7 @@ export function ReportPage({ transactions }: ReportPageProps) {
 
         <Panel title={t('forms.report.summaryTitle')}>
           {empty ? (
-            <p className="py-6 text-center text-sm text-slate-400">{t('forms.report.noData')}</p>
+            <p className="py-6 text-center text-sm text-slate-500">{t('forms.report.noData')}</p>
           ) : (
             <dl className="divide-y divide-slate-100 text-sm">
               <Row label={t('forms.report.count')} value={`${report.count}`} />
@@ -139,11 +139,11 @@ export function ReportPage({ transactions }: ReportPageProps) {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold text-slate-900">{tx.description || tx.category}</span>
-                    <span className="block text-xs text-slate-400">
+                    <span className="block text-xs text-slate-500">
                       {tx.category} · {parseISODate(tx.date).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })}
                     </span>
                   </span>
-                  <span className="shrink-0 text-sm font-bold tabular-nums text-brand">−{rupiahLabel(tx.total)}</span>
+                  <span className="shrink-0 text-sm font-bold tabular-nums text-brand-600">−{rupiahLabel(tx.total)}</span>
                 </li>
               );
             })}
@@ -161,16 +161,16 @@ function Tile({
   const hasChange = change !== undefined && change !== null && change !== 0;
   const good = hasChange && (goodWhen === 'up' ? change > 0 : change < 0);
   return (
-    <div className="rounded-2xl border border-line bg-white p-4 shadow-card">
+    <div className="rounded-2xl border border-line bg-card p-4 shadow-card">
       <p className="text-xs font-semibold text-slate-500">{label}</p>
-      <p className={`mt-1.5 text-lg font-extrabold tabular-nums sm:text-xl ${tone}`}>{value}</p>
+      <p className={`mt-1.5 text-lg font-display font-bold tabular-nums sm:text-xl ${tone}`}>{value}</p>
       {hasChange ? (
         <p className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${good ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
           {change > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
           {t('forms.report.changeVsLast', { change: `${change > 0 ? '+' : ''}${change}` })}
         </p>
       ) : (
-        <p className="mt-1.5 text-[11px] text-slate-400">{hint ?? t(change === null ? 'forms.report.noBaseline' : 'forms.report.sameAsLast')}</p>
+        <p className="mt-1.5 text-[11px] text-slate-500">{hint ?? t(change === null ? 'forms.report.noBaseline' : 'forms.report.sameAsLast')}</p>
       )}
     </div>
   );
@@ -179,7 +179,7 @@ function Tile({
 
 function Panel({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6">
+    <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-base font-bold tracking-tight text-slate-900">{title}</h2>
         {action}
@@ -225,7 +225,7 @@ function Trend({
       </div>
       <div className="mt-2 flex gap-2">
         {points.map((p) => (
-          <span key={p.month} className={`flex-1 text-center text-[11px] ${p.month === selected ? 'font-bold text-brand' : 'text-slate-400'}`}>
+          <span key={p.month} className={`flex-1 text-center text-[11px] ${p.month === selected ? 'font-bold text-brand-600' : 'text-slate-500'}`}>
             {monthLabel(p.month, 'short')}
           </span>
         ))}

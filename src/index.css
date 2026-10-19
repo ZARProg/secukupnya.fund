@@ -1,4 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+/* Font di-host sendiri (public/fonts, subset Latin, lisensi OFL): ikut tersimpan untuk mode offline dan tidak memanggil Google Fonts. */
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('/fonts/figtree-latin-wght.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/bricolage-grotesque-latin-wght.woff2') format('woff2');
+}
 
 @tailwind base;
 @tailwind components;
@@ -6,24 +20,25 @@
 
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    @apply bg-paper text-slate-800 antialiased selection:bg-brand-soft/30 selection:text-ink;
+    @apply bg-paper font-sans text-slate-800 antialiased selection:bg-brand-300/40 selection:text-ink;
   }
 
   :focus-visible {
-    outline: 2px solid #800020;
+    outline: 2px solid #505D44;
     outline-offset: 2px;
   }
 
-  aside :focus-visible {
-    outline-color: #f4b6c4;
+  /* Dropdown seragam di semua browser: panah sendiri, sudut membulat. */
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
   }
 
-  /* Dropdown seragam di semua browser: panah sendiri, sudut membulat. */
   select {
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238E8B80' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.85rem center;
     background-size: 1rem;
@@ -34,7 +49,7 @@
 
 @layer components {
   .form-input {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-150 focus:border-[#800020] focus:ring-2 focus:ring-[#800020]/10;
+    @apply w-full rounded-xl border border-slate-200 bg-card px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-150 focus:border-brand focus:ring-2 focus:ring-brand/20;
   }
 }
 

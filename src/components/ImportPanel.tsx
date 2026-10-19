@@ -195,12 +195,12 @@ export function ImportPanel({
         >
           {phase === 'reading' ? (
             <>
-              <Loader2 className="h-8 w-8 animate-spin text-brand" />
+              <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
               <p className="text-sm font-semibold text-slate-700">{t('importer.reading', { name: fileName })}</p>
             </>
           ) : (
             <>
-              <UploadCloud className="h-8 w-8 text-brand" />
+              <UploadCloud className="h-8 w-8 text-brand-600" />
               <p className="text-sm font-semibold text-slate-800">{t('importer.drop.title')}</p>
               <p className="text-xs text-slate-500">{t('importer.drop.hint')}</p>
             </>
@@ -245,13 +245,13 @@ export function ImportPanel({
       <div className="flex-1 space-y-5 p-6">
         <div className="flex items-center justify-between gap-3 rounded-lg bg-slate-50 px-4 py-3">
           <div className="flex min-w-0 items-center gap-2">
-            <FileSpreadsheet className="h-4 w-4 shrink-0 text-brand" />
+            <FileSpreadsheet className="h-4 w-4 shrink-0 text-brand-600" />
             <span className="truncate text-sm font-medium text-slate-800">{fileName}</span>
           </div>
           <button
             onClick={reset}
             disabled={importing}
-            className="shrink-0 text-xs font-semibold text-brand hover:underline disabled:opacity-50"
+            className="shrink-0 text-xs font-semibold text-brand-600 hover:underline disabled:opacity-50"
           >
             {t('importer.changeFile')}
           </button>
@@ -261,7 +261,7 @@ export function ImportPanel({
 
         {transfersToImport > 0 && (
           <p className="flex items-start gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-600">
-            <ArrowLeftRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+            <ArrowLeftRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
             <span>{tp('importer.transfers', transfersToImport)}</span>
           </p>
         )}
@@ -302,7 +302,7 @@ export function ImportPanel({
             />
           </div>
           {!sheetReady && (
-            <button onClick={onGoToSources} className="mt-2 text-xs font-semibold text-brand hover:underline">
+            <button onClick={onGoToSources} className="mt-2 text-xs font-semibold text-brand-600 hover:underline">
               {sheetConnected ? t('importer.goSources.check') : t('importer.goSources.connect')}
             </button>
           )}
@@ -338,7 +338,7 @@ export function ImportPanel({
                             return next;
                           })
                         }
-                        className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#800020]"
+                        className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-brand"
                       />
                       <span className="min-w-0">
                         <span className="block truncate font-medium">
@@ -367,7 +367,7 @@ export function ImportPanel({
               checked={skipDuplicates}
               onChange={(e) => setSkipDuplicates(e.target.checked)}
               disabled={importing}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#800020]"
+              className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-brand"
             />
             <span>
               {tp('importer.skipDuplicates', split?.duplicates.length ?? 0)}
@@ -385,7 +385,7 @@ export function ImportPanel({
               {split?.duplicates.map((r) => (
                 <li key={rowKey(r)} className="truncate py-1">
                   {t('importer.review.row', { line: r.line })} · {r.payload.date} · {r.payload.description || t('importer.review.noDescription')} · {rupiahLabel(r.payload.total)}
-                  {dupSource.get(rowKey(r)) && <span className="ml-1 text-slate-400">({t(`dup.in.${dupSource.get(rowKey(r))}` as 'dup.in.local')})</span>}
+                  {dupSource.get(rowKey(r)) && <span className="ml-1 text-slate-500">({t(`dup.in.${dupSource.get(rowKey(r))}` as 'dup.in.local')})</span>}
                 </li>
               ))}
             </ul>
@@ -395,14 +395,14 @@ export function ImportPanel({
         {ruleSuggestions.size > 0 && (
           <section className="space-y-2 rounded-lg border border-violet-200 bg-violet-50/60 px-3 py-3 text-sm text-slate-700" data-testid="import-rules">
             <label className="flex cursor-pointer items-start gap-2.5">
-              <input type="checkbox" checked={useRuleSuggest} onChange={(e) => setUseRuleSuggest(e.target.checked)} disabled={importing} className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#800020]" data-testid="import-rules-apply" />
+              <input type="checkbox" checked={useRuleSuggest} onChange={(e) => setUseRuleSuggest(e.target.checked)} disabled={importing} className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-brand" data-testid="import-rules-apply" />
               <span>
                 <span className="font-semibold">{tp('rules.import.title', ruleSuggestions.size)}</span>
                 <span className="block text-xs text-slate-500">{t('rules.import.apply')}. {overrideExisting ? t('rules.import.overrideHint') : t('rules.import.hint')}</span>
               </span>
             </label>
             <label className="flex cursor-pointer items-start gap-2.5 text-xs">
-              <input type="checkbox" checked={overrideExisting} onChange={(e) => setOverrideExisting(e.target.checked)} disabled={importing} className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#800020]" data-testid="import-rules-override" />
+              <input type="checkbox" checked={overrideExisting} onChange={(e) => setOverrideExisting(e.target.checked)} disabled={importing} className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-brand" data-testid="import-rules-override" />
               <span>{t('rules.import.override')}</span>
             </label>
             <details className="text-xs">
@@ -426,7 +426,7 @@ export function ImportPanel({
             <p className="mb-2 flex flex-wrap items-center justify-between gap-x-4 text-sm font-semibold text-slate-800">
               <span>{t('importer.preview')}</span>
               <span className="text-xs font-medium text-slate-500">
-                {totals.expense > 0 && <span className="text-brand tabular-nums">−{rupiahLabel(totals.expense)}</span>}
+                {totals.expense > 0 && <span className="text-brand-600 tabular-nums">−{rupiahLabel(totals.expense)}</span>}
                 {totals.expense > 0 && totals.income > 0 && ' · '}
                 {totals.income > 0 && (
                   <span className="text-emerald-600 tabular-nums">+{rupiahLabel(totals.income)}</span>
@@ -454,7 +454,7 @@ export function ImportPanel({
                       </span>
                     </span>
                     <span
-                      className={`shrink-0 text-sm font-bold tabular-nums ${isExpense ? 'text-brand' : 'text-emerald-600'}`}
+                      className={`shrink-0 text-sm font-bold tabular-nums ${isExpense ? 'text-brand-600' : 'text-emerald-600'}`}
                     >
                       {isExpense ? '−' : '+'}
                       {rupiahLabel(r.payload.total)}
@@ -499,7 +499,7 @@ export function ImportPanel({
 
       </div>
 
-      <div className="sticky bottom-0 border-t border-slate-100 bg-white px-6 py-4">
+      <div className="sticky bottom-0 border-t border-slate-100 bg-card px-6 py-4">
         <button
           onClick={runImport}
           disabled={importing || toImport.length === 0}
@@ -526,7 +526,7 @@ export function ImportPanel({
 function Stat({ label, value, tone }: { label: string; value: number; tone: string }) {
   return (
     <div className="rounded-lg border border-slate-200 px-2 py-3">
-      <p className={`text-xl font-extrabold tabular-nums ${tone}`}>{value}</p>
+      <p className={`text-xl font-display font-bold tabular-nums ${tone}`}>{value}</p>
       <p className="mt-0.5 text-xs text-slate-500">{label}</p>
     </div>
   );
@@ -569,7 +569,7 @@ function DestinationOption({
         onChange={onSelect}
         className="sr-only"
       />
-      <span className={`mt-0.5 ${checked ? 'text-brand' : 'text-slate-500'}`}>{icon}</span>
+      <span className={`mt-0.5 ${checked ? 'text-brand-600' : 'text-slate-500'}`}>{icon}</span>
       <span>
         <span className="block text-sm font-semibold text-slate-900">{title}</span>
         <span className="block text-xs text-slate-500">{hint}</span>

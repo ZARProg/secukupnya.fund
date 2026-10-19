@@ -24,7 +24,7 @@ export function AccountStrip({ accounts, onSelect, onManage }: AccountStripProps
         </h2>
         <button
           onClick={onManage}
-          className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-brand transition-colors hover:bg-rose-50"
+          className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
         >
           <Settings2 className="h-3.5 w-3.5" />
           {t('shell.strip.choose')}
@@ -38,19 +38,19 @@ export function AccountStrip({ accounts, onSelect, onManage }: AccountStripProps
             <li key={account} className="snap-start">
               <button
                 onClick={() => onSelect(account)}
-                className="group flex w-44 flex-col gap-4 rounded-2xl border border-line bg-white p-4 text-left transition-colors hover:border-brand/40 hover:bg-rose-50/40"
+                className="group flex w-44 flex-col gap-4 rounded-2xl border border-line bg-card p-4 text-left transition-colors hover:border-brand/40 hover:bg-rose-50/40"
                 aria-label={t('shell.strip.open', { account, balance: rupiahSigned(balance) })}
               >
                 <div className="flex items-center gap-2.5">
                   <AccountAvatar name={account} size="md" />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-bold text-slate-900">{account}</p>
-                    <p className="text-xs text-slate-400">{kind}</p>
+                    <p className="text-xs text-slate-500">{kind}</p>
                   </div>
                 </div>
                 <p
                   className={`text-base font-bold tabular-nums tracking-tight ${
-                    balance < 0 ? 'text-rose-600' : 'text-slate-900'
+                    balance < 0 ? 'text-red-700' : 'text-slate-900'
                   }`}
                 >
                   {rupiahSigned(balance)}

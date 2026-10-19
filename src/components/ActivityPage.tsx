@@ -67,16 +67,16 @@ export function ActivityPage({ onRestore, onToast }: { onRestore: (e: ActivityEn
 
   return (
     <div className="space-y-4" data-testid="activity-page">
-      <p className="flex items-start gap-2 rounded-2xl border border-line bg-white p-4 text-xs leading-relaxed text-slate-600 shadow-card">
-        <History className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+      <p className="flex items-start gap-2 rounded-2xl border border-line bg-card p-4 text-xs leading-relaxed text-slate-600 shadow-card">
+        <History className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
         {t('activity.scope')}
       </p>
 
       {entries.length === 0 ? (
-        <p className="rounded-2xl border border-line bg-white p-6 text-sm text-slate-500" data-testid="activity-empty">{t('activity.empty')}</p>
+        <p className="rounded-2xl border border-line bg-card p-6 text-sm text-slate-500" data-testid="activity-empty">{t('activity.empty')}</p>
       ) : (
         <>
-          <div className="space-y-3 rounded-2xl border border-line bg-white p-4 shadow-card">
+          <div className="space-y-3 rounded-2xl border border-line bg-card p-4 shadow-card">
             <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('activity.filter.all')}>
               {GROUPS.map((g) => (
                 <button
@@ -102,7 +102,7 @@ export function ActivityPage({ onRestore, onToast }: { onRestore: (e: ActivityEn
           </div>
 
           {shown.length === 0 ? (
-            <p className="rounded-2xl border border-line bg-white p-6 text-sm text-slate-500">{t('activity.emptyFilter')}</p>
+            <p className="rounded-2xl border border-line bg-card p-6 text-sm text-slate-500">{t('activity.emptyFilter')}</p>
           ) : (
             <ul className="space-y-2" data-testid="activity-list">
               {shown.slice(0, limit).map((e) => (
@@ -111,7 +111,7 @@ export function ActivityPage({ onRestore, onToast }: { onRestore: (e: ActivityEn
             </ul>
           )}
           {shown.length > limit && (
-            <button onClick={() => setLimit((l) => l + PAGE)} className="w-full rounded-xl border border-line bg-white py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+            <button onClick={() => setLimit((l) => l + PAGE)} className="w-full rounded-xl border border-line bg-card py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
               +{Math.min(PAGE, shown.length - limit)}
             </button>
           )}
@@ -149,12 +149,12 @@ function Entry({ e, busy, onRestore }: { e: ActivityEntry; busy: boolean; onRest
   const line = (s: TxSnap) => `${s.description || s.category} · ${s.category} · ${s.account} · ${shortDate(s.date)} · ${t(`activity.type.${s.type}` as MessageKey)} ${money(s.total)}`;
 
   return (
-    <li className="rounded-2xl border border-line bg-white p-4 shadow-card" data-testid="activity-entry" data-action={e.action}>
+    <li className="rounded-2xl border border-line bg-card p-4 shadow-card" data-testid="activity-entry" data-action={e.action}>
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className={`rounded-full px-2.5 py-0.5 font-bold ${TONE[e.action]}`}>{t(`activity.action.${e.action}` as MessageKey)}</span>
         <span className="rounded-full bg-slate-100 px-2 py-0.5 font-semibold text-slate-600">{t(e.source === 'sheet' ? 'activity.source.sheet' : 'activity.source.local')}</span>
         <time className="text-slate-500" dateTime={e.at}>{when(e.at)}</time>
-        <span className={`ml-auto font-bold tabular-nums ${effect < 0 ? 'text-brand' : effect > 0 ? 'text-emerald-700' : 'text-slate-500'}`} title={t('activity.effect')} data-testid="activity-effect">
+        <span className={`ml-auto font-bold tabular-nums ${effect < 0 ? 'text-brand-600' : effect > 0 ? 'text-emerald-700' : 'text-slate-500'}`} title={t('activity.effect')} data-testid="activity-effect">
           {moneySigned(effect)}
         </span>
       </div>
@@ -170,7 +170,7 @@ function Entry({ e, busy, onRestore }: { e: ActivityEntry; busy: boolean; onRest
             {fields.map((f) => (
               <li key={f} className="text-slate-600">
                 <span className="font-semibold">{t(`activity.field.${f}` as MessageKey)}:</span>{' '}
-                <span className="text-slate-400 line-through">{f === 'total' ? money(e.before![f]) : String(e.before![f])}</span>
+                <span className="text-slate-500 line-through">{f === 'total' ? money(e.before![f]) : String(e.before![f])}</span>
                 {' → '}
                 <span className="font-semibold text-slate-900">{f === 'total' ? money(e.after![f]) : String(e.after![f])}</span>
               </li>
@@ -184,7 +184,7 @@ function Entry({ e, busy, onRestore }: { e: ActivityEntry; busy: boolean; onRest
       {(canRestore || e.restoredAt) && (
         <div className="mt-3">
           {e.restoredAt ? (
-            <span className="text-xs font-semibold text-slate-400">{t('activity.restored')} · {when(e.restoredAt)}</span>
+            <span className="text-xs font-semibold text-slate-500">{t('activity.restored')} · {when(e.restoredAt)}</span>
           ) : (
             <button
               onClick={onRestore}

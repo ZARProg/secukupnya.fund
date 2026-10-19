@@ -31,10 +31,10 @@ export function Toast({ toast, onDismiss }: ToastProps) {
         className={`flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-md transition-all ${
           success
             ? 'border-emerald-200/80 bg-emerald-50/95 text-emerald-900'
-            : 'border-rose-200/80 bg-rose-50/95 text-rose-900'
+            : 'border-red-200 bg-red-50 text-red-900'
         }`}
       >
-        <div className={`p-1 rounded-xl ${success ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+        <div className={`p-1 rounded-xl ${success ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
           {success ? (
             <CheckCircle2 className="h-4 w-4 shrink-0" />
           ) : (
@@ -45,7 +45,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
         <button
           onClick={onDismiss}
           className={`rounded-lg p-1 transition-colors hover:bg-black/5 ${
-            success ? 'text-emerald-700' : 'text-rose-700'
+            success ? 'text-emerald-700' : 'text-red-700'
           }`}
           aria-label={tx('shell.toast.dismiss')}
         >

@@ -1,38 +1,29 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { Suspense, useState, useCallback, useEffect, useMemo } from 'react';
 import { Menu, Plus, TriangleAlert, Wallet } from 'lucide-react';
 import { Sidebar, type View } from '@/components/Sidebar';
 import { SlideOver } from '@/components/SlideOver';
 import { todayISO } from '@/lib/date';
 import { PickAccountsBanner } from '@/components/PickAccountsBanner';
 import { DueBanner } from '@/components/DueBanner';
-import { CalendarPage } from '@/components/CalendarPage';
-import { GoalsPage, PlansPage } from '@/components/PlansPage';
 import { usePlans } from '@/hooks/usePlans';
 import { useBudgets } from '@/hooks/useBudgets';
 import { dueRules, monthKey, type Recurring } from '@/lib/plans';
 import { RecordPanel } from '@/components/RecordPanel';
-import { ConflictsPage } from '@/components/ConflictsPage';
-import { ActivityPage } from '@/components/ActivityPage';
-import { RulesPage } from '@/components/RulesPage';
-import { DebtsPage } from '@/components/DebtsPage';
 import { SecurityBanner } from '@/components/SecurityBanner';
 import { DebtDueBanner } from '@/components/DebtDueBanner';
-import { BudgetsPage } from '@/components/BudgetsPage';
-import { NetWorthPage } from '@/components/NetWorthPage';
-import { ReportPage } from '@/components/ReportPage';
-import { TransactionsPage } from '@/components/TransactionsPage';
-import { SourcesPage } from '@/components/SourcesPage';
-import { ImportPanel } from '@/components/ImportPanel';
 import { Dashboard } from '@/components/Dashboard';
+import {
+  AchievementsPage, ActivityPage, BudgetsPage, CalendarPage, ConflictsPage, DebtsPage, GoalsPage, ImportPanel, NetWorthPage,
+  PlansPage, RecapPage, ReportPage, RulesPage, SourcesPage, TransactionsPage,
+} from '@/components/pages';
+import { PageFallback } from '@/components/PageFallback';
+import { PwaStatus } from '@/components/PwaStatus';
 import { Toast, ToastState } from '@/components/Toast';
-import { RecapPage } from '@/components/RecapPage';
-import { AchievementsPage } from '@/components/AchievementsPage';
 import { useEngagement } from '@/hooks/useEngagement';
 import { BADGE_EMOJI } from '@/lib/engage';
 import { useTransactions, type Destination } from '@/hooks/useTransactions';
 import { findCrossDuplicates, loadIgnored, saveIgnored } from '@/lib/crossSource';
 import { clearSheetToken, clearSheetUrl, getSheetUrl, isUrlFromEnv, saveSheetToken, saveSheetUrl } from '@/lib/config';
-import { downloadTemplate, downloadTransactions } from '@/lib/excelFile';
 import { loadAccounts, saveAccounts } from '@/lib/accounts';
 import { accountBalances } from '@/lib/summary';
 import { isTransferCategory } from '@/lib/categories';
@@ -246,6 +237,7 @@ function App() {
       return;
     }
     try {
+      const { downloadTransactions } = await import('@/lib/excelFile');
       await downloadTransactions(transactions);
     } catch (err) {
       console.error('Export gagal:', err);
@@ -255,6 +247,7 @@ function App() {
 
   const handleTemplate = useCallback(async () => {
     try {
+      const { downloadTemplate } = await import('@/lib/excelFile');
       await downloadTemplate();
     } catch (err) {
       console.error('Template gagal dibuat:', err);
@@ -361,7 +354,7 @@ function App() {
 
       <div className="lg:pl-72">
         {/* Top bar (mobile only) */}
-        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
+        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-paper/90 px-4 py-3 backdrop-blur-md lg:hidden">
           <button
             onClick={() => setNavOpen(true)}
             className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100"
@@ -373,13 +366,13 @@ function App() {
             <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-white">
               <Wallet className="h-4 w-4" />
             </span>
-            <span className="text-sm font-bold tracking-tight">Secukupnya.fund</span>
+            <span className="font-display text-base font-bold tracking-tight">Secukupnya.fund</span>
           </div>
         </div>
 
         <main className="mx-auto max-w-5xl px-4 pb-24 pt-6 sm:px-8 sm:pt-10 lg:pb-10">
           <header className="mb-6 sm:mb-8">
-            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-[2rem]">{heading.title}</h1>
+            <h1 className="font-display text-[1.75rem] font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">{heading.title}</h1>
             <p className="mt-1 text-sm text-slate-500">{heading.subtitle}</p>
           </header>
 
@@ -392,13 +385,13 @@ function App() {
               <div className="flex gap-2">
                 <button
                   onClick={refresh}
-                  className="rounded-lg border border-red-200 bg-white px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                  className="rounded-lg border border-red-200 bg-card px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
                 >
                   {t('shell.app.retry')}
                 </button>
                 <button
                   onClick={() => navigate('sources')}
-                  className="rounded-lg border border-red-200 bg-white px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                  className="rounded-lg border border-red-200 bg-card px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
                 >
                   {t('shell.nav.sources')}
                 </button>
@@ -424,6 +417,7 @@ function App() {
             </div>
           )}
 
+          <Suspense fallback={<PageFallback />}>
           {view === 'overview' && selectedAccounts.length === 0 && <PickAccountsBanner onPick={manageAccounts} />}
           {view === 'overview' && <DueBanner due={due} onRecord={handleRecordDue} onSkip={handleSkipDue} />}
           {view === 'overview' && sheetUrl && !loading && !error && sheetVersion > 0 && !sheetSecured && (
@@ -521,6 +515,7 @@ function App() {
               onNotify={notify}
             />
           )}
+          </Suspense>
         </main>
       </div>
 
@@ -549,6 +544,7 @@ function App() {
       </SlideOver>
 
       <SlideOver open={panel === 'import'} title={t('shell.action.import')} onClose={closePanel} wide>
+        <Suspense fallback={<PageFallback />}>
         <ImportPanel
           sheetConnected={sheetConnected}
           sheetLoading={loading}
@@ -563,7 +559,9 @@ function App() {
             navigate('sources');
           }}
         />
+        </Suspense>
       </SlideOver>
+      <PwaStatus />
     </div>
   );
 }

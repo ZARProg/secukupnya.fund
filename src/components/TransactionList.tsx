@@ -53,11 +53,11 @@ export function TransactionList({
   if (!transactions.length) {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 px-4 py-12 text-center">
-        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-100 bg-white text-slate-400 shadow-xs">
+        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-100 bg-card text-slate-500 shadow-xs">
           <Inbox className="h-6 w-6" />
         </div>
         <p className="text-sm font-semibold text-slate-700">{emptyTitle ?? t('shell.list.emptyTitle')}</p>
-        <p className="mt-1 max-w-xs text-xs text-slate-400">{emptyHint ?? t('shell.list.emptyHint')}</p>
+        <p className="mt-1 max-w-xs text-xs text-slate-500">{emptyHint ?? t('shell.list.emptyHint')}</p>
       </div>
     );
   }
@@ -106,7 +106,7 @@ export function TransactionList({
 
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-slate-900">{tx.description || tx.category}</p>
-                <div className="mt-1 flex items-center gap-x-2 text-xs text-slate-400">
+                <div className="mt-1 flex items-center gap-x-2 text-xs text-slate-500">
                   <span className="truncate">{tx.category}</span>
                   {tx.account && (
                     <span className="flex shrink-0 items-center gap-1.5 font-medium text-slate-500" title={tx.account}>
@@ -130,7 +130,7 @@ export function TransactionList({
                 </div>
               </div>
 
-              <p className={`shrink-0 text-sm font-bold tabular-nums ${isExpense ? 'text-brand' : 'text-emerald-600'}`}>
+              <p className={`shrink-0 text-sm font-bold tabular-nums ${isExpense ? 'text-brand-600' : 'text-emerald-600'}`}>
                 {isExpense ? '−' : '+'}
                 {rupiahLabel(tx.total)}
               </p>
@@ -139,7 +139,7 @@ export function TransactionList({
                 <button
                   onClick={() => onEdit(tx)}
                   disabled={deletingId !== null}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-700 focus-visible:text-slate-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 focus-visible:text-slate-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
                   aria-label={t('edit.aria', { name: tx.description || tx.category })}
                 >
                   <Pencil className="h-4 w-4" />
@@ -148,7 +148,7 @@ export function TransactionList({
               <button
                 onClick={() => handleDelete(tx)}
                 disabled={deletingId !== null}
-                className="-mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 sm:mr-0 transition-all hover:bg-rose-50 hover:text-rose-600 focus-visible:text-rose-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
+                className="-mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 sm:mr-0 transition-all hover:bg-red-50 hover:text-red-700 focus-visible:text-red-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
                 aria-label={t('shell.list.delete', { name: tx.description || tx.category })}
               >
                 {deletingId === tx.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}

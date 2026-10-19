@@ -12,9 +12,9 @@ export function PwaStatus() {
   return (
     <div className="pointer-events-none fixed inset-x-4 bottom-24 z-[70] space-y-2 lg:bottom-4 lg:left-auto lg:right-4 lg:w-96">
       {updateReady && (
-        <div role="status" data-testid="pwa-update" className="pointer-events-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-lg">
+        <div role="status" data-testid="pwa-update" className="pointer-events-auto rounded-2xl border border-slate-200 bg-card p-4 shadow-lg">
           <div className="flex items-start gap-3">
-            <RefreshCw className="mt-0.5 h-5 w-5 shrink-0 text-brand" aria-hidden="true" />
+            <RefreshCw className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" aria-hidden="true" />
             <div className="min-w-0">
               <p className="text-sm font-bold text-slate-900">{t('pwa.update.title')}</p>
               <p className="mt-0.5 text-xs text-slate-500">{t('pwa.update.body')}</p>

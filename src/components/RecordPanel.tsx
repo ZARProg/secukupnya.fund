@@ -72,7 +72,7 @@ export function RecordPanel(props: RecordPanelProps) {
               type="button"
               onClick={() => pick(k)}
               aria-pressed={tab === k}
-              className={`rounded-lg py-2 text-xs font-bold transition-all ${tab === k ? 'bg-white text-brand shadow-xs' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`rounded-lg py-2 text-xs font-bold transition-all ${tab === k ? 'bg-card text-brand-600 shadow-xs' : 'text-slate-500 hover:text-slate-700'}`}
             >
               {t(k === 'quick' ? 'quick.tab.quick' : k === 'full' ? 'quick.tab.full' : 'scan.tab')}
             </button>

@@ -99,7 +99,7 @@ export function RecapPage({ transactions, eng, onToast }: {
               key={k}
               onClick={() => pickKind(k)}
               aria-pressed={kind === k}
-              className={`rounded-lg px-3 py-1.5 text-sm font-semibold ${kind === k ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`}
+              className={`rounded-lg px-3 py-1.5 text-sm font-semibold ${kind === k ? 'bg-card text-brand-600 shadow-sm' : 'text-slate-500'}`}
             >
               {t(k === 'week' ? 'recap.kind.week' : 'recap.kind.month')}
             </button>
@@ -126,7 +126,7 @@ export function RecapPage({ transactions, eng, onToast }: {
       </div>
 
       {!data.hasData ? (
-        <p className="rounded-2xl border border-line bg-white p-6 text-sm text-slate-500" data-testid="recap-empty">{t('recap.empty')}</p>
+        <p className="rounded-2xl border border-line bg-card p-6 text-sm text-slate-500" data-testid="recap-empty">{t('recap.empty')}</p>
       ) : (
         <>
           <div className="mx-auto w-full max-w-sm">
@@ -164,7 +164,7 @@ export function RecapPage({ transactions, eng, onToast }: {
                 <Download className="h-4 w-4" /> {t('recap.download')}
               </button>
               {canShare && (
-                <button onClick={share} className="flex items-center justify-center gap-2 rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-semibold text-slate-700">
+                <button onClick={share} className="flex items-center justify-center gap-2 rounded-xl border border-line bg-card px-4 py-2.5 text-sm font-semibold text-slate-700">
                   <Share2 className="h-4 w-4" /> {t('recap.share')}
                 </button>
               )}
@@ -197,11 +197,11 @@ function CardView({ card, footer }: { card: StoryCard; footer: string }) {
       className="relative flex aspect-[4/5] w-full flex-col overflow-hidden rounded-3xl p-7 shadow-card"
       style={{ background: `linear-gradient(135deg, ${th.from}, ${th.to})`, color: th.text }}
     >
-      <span aria-hidden className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-white/10" />
-      <span aria-hidden className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-white/10" />
+      <span aria-hidden className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-card/10" />
+      <span aria-hidden className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-card/10" />
       <p className="relative text-xs font-bold uppercase tracking-widest" style={{ color: th.muted }}>{card.eyebrow}</p>
-      {card.title && <h3 className="relative mt-3 text-2xl font-extrabold leading-tight">{card.title}</h3>}
-      <p className="relative mt-auto break-words text-5xl font-extrabold leading-none tracking-tight" data-testid="recap-big">{card.big}</p>
+      {card.title && <h3 className="relative mt-3 text-2xl font-display font-bold leading-tight">{card.title}</h3>}
+      <p className="relative mt-auto break-words text-5xl font-display font-bold leading-none tracking-tight" data-testid="recap-big">{card.big}</p>
       <p className="relative mt-3 text-sm font-medium" style={{ color: th.muted }}>{card.sub}</p>
       {card.rows.length > 0 && (
         <ul className="relative mt-5 space-y-3">
@@ -209,10 +209,10 @@ function CardView({ card, footer }: { card: StoryCard; footer: string }) {
             <li key={r.label}>
               <div className="flex justify-between gap-3 text-sm">
                 <span className="truncate">{r.label}</span>
-                <span className="whitespace-nowrap font-extrabold">{r.value}</span>
+                <span className="whitespace-nowrap font-display font-bold">{r.value}</span>
               </div>
               {r.pct !== undefined && (
-                <div className="mt-1 h-1.5 rounded-full bg-white/20">
+                <div className="mt-1 h-1.5 rounded-full bg-card/20">
                   <div className="h-full rounded-full" style={{ width: `${Math.max(2, Math.min(100, r.pct))}%`, background: th.accent }} />
                 </div>
               )}

@@ -81,12 +81,12 @@ export function Dashboard({
         </Panel>
       </div>
 
-      <div className="rise grid grid-cols-1 gap-5 lg:grid-cols-2" style={{ animationDelay: '180ms' }}>
+      <div className="rise grid grid-cols-1 items-start gap-5 lg:grid-cols-2" style={{ animationDelay: '180ms' }}>
         <Panel
           title={t('ux.cat.period', { month: monthLabel(month) })}
           action={
             <div className="flex gap-1 rounded-lg bg-slate-100 p-0.5" role="group" aria-label={t('shell.type.group')}>
-              <TabButton active={chartTab === 'expense'} activeColor="text-brand" onClick={() => setChartTab('expense')}>
+              <TabButton active={chartTab === 'expense'} activeColor="text-brand-600" onClick={() => setChartTab('expense')}>
                 {t('shell.type.expense')}
               </TabButton>
               <TabButton active={chartTab === 'income'} activeColor="text-emerald-600" onClick={() => setChartTab('income')}>
@@ -103,7 +103,7 @@ export function Dashboard({
           action={
             <button
               onClick={onSeeAll}
-              className="rounded-lg px-2 py-1 text-xs font-semibold text-brand transition-colors hover:bg-rose-50"
+              className="rounded-lg px-2 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
             >
               {t('shell.dashboard.seeAll', { n: listed.length })}
             </button>
@@ -118,9 +118,9 @@ export function Dashboard({
 
 function Panel({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6">
+    <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-        <h2 className="text-base font-bold tracking-tight text-slate-900">{title}</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-slate-900">{title}</h2>
         {action}
       </div>
       {children}
@@ -141,7 +141,7 @@ function TabButton({
       onClick={onClick}
       aria-pressed={active}
       className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${
-        active ? `bg-white ${activeColor} shadow-sm` : 'text-slate-500 hover:text-slate-700'
+        active ? `bg-card ${activeColor} shadow-sm` : 'text-slate-500 hover:text-slate-700'
       }`}
     >
       {children}
@@ -175,8 +175,8 @@ function GettingStarted({
   ];
 
   return (
-    <section className="rounded-3xl border border-line bg-white p-6 sm:p-8">
-      <h2 className="text-xl font-extrabold tracking-tight text-slate-900">{t('shell.start.title')}</h2>
+    <section className="rounded-3xl border border-line bg-card p-6 sm:p-8">
+      <h2 className="text-xl font-display font-bold tracking-tight text-slate-900">{t('shell.start.title')}</h2>
       <p className="mt-1 text-sm text-slate-500">{t('shell.start.subtitle')}</p>
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         {options.map(({ icon: Icon, title, text, action }) => (
@@ -195,7 +195,7 @@ function GettingStarted({
       </div>
       <button
         onClick={onTemplate}
-        className="mt-5 flex items-center gap-2 rounded-lg text-sm font-semibold text-brand transition-colors hover:text-brand-dark"
+        className="mt-5 flex items-center gap-2 rounded-lg text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700"
       >
         <Download className="h-4 w-4" />
         {t('shell.start.template')}

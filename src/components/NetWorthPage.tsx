@@ -60,36 +60,36 @@ export function NetWorthPage({ balances, transactions, ready, onToast }: NetWort
   return (
     <div className="space-y-5" data-testid="networth-page">
       <section
-        className="rounded-3xl bg-gradient-to-br from-[#93102f] via-brand to-[#4a0014] p-6 text-white shadow-card sm:p-8"
+        className="rounded-3xl bg-brand p-6 text-white sm:p-8"
         aria-label={t('nw.hero.label')}
       >
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm font-semibold text-white/80">{t('nw.hero.label')}</p>
+          <p className="text-sm font-semibold text-white">{t('nw.hero.label')}</p>
           {result.hasEstimate && (
             <span className="rounded-full bg-amber-300/90 px-2.5 py-0.5 text-[11px] font-bold text-amber-950" data-testid="nw-estimate-badge">
               {t('nw.estimate.badge')}
             </span>
           )}
         </div>
-        <p className="mt-1 text-4xl font-extrabold tracking-tight tabular-nums sm:text-5xl" data-testid="nw-net">
+        <p className="mt-1 font-display text-5xl font-bold leading-none tracking-tight tabular-nums sm:text-6xl" data-testid="nw-net">
           {result.hasEstimate && '≈ '}{moneySigned(result.net)}
         </p>
-        <p className="mt-2 text-sm text-white/85" data-testid="nw-formula">
+        <p className="mt-2 text-sm text-white" data-testid="nw-formula">
           {t('nw.hero.formula', { assets: money(result.assets), liabilities: money(result.liabilities) })}
         </p>
 
         <div className="mt-4 space-y-1.5 text-sm">
-          {!ready && <p className="text-white/80">{t('nw.loading')}</p>}
+          {!ready && <p className="text-white">{t('nw.loading')}</p>}
           {change ? (
             <p className="flex items-center gap-1.5 font-semibold" data-testid="nw-change">
               {change.delta >= 0 ? <TrendingUp className="h-4 w-4" aria-hidden="true" /> : <TrendingDown className="h-4 w-4" aria-hidden="true" />}
               {t('nw.change', { date: shortDate(change.since), delta: `${change.delta > 0 ? '+' : ''}${moneySigned(change.delta)}` })}
             </p>
           ) : (
-            hasAnything && <p className="text-white/80">{t('nw.change.none')}</p>
+            hasAnything && <p className="text-white">{t('nw.change.none')}</p>
           )}
           {hasAnything && (
-            <p className="text-white/80" data-testid="nw-estimate-note">
+            <p className="text-white" data-testid="nw-estimate-note">
               {result.hasEstimate
                 ? t('nw.estimate.note', { amount: money(estAmount), pct: estPct })
                 : t('nw.exact.note', { days: STALE_DAYS })}
@@ -117,14 +117,14 @@ export function NetWorthPage({ balances, transactions, ready, onToast }: NetWort
         />
       </div>
 
-      <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6" aria-label={t('nw.how.title')}>
+      <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6" aria-label={t('nw.how.title')}>
         <div className="space-y-2">
           <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-slate-700">
             <input
               type="checkbox"
               checked={data.includeAccounts}
               onChange={(e) => nw.setInclude('includeAccounts', e.target.checked)}
-              className="h-4 w-4 accent-[#800020]"
+              className="h-4 w-4 accent-brand"
               data-testid="nw-toggle-accounts"
             />
             {t('nw.toggle.accounts')}
@@ -134,7 +134,7 @@ export function NetWorthPage({ balances, transactions, ready, onToast }: NetWort
               type="checkbox"
               checked={data.includeDebts}
               onChange={(e) => nw.setInclude('includeDebts', e.target.checked)}
-              className="h-4 w-4 accent-[#800020]"
+              className="h-4 w-4 accent-brand"
               data-testid="nw-toggle-debts"
             />
             {t('nw.toggle.debts')}
@@ -168,7 +168,7 @@ function HistoryChart({ history }: { history: NetSnapshot[] }) {
   const enough = pts.length >= 2;
 
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6" aria-labelledby="nw-chart-title">
+    <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6" aria-labelledby="nw-chart-title">
       <h2 id="nw-chart-title" className="text-base font-bold tracking-tight text-slate-900">{t('nw.chart.title')}</h2>
       {!enough ? (
         <p className="mt-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center text-sm text-slate-500" data-testid="nw-chart-empty">
@@ -216,21 +216,21 @@ function ChartSvg({ pts }: { pts: NetSnapshot[] }) {
       >
         {ticks.map((v, i) => (
           <g key={i}>
-            <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="#e2e8f0" strokeDasharray="3 4" />
-            <text x={L - 6} y={y(v) + 3} textAnchor="end" fontSize="14" fill="#94a3b8">{v < 0 ? '−' : ''}{compact(Math.abs(v))}</text>
+            <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="#EBE8DC" strokeDasharray="3 4" />
+            <text x={L - 6} y={y(v) + 3} textAnchor="end" fontSize="14" fill="#6F6B5D">{v < 0 ? '−' : ''}{compact(Math.abs(v))}</text>
           </g>
         ))}
-        {min < 0 && max > 0 && <line x1={L} x2={W - R} y1={y(0)} y2={y(0)} stroke="#475569" strokeWidth="1" />}
-        <path d={area} fill="#800020" fillOpacity="0.08" />
-        <path d={line} fill="none" stroke="#800020" strokeWidth="2" strokeLinejoin="round" />
+        {min < 0 && max > 0 && <line x1={L} x2={W - R} y1={y(0)} y2={y(0)} stroke="#555143" strokeWidth="1" />}
+        <path d={area} fill="#6A795D" fillOpacity="0.08" />
+        <path d={line} fill="none" stroke="#6A795D" strokeWidth="2" strokeLinejoin="round" />
         {pts.map((p) => (
-          <circle key={p.date} cx={x(p.date)} cy={y(p.net)} r="3.5" fill={p.estimated > 0 ? '#fff' : '#800020'} stroke="#800020" strokeWidth="2">
+          <circle key={p.date} cx={x(p.date)} cy={y(p.net)} r="3.5" fill={p.estimated > 0 ? '#fff' : '#6A795D'} stroke="#6A795D" strokeWidth="2">
             <title>{`${shortDate(p.date)}: ${rupiahSigned(p.net)}${p.estimated > 0 ? ` (${t('nw.estimate.badge')})` : ''}`}</title>
           </circle>
         ))}
       </svg>
       <p className="mt-2 text-xs text-slate-500" data-testid="nw-chart-caption">{t('nw.chart.caption', { from, to, n: pts.length })}</p>
-      <p className="mt-1 text-[11px] text-slate-400">
+      <p className="mt-1 text-[11px] text-slate-500">
         <span aria-hidden="true">○</span> {t('nw.estimate.badge')} · <span aria-hidden="true">●</span> {t('nw.exact.note', { days: STALE_DAYS })}
       </p>
     </div>
@@ -257,7 +257,7 @@ function ItemsPanel({
   const manualCount = kind === 'assets' ? nw.data.assets.length : nw.data.liabilities.length;
 
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6" aria-labelledby={`nw-${kind}-title`} data-testid={`nw-${kind}`}>
+    <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6" aria-labelledby={`nw-${kind}-title`} data-testid={`nw-${kind}`}>
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 id={`nw-${kind}-title`} className="text-base font-bold tracking-tight text-slate-900">{title}</h2>
@@ -370,7 +370,7 @@ function ItemRow({ row, list, onToast }: { row: NetRow; list: ListKey; onToast: 
           <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-800" data-testid="nw-row-estimate">{reason}</span>
         )}
         {!row.estimate && manual && (
-          <span className="text-[11px] text-slate-400">{t('nw.updated', { date: shortDate(manual.updatedAt) })}</span>
+          <span className="text-[11px] text-slate-500">{t('nw.updated', { date: shortDate(manual.updatedAt) })}</span>
         )}
         {negativeAccount && <span className="text-[11px] text-red-600">{t('nw.negative')}</span>}
 
@@ -379,7 +379,7 @@ function ItemRow({ row, list, onToast }: { row: NetRow; list: ListKey; onToast: 
             <button
               onClick={startEdit}
               aria-label={row.source === 'account' ? `${t('nw.opening.edit')}: ${row.name}` : t('nw.update.aria', { name: row.name })}
-              className="min-h-10 rounded-lg px-3 text-xs font-semibold text-brand transition-colors hover:bg-rose-50"
+              className="min-h-10 rounded-lg px-3 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
               data-testid={`nw-update-${row.key}`}
             >
               {row.source === 'account' ? t('nw.opening.set') : t('nw.update')}
@@ -392,7 +392,7 @@ function ItemRow({ row, list, onToast }: { row: NetRow; list: ListKey; onToast: 
                 onToast({ kind: 'success', message: t('nw.toast.removed', { name: row.name }) });
               }}
               aria-label={t('nw.remove.aria', { name: row.name })}
-              className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600"
             >
               <Trash2 className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -517,7 +517,7 @@ function AddItemForm({ kind, onDone, onToast }: { kind: ListKey; onDone: () => v
         />
       </Field>
       <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-slate-700">
-        <input type="checkbox" checked={estimate} onChange={(e) => setEstimate(e.target.checked)} className="h-4 w-4 accent-[#800020]" data-testid="nw-f-estimate" />
+        <input type="checkbox" checked={estimate} onChange={(e) => setEstimate(e.target.checked)} className="h-4 w-4 accent-brand" data-testid="nw-f-estimate" />
         {t('nw.f.estimate')}
       </label>
       {error && <p role="alert" className="text-xs font-semibold text-red-600" data-testid="nw-f-error">{error}</p>}

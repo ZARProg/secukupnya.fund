@@ -45,7 +45,7 @@ export function SafeToSpendCard({ transactions, accounts }: Props) {
   const hasExpenseRules = recurring.some((x) => x.type === 'expense');
 
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6" aria-labelledby="safe-title" data-testid="safe-card">
+    <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6" aria-labelledby="safe-title" data-testid="safe-card">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 id="safe-title" className="flex items-center gap-2 text-base font-bold tracking-tight text-slate-900">
           <ShieldCheck className="h-4 w-4 text-emerald-600" />
@@ -55,7 +55,7 @@ export function SafeToSpendCard({ transactions, accounts }: Props) {
         <button
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
-          className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-brand hover:bg-rose-50"
+          className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-brand-600 hover:bg-rose-50"
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
           {t('safe.settings')}
@@ -68,7 +68,7 @@ export function SafeToSpendCard({ transactions, accounts }: Props) {
         </p>
       ) : (
         <>
-          <p className={`text-3xl font-extrabold tabular-nums tracking-tight ${negative ? 'text-red-600' : 'text-slate-900'}`} data-testid="safe-amount">
+          <p className={`text-3xl font-display font-bold tabular-nums tracking-tight ${negative ? 'text-red-600' : 'text-slate-900'}`} data-testid="safe-amount">
             {moneySigned(r.safe)}
           </p>
           <p className="mt-1 text-sm text-slate-500">{t('safe.sub')}</p>
@@ -116,7 +116,7 @@ export function SafeToSpendCard({ transactions, accounts }: Props) {
             <p className="mt-1 text-xs text-slate-500">{t('safe.settings.balance.hint')}</p>
             {bad && <p className="mt-1 text-xs text-red-600">{t('safe.settings.invalid')}</p>}
             {settings.adjust !== 0 && (
-              <button onClick={() => update({ adjust: 0 })} className="mt-1 text-xs font-semibold text-brand">
+              <button onClick={() => update({ adjust: 0 })} className="mt-1 text-xs font-semibold text-brand-600">
                 {t('safe.settings.reset')}
               </button>
             )}
@@ -144,7 +144,7 @@ function Row({ label, value, sub }: { label: string; value: string; sub?: string
     <div className="flex items-baseline justify-between gap-3">
       <dt className="text-slate-600">
         {label}
-        {sub && <span className="block text-xs text-slate-400">{sub}</span>}
+        {sub && <span className="block text-xs text-slate-500">{sub}</span>}
       </dt>
       <dd className="whitespace-nowrap font-semibold tabular-nums text-slate-800">{value}</dd>
     </div>

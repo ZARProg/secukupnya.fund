@@ -9,9 +9,9 @@ export function LevelChip({ eng, onOpen }: { eng: Engagement; onOpen: () => void
     <button
       onClick={onOpen}
       data-testid="level-chip"
-      className="flex w-full items-center gap-4 rounded-2xl border border-line bg-white p-4 text-left shadow-card transition-colors hover:bg-rose-50/40"
+      className="flex w-full items-center gap-4 rounded-2xl border border-line bg-card p-4 text-left shadow-card transition-colors hover:bg-rose-50/40"
     >
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand/10 text-brand"><Trophy className="h-5 w-5" /></span>
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand/10 text-brand-600"><Trophy className="h-5 w-5" /></span>
       <span className="min-w-0 flex-1">
         <span className="flex items-baseline justify-between gap-2">
           <span className="truncate text-sm font-bold text-slate-900">

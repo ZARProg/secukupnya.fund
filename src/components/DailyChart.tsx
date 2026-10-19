@@ -36,7 +36,7 @@ export function DailyChart({ transactions }: { transactions: Transaction[] }) {
     return (
       <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center" data-testid="daily-empty">
         <p className="text-sm text-slate-500">{t('ux.daily.empty')}</p>
-        <p className="mt-1 text-xs text-slate-400">{period}</p>
+        <p className="mt-1 text-xs text-slate-500">{period}</p>
       </div>
     );
   }
@@ -49,10 +49,10 @@ export function DailyChart({ transactions }: { transactions: Transaction[] }) {
         {t('shell.daily.average', { amount: rupiahLabel(average) })}
         {overDays > 0 ? tp('shell.daily.over', overDays) : ''}
       </p>
-      <p className="mb-4 text-xs text-slate-400">{period} · {t('ux.daily.axisTop')}</p>
+      <p className="mb-4 text-xs text-slate-500">{period} · {t('ux.daily.axisTop')}</p>
 
       <div className="flex gap-2">
-        <div className="flex h-36 w-12 shrink-0 flex-col justify-between text-right text-[10px] leading-none tabular-nums text-slate-400" aria-hidden="true">
+        <div className="flex h-36 w-12 shrink-0 flex-col justify-between text-right text-[10px] leading-none tabular-nums text-slate-500" aria-hidden="true">
           {ticks.map((v) => <span key={v}>{v === 0 ? 'Rp 0' : compact(v)}</span>)}
         </div>
 
@@ -72,7 +72,7 @@ export function DailyChart({ transactions }: { transactions: Transaction[] }) {
             <div className="relative flex h-full items-end gap-1 sm:gap-2">
               {days.map((d, i) => {
                 const height = d.total ? Math.max(3, (d.total / scaleMax) * 100) : 0;
-                const color = d.total > DAILY_TARGET ? 'bg-amber-500' : d.isToday ? 'bg-brand' : 'bg-brand/60';
+                const color = d.total > DAILY_TARGET ? 'bg-ochre' : d.isToday ? 'bg-brand-700' : 'bg-brand';
                 const label = `${fmt(d.date, { day: 'numeric', month: 'long' })}: ${rupiahLabel(d.total)}`;
                 return (
                   <button
@@ -96,7 +96,7 @@ export function DailyChart({ transactions }: { transactions: Transaction[] }) {
 
           <div className="mt-1.5 flex gap-1 sm:gap-2" aria-hidden="true">
             {days.map((d) => (
-              <span key={d.date} className={`min-w-0 flex-1 text-center text-[11px] ${d.isToday ? 'font-bold text-slate-900' : 'text-slate-400'}`}>
+              <span key={d.date} className={`min-w-0 flex-1 text-center text-[11px] ${d.isToday ? 'font-bold text-slate-900' : 'text-slate-500'}`}>
                 {d.day}
               </span>
             ))}
@@ -107,9 +107,9 @@ export function DailyChart({ transactions }: { transactions: Transaction[] }) {
       <p className="mt-3 text-sm font-semibold text-slate-700" aria-live="polite" data-testid="daily-caption">{caption}</p>
 
       <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-[11px] text-slate-500">
-        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-brand/60" />{t('ux.daily.legend.under')}</li>
-        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-amber-500" />{t('ux.daily.legend.over')}</li>
-        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-brand" />{t('ux.daily.legend.today')}</li>
+        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-brand" />{t('ux.daily.legend.under')}</li>
+        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-ochre" />{t('ux.daily.legend.over')}</li>
+        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-brand-700" />{t('ux.daily.legend.today')}</li>
         <li className="flex items-center gap-1.5"><span className="h-0 w-4 border-t border-dashed border-slate-700/60" />{t('shell.daily.limit', { amount: rupiahLabel(DAILY_TARGET) })}</li>
       </ul>
     </div>

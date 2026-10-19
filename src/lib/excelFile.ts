@@ -4,6 +4,7 @@ import { tr } from '@/i18n';
 import type { RawSheet } from './importExcel';
 import { ACCOUNT_CATALOG, EXPENSE_CATEGORIES, INCOME_CATEGORIES } from './categories';
 import type { Transaction } from './transactions';
+import { saveBlob } from './download';
 
 export const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
@@ -26,7 +27,7 @@ export async function readWorkbook(file: File): Promise<RawSheet[]> {
 // bisa diimpor ke website, dan bisa juga ditempel langsung ke Google Sheets yang dipakai Apps Script.
 const HEADER = ['Date', 'Category', 'Account/Bank', 'Description', 'Total (Rp)'];
 const COLUMNS = [{ width: 14 }, { width: 18 }, { width: 18 }, { width: 38 }, { width: 16 }];
-const BRAND = '#800020';
+const BRAND = '#6A795D';
 
 function headerRow() {
   return HEADER.map((value) => ({
@@ -36,17 +37,6 @@ function headerRow() {
     backgroundColor: BRAND,
     align: 'left' as const,
   }));
-}
-
-function saveBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /** yyyy-MM-dd → sel tanggal Excel (tengah malam UTC, supaya tidak bergeser sehari karena zona waktu). */

@@ -42,7 +42,7 @@ export function SplitBox({ total, rows, categories, onChange }: Props) {
             </select>
             <div className="col-span-2 flex items-center gap-2 sm:col-span-1 sm:col-start-2 sm:row-start-1">
               <div className="relative min-w-0 flex-1">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">Rp</span>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -55,7 +55,7 @@ export function SplitBox({ total, rows, categories, onChange }: Props) {
                 />
               </div>
               {rest > 0 && parts[i].amount === 0 && (
-                <button type="button" onClick={() => fill(i)} className="whitespace-nowrap rounded-lg px-2 py-1.5 text-xs font-semibold text-brand hover:bg-rose-50">
+                <button type="button" onClick={() => fill(i)} className="whitespace-nowrap rounded-lg px-2 py-1.5 text-xs font-semibold text-brand-600 hover:bg-rose-50">
                   {t('split.fill')}
                 </button>
               )}
@@ -64,7 +64,7 @@ export function SplitBox({ total, rows, categories, onChange }: Props) {
                   type="button"
                   onClick={() => onChange(rows.filter((_, j) => j !== i))}
                   aria-label={t('split.remove.aria', { n: i + 1 })}
-                  className="rounded-lg p-2 text-slate-400 hover:bg-white hover:text-rose-600"
+                  className="rounded-lg p-2 text-slate-500 hover:bg-card hover:text-rose-600"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -78,7 +78,7 @@ export function SplitBox({ total, rows, categories, onChange }: Props) {
           <button
             type="button"
             onClick={() => onChange([...rows, { category: nextCategory(), display: rest > 0 ? formatRupiah(String(rest)) : '' }])}
-            className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-brand hover:bg-rose-50"
+            className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-brand-600 hover:bg-rose-50"
           >
             <Plus className="h-3.5 w-3.5" />
             {t('split.add')}

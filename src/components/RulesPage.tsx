@@ -16,7 +16,7 @@ export function RulesPage({ transactions, onToast }: { transactions: Transaction
 
   return (
     <div className="space-y-5" data-testid="rules-page">
-      <details className="rounded-2xl border border-line bg-white p-4 text-sm text-slate-700 shadow-card">
+      <details className="rounded-2xl border border-line bg-card p-4 text-sm text-slate-700 shadow-card">
         <summary className="cursor-pointer font-semibold text-slate-900">{t('rules.how.title')}</summary>
         <ul className="mt-2 list-disc space-y-1 pl-5">
           <li>{t('rules.how.1')}</li>
@@ -46,7 +46,7 @@ export function RulesPage({ transactions, onToast }: { transactions: Transaction
       )}
 
       {rules.length === 0 && !editing ? (
-        <p className="rounded-2xl border border-line bg-white p-6 text-sm text-slate-500" data-testid="rules-empty">{t('rules.empty')}</p>
+        <p className="rounded-2xl border border-line bg-card p-6 text-sm text-slate-500" data-testid="rules-empty">{t('rules.empty')}</p>
       ) : (
         <ul className="space-y-2" data-testid="rules-list">
           {rules.map((r, i) => {
@@ -55,13 +55,13 @@ export function RulesPage({ transactions, onToast }: { transactions: Transaction
             const h = hits.get(r.id);
             const conflict = conflicts.get(r.id);
             return (
-              <li key={r.id} className="rounded-2xl border border-line bg-white p-4 shadow-card" data-testid="rule-item">
+              <li key={r.id} className="rounded-2xl border border-line bg-card p-4 shadow-card" data-testid="rule-item">
                 <div className="flex items-start gap-3">
                   <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${meta.bg}`}><Icon className={`h-4 w-4 ${meta.color}`} /></span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-slate-900">
                       <span className="break-words">{r.keywords.join(', ')}</span>
-                      <span className="mx-1.5 text-slate-400">→</span>
+                      <span className="mx-1.5 text-slate-500">→</span>
                       {r.category}
                       <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase text-slate-500">{t(r.type === 'income' ? 'rules.type.income' : 'rules.type.expense')}</span>
                     </p>
@@ -108,7 +108,7 @@ function IconBtn({ label, onClick, disabled, danger, children }: { label: string
       disabled={disabled}
       aria-label={label}
       title={label}
-      className={`rounded-lg p-2 disabled:opacity-30 ${danger ? 'text-slate-400 hover:bg-red-50 hover:text-red-600' : 'text-slate-500 hover:bg-slate-100'}`}
+      className={`rounded-lg p-2 disabled:opacity-30 ${danger ? 'text-slate-500 hover:bg-red-50 hover:text-red-600' : 'text-slate-500 hover:bg-slate-100'}`}
     >
       {children}
     </button>
@@ -136,12 +136,12 @@ function RuleForm({ initial, onSave, onCancel }: { initial: Rule | null; onSave:
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-2xl border border-line bg-white p-5 shadow-card" data-testid="rule-form" aria-label={t(initial ? 'rules.edit' : 'rules.add')}>
+    <form onSubmit={submit} className="space-y-3 rounded-2xl border border-line bg-card p-5 shadow-card" data-testid="rule-form" aria-label={t(initial ? 'rules.edit' : 'rules.add')}>
       <h2 className="text-base font-bold text-slate-900">{t(initial ? 'rules.edit' : 'rules.add')}</h2>
       <label className="block">
         <span className="mb-1 block text-xs font-semibold text-slate-500">{t('rules.f.keywords')}</span>
         <input className="form-input" value={kw} onChange={(e) => { setKw(e.target.value); setError(''); }} placeholder={t('rules.f.keywords.placeholder')} data-testid="rule-keywords" />
-        <span className="mt-1 block text-xs text-slate-400">{t('rules.f.keywords.hint')}</span>
+        <span className="mt-1 block text-xs text-slate-500">{t('rules.f.keywords.hint')}</span>
       </label>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <label className="block">

@@ -31,9 +31,9 @@ export function GoalsPage() {
 
 function Section({ icon, title, intro, children }: { icon: ReactNode; title: string; intro: string; children: ReactNode }) {
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6">
+    <section className="rounded-2xl border border-line bg-card p-5 shadow-card sm:p-6">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-brand">{icon}</span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-brand-600">{icon}</span>
         <h2 className="text-base font-bold tracking-tight text-slate-900">{title}</h2>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-slate-500">{intro}</p>
@@ -110,7 +110,7 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
                     {t(status === 'due' ? 'recurring.due' : status === 'done' ? 'recurring.done' : 'recurring.upcoming')}
                   </span>
                 </div>
-                <p className={`text-sm font-bold tabular-nums ${r.type === 'expense' ? 'text-brand' : 'text-emerald-600'}`}>
+                <p className={`text-sm font-bold tabular-nums ${r.type === 'expense' ? 'text-slate-900' : 'text-emerald-600'}`}>
                   {r.type === 'expense' ? '−' : '+'}{money(r.total)}
                 </p>
                 <button
@@ -118,7 +118,7 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
                     if (window.confirm(t('recurring.delete.confirm', { name: r.description }))) removeRecurring(r.id);
                   }}
                   aria-label={t('recurring.delete.aria', { name: r.description })}
-                  className="rounded-xl p-2 text-slate-300 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                  className="rounded-xl p-2 text-slate-300 transition-colors hover:bg-red-50 hover:text-red-700"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -137,7 +137,7 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
                 type="button"
                 aria-pressed={type === k}
                 onClick={() => setType(k)}
-                className={`rounded-lg py-2 text-xs font-bold ${type === k ? 'bg-white shadow-xs text-slate-900' : 'text-slate-500'}`}
+                className={`rounded-lg py-2 text-xs font-bold ${type === k ? 'bg-card shadow-xs text-slate-900' : 'text-slate-500'}`}
               >
                 {t(k === 'expense' ? 'shell.type.expense' : 'shell.type.income')}
               </button>
@@ -164,7 +164,7 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
               <input className="form-input" type="number" min={1} max={31} value={day} onChange={(e) => setDay(e.target.value)} required />
             </Label>
           </div>
-          <p className="text-xs text-slate-400">{t('recurring.startHint')}</p>
+          <p className="text-xs text-slate-500">{t('recurring.startHint')}</p>
           <div className="flex gap-2">
             <button type="submit" disabled={!valid} className="rounded-xl bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-50">
               {t('recurring.add')}
@@ -175,7 +175,7 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
           </div>
         </form>
       ) : (
-        <button onClick={() => setOpen(true)} className="mt-4 flex items-center gap-1.5 rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-semibold text-brand hover:bg-rose-50">
+        <button onClick={() => setOpen(true)} className="mt-4 flex items-center gap-1.5 rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-semibold text-brand-600 hover:bg-rose-50">
           <Plus className="h-4 w-4" />
           {t('recurring.add')}
         </button>
@@ -223,20 +223,20 @@ function GoalsSection() {
             return (
               <li key={g.id} className="rounded-xl border border-slate-200 p-4">
                 <div className="flex items-start gap-3">
-                  <Target className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                  <Target className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold text-slate-900">{g.name}</p>
                     <p className="text-xs text-slate-500">
                       {t('goals.progress', { saved: money(g.saved), target: money(g.target) })}
                     </p>
                   </div>
-                  <span className={`text-sm font-extrabold tabular-nums ${reached ? 'text-emerald-600' : 'text-slate-700'}`}>{pct}%</span>
+                  <span className={`text-sm font-display font-bold tabular-nums ${reached ? 'text-emerald-600' : 'text-slate-700'}`}>{pct}%</span>
                   <button
                     onClick={() => {
                       if (window.confirm(t('goals.delete.confirm', { name: g.name }))) removeGoal(g.id);
                     }}
                     aria-label={t('goals.delete.aria', { name: g.name })}
-                    className="-mr-1 rounded-xl p-1.5 text-slate-300 hover:bg-rose-50 hover:text-rose-600"
+                    className="-mr-1 rounded-xl p-1.5 text-slate-300 hover:bg-red-50 hover:text-red-700"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -317,7 +317,7 @@ function GoalsSection() {
           </div>
         </form>
       ) : (
-        <button onClick={() => setOpen(true)} className="mt-4 flex items-center gap-1.5 rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-semibold text-brand hover:bg-rose-50">
+        <button onClick={() => setOpen(true)} className="mt-4 flex items-center gap-1.5 rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-semibold text-brand-600 hover:bg-rose-50">
           <Plus className="h-4 w-4" />
           {t('goals.add')}
         </button>

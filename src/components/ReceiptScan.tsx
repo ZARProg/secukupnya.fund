@@ -107,7 +107,7 @@ export function ReceiptScan({ accounts, transactions, sheetAvailable, onSave, on
 
         {phase.kind === 'working' ? (
           <div className="rounded-2xl border border-line bg-slate-50 p-5 text-center" role="status" aria-live="polite" data-testid="scan-working">
-            <Loader2 className="mx-auto h-6 w-6 animate-spin text-brand" aria-hidden="true" />
+            <Loader2 className="mx-auto h-6 w-6 animate-spin text-brand-600" aria-hidden="true" />
             <p className="mt-3 text-sm font-semibold text-slate-800">
               {phase.stage === 'prepare'
                 ? t('scan.stage.prepare')
@@ -149,7 +149,7 @@ export function ReceiptScan({ accounts, transactions, sheetAvailable, onSave, on
               <button
                 type="button"
                 onClick={() => camera.current?.click()}
-                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-line bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-50"
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-line bg-card px-4 text-sm font-bold text-slate-800 hover:bg-slate-50"
                 data-testid="scan-camera"
               >
                 <Camera className="h-4 w-4" aria-hidden="true" />
@@ -159,7 +159,7 @@ export function ReceiptScan({ accounts, transactions, sheetAvailable, onSave, on
             <input ref={picker} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-label={t('scan.pick')} onChange={(e) => onFile(e.target.files)} data-testid="scan-file" />
             <input ref={camera} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} aria-label={t('scan.camera')} onChange={(e) => onFile(e.target.files)} />
             <p className="text-xs text-slate-500">{t('scan.tips')}</p>
-            <p className="text-xs text-slate-400">{t('scan.first')}</p>
+            <p className="text-xs text-slate-500">{t('scan.first')}</p>
           </>
         )}
       </div>
@@ -316,7 +316,7 @@ function ReviewForm({
               {EXPENSE_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
             {category && category === suggested && (
-              <p className="mt-1 text-[11px] text-slate-400">{ruleHit ? t('scan.catFrom.rule') : t('scan.catFrom.known')}</p>
+              <p className="mt-1 text-[11px] text-slate-500">{ruleHit ? t('scan.catFrom.rule') : t('scan.catFrom.known')}</p>
             )}
             {errors.category && <p role="alert" className="mt-1 text-xs font-semibold text-red-600">{errors.category}</p>}
           </Field>
@@ -326,7 +326,7 @@ function ReviewForm({
               {accounts.map((a) => <option key={a} value={a}>{a}</option>)}
             </select>
             {accounts.length === 0 && (
-              <button type="button" onClick={onManageAccounts} className="mt-1 text-xs font-semibold text-brand underline">{t('accounts.pick.button')}</button>
+              <button type="button" onClick={onManageAccounts} className="mt-1 text-xs font-semibold text-brand-600 underline">{t('accounts.pick.button')}</button>
             )}
             {errors.account && <p role="alert" className="mt-1 text-xs font-semibold text-red-600">{errors.account}</p>}
           </Field>
@@ -341,7 +341,7 @@ function ReviewForm({
         {parse.items.length > 0 && (
           <section aria-label={t('scan.items.title', { n: parse.items.length })} className="rounded-xl border border-line p-3">
             <h4 className="text-xs font-bold text-slate-700">{t('scan.items.title', { n: parse.items.length })}</h4>
-            <p className="text-[11px] text-slate-400">{t('scan.items.note')}</p>
+            <p className="text-[11px] text-slate-500">{t('scan.items.note')}</p>
             <ul className="mt-2 divide-y divide-slate-100 text-sm" data-testid="scan-items">
               {parse.items.map((i, idx) => (
                 <li key={idx} className="flex items-baseline justify-between gap-3 py-1.5">
@@ -352,7 +352,7 @@ function ReviewForm({
             </ul>
             <p className="mt-1 text-right text-[11px] font-semibold text-slate-500">{t('scan.items.sum', { sum: rupiahLabel(itemsSum) })}</p>
             <label className="mt-2 flex min-h-10 cursor-pointer items-center gap-2 text-xs text-slate-600">
-              <input type="checkbox" checked={withItems} onChange={(e) => setWithItems(e.target.checked)} className="h-4 w-4 accent-[#800020]" data-testid="scan-with-items" />
+              <input type="checkbox" checked={withItems} onChange={(e) => setWithItems(e.target.checked)} className="h-4 w-4 accent-brand" data-testid="scan-with-items" />
               {t('scan.items.include')}
             </label>
           </section>
@@ -373,7 +373,7 @@ function ReviewForm({
                   type="button"
                   onClick={() => setDestination(d)}
                   aria-pressed={destination === d}
-                  className={`rounded-lg py-2 text-xs font-semibold transition-all ${destination === d ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-700'}`}
+                  className={`rounded-lg py-2 text-xs font-semibold transition-all ${destination === d ? 'bg-card text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                   {t(d === 'sheet' ? 'forms.dest.sheet' : 'forms.dest.local')}
                 </button>
@@ -383,7 +383,7 @@ function ReviewForm({
         )}
       </div>
 
-      <div className="sticky bottom-0 flex gap-2 border-t border-slate-100 bg-white/95 px-6 py-4 backdrop-blur-md">
+      <div className="sticky bottom-0 flex gap-2 border-t border-slate-100 bg-card/95 px-6 py-4 backdrop-blur-md">
         <button type="button" onClick={onRescan} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100" data-testid="scan-rescan">
           {t('scan.retry')}
         </button>

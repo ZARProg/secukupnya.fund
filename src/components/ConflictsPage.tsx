@@ -55,10 +55,10 @@ export function ConflictsPage({ pairs, ignoredCount, onIgnore, onUnignoreAll, on
 
   return (
     <div className="space-y-4" data-testid="conflicts-page">
-      <p className="rounded-2xl border border-line bg-white p-4 text-sm leading-relaxed text-slate-600 shadow-card">{t('conflicts.intro')}</p>
+      <p className="rounded-2xl border border-line bg-card p-4 text-sm leading-relaxed text-slate-600 shadow-card">{t('conflicts.intro')}</p>
 
       {pairs.length === 0 ? (
-        <p className="rounded-2xl border border-line bg-white p-6 text-sm text-slate-500" data-testid="conflicts-empty">{t('conflicts.empty')}</p>
+        <p className="rounded-2xl border border-line bg-card p-6 text-sm text-slate-500" data-testid="conflicts-empty">{t('conflicts.empty')}</p>
       ) : (
         <>
           <div className="space-y-2 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-amber-900">
@@ -73,9 +73,9 @@ export function ConflictsPage({ pairs, ignoredCount, onIgnore, onUnignoreAll, on
 
           <ul className="space-y-3" data-testid="conflicts-list">
             {pairs.map((p) => (
-              <li key={p.key} className="rounded-2xl border border-line bg-white p-4 shadow-card" data-testid="conflict-item" data-level={p.level}>
+              <li key={p.key} className="rounded-2xl border border-line bg-card p-4 shadow-card" data-testid="conflict-item" data-level={p.level}>
                 <div className="mb-2 flex items-center gap-2 text-xs">
-                  <Copy className="h-3.5 w-3.5 text-slate-400" />
+                  <Copy className="h-3.5 w-3.5 text-slate-500" />
                   <span className={`rounded-full px-2 py-0.5 font-bold ${p.level === 'exact' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-800'}`}>{t(`conflicts.level.${p.level}` as MessageKey)}</span>
                   {p.level === 'likely' && <span className="text-slate-500">{t('conflicts.level.likely.hint')}</span>}
                 </div>
@@ -97,7 +97,7 @@ export function ConflictsPage({ pairs, ignoredCount, onIgnore, onUnignoreAll, on
       {ignoredCount > 0 && (
         <p className="text-xs text-slate-500">
           {t('conflicts.ignored', { n: ignoredCount })}{' '}
-          <button onClick={onUnignoreAll} className="font-semibold text-brand underline" data-testid="conflicts-unignore">{t('conflicts.showIgnored')}</button>
+          <button onClick={onUnignoreAll} className="font-semibold text-brand-600 underline" data-testid="conflicts-unignore">{t('conflicts.showIgnored')}</button>
         </p>
       )}
     </div>
@@ -108,10 +108,10 @@ function Side({ title, tx }: { title: string; tx: Transaction }) {
   const { money } = usePrivacy();
   return (
     <div className="rounded-xl bg-slate-50 p-3 text-sm">
-      <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-slate-400">{title}</p>
+      <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-slate-500">{title}</p>
       <p className="font-semibold text-slate-900">{tx.description || tx.category}</p>
       <p className="text-xs text-slate-500">{shortDate(tx.date)} · {tx.category} · {tx.account}</p>
-      <p className={`mt-1 font-bold tabular-nums ${tx.type === 'income' ? 'text-emerald-700' : 'text-brand'}`}>{tx.type === 'income' ? '+' : '−'}{money(tx.total)}</p>
+      <p className={`mt-1 font-bold tabular-nums ${tx.type === 'income' ? 'text-emerald-700' : 'text-brand-600'}`}>{tx.type === 'income' ? '+' : '−'}{money(tx.total)}</p>
     </div>
   );
 }

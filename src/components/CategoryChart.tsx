@@ -25,7 +25,7 @@ export function CategoryChart({ transactions, type }: CategoryChartProps) {
   if (!data.entries.length) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-500">
           {t(type === 'expense' ? 'shell.category.emptyExpense' : 'shell.category.emptyIncome')}
         </p>
         <p className="mt-1 text-xs text-slate-300">{t('shell.category.emptyHint')}</p>
@@ -51,14 +51,14 @@ export function CategoryChart({ transactions, type }: CategoryChartProps) {
                 <span className="text-sm font-medium text-slate-700">{meta.label}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-400">{sharePct}%</span>
+                <span className="text-xs text-slate-500">{sharePct}%</span>
                 <span className="text-sm font-semibold text-slate-900">{rupiahLabel(amount)}</span>
               </div>
             </div>
             <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500 ease-out ${
-                  type === 'expense' ? 'bg-[#800020]' : 'bg-emerald-500'
+                  type === 'expense' ? 'bg-brand' : 'bg-brand-300'
                 }`}
                 style={{ width: `${pct}%` }}
               />
