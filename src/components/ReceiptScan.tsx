@@ -24,7 +24,7 @@ interface ReceiptScanProps {
 }
 
 type Phase =
-  | { kind: 'idle'; error?: OcrErrorCode }
+  | { kind: 'idle'; error?: OcrErrorCode; detail?: string }
   | { kind: 'working'; stage: OcrProgress['stage']; progress: number }
   | { kind: 'review'; parse: ReceiptParse; preview: string; ocrConfidence: number };
 
@@ -65,7 +65,8 @@ export function ReceiptScan({ accounts, transactions, sheetAvailable, onSave, on
       if (id !== run.current) return;
       const code = (e as Partial<OcrError>)?.code;
       console.error('Receipt scan failed:', e);
-      setPhase({ kind: 'idle', error: code === 'engine' || code === 'read' || code === 'decode' ? code : 'read' });
+      const detail = e instanceof Error && e.message && e.message !== code ? e.message.slice(0, 160) : undefined;
+      setPhase({ kind: 'idle', error: code === 'engine' || code === 'read' || code === 'decode' ? code : 'read', detail });
     }
   }, []);
 
@@ -127,7 +128,10 @@ export function ReceiptScan({ accounts, transactions, sheetAvailable, onSave, on
             {phase.error && (
               <div role="alert" className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800" data-testid="scan-error">
                 <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-                <span>{t(`scan.err.${phase.error === 'cancelled' ? 'read' : phase.error}` as MessageKey)}</span>
+                <div className="min-w-0">
+                  <p>{t(`scan.err.${phase.error === 'cancelled' ? 'read' : phase.error}` as MessageKey)}</p>
+                  {phase.detail && <p data-testid="scan-error-detail" className="mt-1 break-words text-xs opacity-80">{t('scan.err.detail', { msg: phase.detail })}</p>}
+                </div>
               </div>
             )}
             {accounts.length === 0 && (

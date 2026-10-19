@@ -113,6 +113,9 @@ type TessWorker = import('tesseract.js').Worker;
 let workerPromise: Promise<TessWorker> | null = null;
 let onProgress: ((p: OcrProgress) => void) | null = null;
 
+/** Batas diam saat memuat mesin: unduhan lambat tetap aman selama masih ada kemajuan. */
+const ENGINE_IDLE_MS = 45_000;
+
 const base = () => `${import.meta.env.BASE_URL.replace(/\/$/, '')}/ocr`;
 
 async function getWorker(): Promise<TessWorker> {
@@ -120,18 +123,45 @@ async function getWorker(): Promise<TessWorker> {
     workerPromise = (async () => {
       const { createWorker } = await import('tesseract.js');
       const dir = base();
-      const worker = await createWorker('ind', 1, {
-        workerPath: `${dir}/worker.min.js`,
-        corePath: dir,
-        langPath: dir,
-        gzip: true,
-        workerBlobURL: false,
-        logger: (m) => {
-          if (!onProgress) return;
-          const p = typeof m.progress === 'number' ? m.progress : 0;
-          if (m.status === 'recognizing text') onProgress({ stage: 'read', progress: p });
-          else onProgress({ stage: 'engine', progress: p });
-        },
+      // Mesin yang gagal berjalan (mis. WebAssembly diblokir browser lama) tidak selalu melempar error, kadang hanya diam.
+      // Karena itu error dari worker ditangkap, dan tanpa kabar selama ENGINE_IDLE_MS dianggap gagal dengan pesan yang jelas.
+      const worker = await new Promise<TessWorker>((resolve, reject) => {
+        let settled = false;
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const fail = (e: unknown) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          reject(e instanceof Error ? e : new Error(typeof e === 'string' ? e : JSON.stringify(e)));
+        };
+        const arm = () => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fail(new Error('timeout: the engine did not respond')), ENGINE_IDLE_MS);
+        };
+        arm();
+        createWorker('ind', 1, {
+          workerPath: `${dir}/worker.min.js`,
+          corePath: dir,
+          langPath: dir,
+          gzip: true,
+          workerBlobURL: false,
+          errorHandler: fail,
+          logger: (m) => {
+            arm();
+            if (!onProgress) return;
+            const p = typeof m.progress === 'number' ? m.progress : 0;
+            if (m.status === 'recognizing text') onProgress({ stage: 'read', progress: p });
+            else onProgress({ stage: 'engine', progress: p });
+          },
+        }).then(
+          (w) => {
+            if (settled) { void w.terminate(); return; } // sudah dianggap gagal: jangan biarkan mesin menggantung
+            settled = true;
+            clearTimeout(timer);
+            resolve(w);
+          },
+          fail,
+        );
       });
       await worker.setParameters({ tessedit_pageseg_mode: '4' as never, preserve_interword_spaces: '1' });
       return worker;
