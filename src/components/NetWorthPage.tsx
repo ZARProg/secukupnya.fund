@@ -60,9 +60,10 @@ export function NetWorthPage({ balances, transactions, ready, onToast }: NetWort
   return (
     <div className="space-y-5" data-testid="networth-page">
       <section
-        className="rounded-3xl bg-brand p-6 text-white sm:p-8"
+        className="relative rounded-3xl bg-brand p-7 text-white shadow-sm sm:p-9"
         aria-label={t('nw.hero.label')}
       >
+        <div aria-hidden="true" className="pointer-events-none absolute inset-2 rounded-[0.8rem] border border-[#F8E69F]/30" />
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-sm font-semibold text-white">{t('nw.hero.label')}</p>
           {result.hasEstimate && (
@@ -71,7 +72,7 @@ export function NetWorthPage({ balances, transactions, ready, onToast }: NetWort
             </span>
           )}
         </div>
-        <p className="mt-1 font-display text-5xl font-bold leading-none tracking-tight tabular-nums sm:text-6xl" data-testid="nw-net">
+        <p className="mt-1 font-display text-5xl font-medium leading-none tracking-tight tabular-nums sm:text-6xl" data-testid="nw-net">
           {result.hasEstimate && '≈ '}{moneySigned(result.net)}
         </p>
         <p className="mt-2 text-sm text-white" data-testid="nw-formula">

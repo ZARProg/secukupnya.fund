@@ -8,11 +8,11 @@
   src: url('/fonts/figtree-latin-wght.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Bricolage Grotesque';
+  font-family: 'Newsreader';
   font-style: normal;
   font-weight: 200 800;
   font-display: swap;
-  src: url('/fonts/bricolage-grotesque-latin-wght.woff2') format('woff2');
+  src: url('/fonts/newsreader-latin-opsz.woff2') format('woff2');
 }
 
 @tailwind base;
@@ -33,7 +33,8 @@
   h1,
   h2,
   h3 {
-    @apply font-display;
+    @apply font-display font-semibold tracking-tight;
+    font-optical-sizing: auto;
   }
 
   select {

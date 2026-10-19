@@ -28,20 +28,21 @@ export function StatsCards({ transactions }: StatsProps) {
   return (
     <section
       aria-label={t('shell.stats.label')}
-      className="relative overflow-hidden rounded-3xl bg-brand p-6 text-white sm:p-8"
+      className="relative overflow-hidden rounded-3xl bg-brand p-7 text-white shadow-sm sm:p-9"
     >
-      {/* Lingkaran konsentris berwarna lime (palet merek): satu-satunya hiasan di halaman, dan hanya di hero. */}
+      {/* Pola guilloche tipis ala surat berharga + bingkai dalam: satu-satunya hiasan di halaman, hanya di hero. */}
       <svg
         aria-hidden="true"
         viewBox="0 0 400 400"
-        className="pointer-events-none absolute -right-24 -top-28 h-[26rem] w-[26rem] text-[#B2BD7E]"
+        className="pointer-events-none absolute -right-20 -top-24 h-[24rem] w-[24rem] text-[#B2BD7E]"
         fill="none"
         stroke="currentColor"
       >
-        {[60, 100, 140, 180, 220].map((r, i) => (
-          <circle key={r} cx="200" cy="200" r={r} strokeWidth="1.5" opacity={0.55 - i * 0.1} />
+        {Array.from({ length: 18 }, (_, i) => (
+          <ellipse key={i} cx="200" cy="200" rx="190" ry="70" strokeWidth="0.8" opacity="0.28" transform={`rotate(${i * 10} 200 200)`} />
         ))}
       </svg>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-2 rounded-[0.8rem] border border-[#F8E69F]/30" />
 
       <div className="relative grid gap-6 sm:grid-cols-[1fr_auto] sm:items-end">
         <div>
@@ -57,7 +58,7 @@ export function StatsCards({ transactions }: StatsProps) {
               {hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
-          <p className="mt-1 font-display text-5xl font-bold leading-none tracking-tight tabular-nums sm:text-6xl">
+          <p className="mt-1 font-display text-5xl font-medium leading-none tracking-tight tabular-nums sm:text-6xl">
             {stats.balance < 0 && !hidden ? '−' : ''}
             {rupiahLabel(Math.abs(stats.balance))}
           </p>
@@ -77,11 +78,11 @@ export function StatsCards({ transactions }: StatsProps) {
         <dl className="grid grid-cols-2 gap-6 sm:gap-8">
           <div>
             <dt className="text-xs font-semibold text-white">{t('ux.stats.monthIncome')}</dt>
-            <dd className="mt-1 font-display text-xl font-bold tabular-nums">{rupiahLabel(month.income)}</dd>
+            <dd className="mt-1 font-display text-xl font-semibold tabular-nums">{rupiahLabel(month.income)}</dd>
           </div>
           <div>
             <dt className="text-xs font-semibold text-white">{t('ux.stats.monthExpense')}</dt>
-            <dd className="mt-1 font-display text-xl font-bold tabular-nums">{rupiahLabel(month.expense)}</dd>
+            <dd className="mt-1 font-display text-xl font-semibold tabular-nums">{rupiahLabel(month.expense)}</dd>
           </div>
         </dl>
       </div>
