@@ -243,7 +243,7 @@ Halaman selain Beranda dimuat saat pertama dibuka (`src/components/pages.ts`), d
 
 ## Tampilan & palet warna
 
-Tema memakai empat warna dasar: sage `#6A795D` (merek), olive `#8E9162`, lime `#B2BD7E`, dan krem `#FCF0DA` (latar). Warna turunan (gelap/terang) dibuat dari keempatnya agar teks kecil tetap lolos kontras WCAG AA — teks kecil memakai sage gelap `#505D44`, bukan sage murni. Pengeluaran ditampilkan netral dengan tanda −, pemasukan hijau. Gaya modern klasik: judul & angka utama memakai serif Newsreader, isi memakai Figtree, sudut lebih tegas, garis tipis. Font (Figtree & Newsreader) di-host sendiri di `public/fonts` sehingga tetap tampil saat offline. Warna diatur di `tailwind.config.js`.
+Tema memakai empat warna dasar: sage `#6A795D` (merek), olive `#8E9162`, lime `#B2BD7E`, dan krem `#FCF0DA` (latar). Warna turunan (gelap/terang) dibuat dari keempatnya agar teks kecil tetap lolos kontras WCAG AA — teks kecil memakai sage gelap `#505D44`, bukan sage murni. Pengeluaran ditampilkan netral dengan tanda −, pemasukan hijau. Gaya modern klasik: judul & angka utama memakai serif Newsreader, isi memakai Figtree, sudut lebih tegas, garis tipis. Font (Figtree & Newsreader) di-host sendiri di `public/fonts` sehingga tetap tampil saat offline. Warna diatur di `tailwind.config.js`. Logo bank/e-wallet opsional: logo resmi sudah dipasang di `src/assets/banks` (11 bank/e-wallet); bank tanpa berkas dipakai monogram.
 
 ## Keamanan, tema, dan penyesuaian saldo
 

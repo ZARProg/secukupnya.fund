@@ -104,7 +104,7 @@ export interface AccountMeta {
   /** Nama yang disimpan di transaksi dan Google Sheets. */
   name: string;
   kind: 'bank' | 'ewallet';
-  /** Singkatan di avatar. Bukan logo resmi, hanya monogram. */
+  /** Singkatan di avatar bila logo tidak tersedia (lihat src/assets/banks). */
   mono: string;
   /** Kelas Tailwind untuk avatar (latar + teks). Ditulis utuh supaya ikut terbaca Tailwind. */
   avatar: string;
