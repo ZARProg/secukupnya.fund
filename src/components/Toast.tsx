@@ -28,7 +28,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
   const success = toast.kind === 'success';
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 px-4 w-full max-w-sm animate-[toastIn_0.25s_ease-out]">
+    <div className="fixed bottom-24 left-1/2 lg:bottom-6 z-[70] -translate-x-1/2 px-4 w-full max-w-sm animate-[toastIn_0.25s_ease-out]">
       <div
         className={`flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-md transition-all ${
           success

@@ -105,7 +105,7 @@ export function TransactionList({
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-slate-900">{tx.description || tx.category}</p>
+                <p className="line-clamp-2 break-words text-sm font-semibold leading-snug text-slate-900 sm:line-clamp-1">{tx.description || tx.category}</p>
                 <div className="mt-1 flex items-center gap-x-2 text-xs text-slate-500">
                   <span className="truncate">{tx.category}</span>
                   {tx.account && (
@@ -130,29 +130,34 @@ export function TransactionList({
                 </div>
               </div>
 
-              <p className={`shrink-0 text-sm font-bold tabular-nums ${isExpense ? 'text-brand-600' : 'text-emerald-600'}`}>
-                {isExpense ? '−' : '+'}
-                {rupiahLabel(tx.total)}
-              </p>
+              {/* HP: nominal di atas, tombol di bawahnya, supaya deskripsi dapat ruang. sm ke atas: satu baris seperti biasa. */}
+              <div className="flex shrink-0 flex-col items-end sm:flex-row sm:items-center sm:gap-3.5">
+                <p className={`text-sm font-bold tabular-nums ${isExpense ? 'text-brand-600' : 'text-emerald-600'}`}>
+                  {isExpense ? '−' : '+'}
+                  {rupiahLabel(tx.total)}
+                </p>
 
-              {onEdit && (
-                <button
-                  onClick={() => onEdit(tx)}
-                  disabled={deletingId !== null}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 focus-visible:text-slate-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
-                  aria-label={t('edit.aria', { name: tx.description || tx.category })}
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
-              )}
-              <button
-                onClick={() => handleDelete(tx)}
-                disabled={deletingId !== null}
-                className="-mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 sm:mr-0 transition-all hover:bg-red-50 hover:text-red-700 focus-visible:text-red-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
-                aria-label={t('shell.list.delete', { name: tx.description || tx.category })}
-              >
-                {deletingId === tx.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-              </button>
+                <div className="-mr-1.5 mt-0.5 flex items-center sm:mr-0 sm:mt-0 sm:contents">
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(tx)}
+                      disabled={deletingId !== null}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 focus-visible:text-slate-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-10 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
+                      aria-label={t('edit.aria', { name: tx.description || tx.category })}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDelete(tx)}
+                    disabled={deletingId !== null}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-all hover:bg-red-50 hover:text-red-700 focus-visible:text-red-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-10 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
+                    aria-label={t('shell.list.delete', { name: tx.description || tx.category })}
+                  >
+                    {deletingId === tx.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
             </li>
           </Fragment>
         );

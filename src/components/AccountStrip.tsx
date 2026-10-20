@@ -28,18 +28,20 @@ export function AccountStrip({ accounts, onSelect, onManage, onReconcile }: Acco
           <button
             data-testid="recon-open"
             onClick={onReconcile}
-            className="flex min-h-9 items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
+            className="flex min-h-10 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
           >
             <Scale className="h-3.5 w-3.5" />
             {t('recon.open')}
           </button>
         )}
+        {/* HP: hanya ikon (labelnya terlalu panjang dan membuat judul patah baris); label tetap ada untuk pembaca layar. */}
         <button
           onClick={onManage}
-          className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
+          className="flex min-h-10 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
+          title={t('shell.strip.choose')}
         >
-          <Settings2 className="h-3.5 w-3.5" />
-          {t('shell.strip.choose')}
+          <Settings2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+          <span className="sr-only sm:not-sr-only">{t('shell.strip.choose')}</span>
         </button>
         </div>
       </div>

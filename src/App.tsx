@@ -3,8 +3,9 @@ import { ReconcileDialog } from '@/components/ReconcileDialog';
 import { readSafeSettings } from '@/hooks/useSafeSettings';
 import type { TransactionPayload } from '@/lib/transactions';
 import { Suspense, useState, useCallback, useEffect, useMemo } from 'react';
-import { Menu, Plus, TriangleAlert, Wallet } from 'lucide-react';
+import { Menu, TriangleAlert, Wallet } from 'lucide-react';
 import { Sidebar, type View } from '@/components/Sidebar';
+import { BottomNav } from '@/components/BottomNav';
 import { SlideOver } from '@/components/SlideOver';
 import { todayISO } from '@/lib/date';
 import { PickAccountsBanner } from '@/components/PickAccountsBanner';
@@ -406,7 +407,7 @@ function App() {
           </div>
         </div>
 
-        <main className="mx-auto max-w-5xl px-4 pb-24 pt-6 sm:px-8 sm:pt-10 lg:pb-10">
+        <main className="mx-auto max-w-5xl px-4 pb-32 pt-6 sm:px-8 sm:pt-10 lg:pb-10">
           <header className="mb-6 sm:mb-8">
             <h1 className="font-display text-[1.75rem] font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">{heading.title}</h1>
             <p className="mt-1 text-sm text-slate-500">{heading.subtitle}</p>
@@ -557,13 +558,7 @@ function App() {
         </main>
       </div>
 
-      <button
-        onClick={() => openPanel('form')}
-        className="fixed bottom-5 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-white shadow-lg transition-colors hover:bg-brand-dark lg:hidden"
-        aria-label={t('shell.action.record')}
-      >
-        <Plus className="h-6 w-6" />
-      </button>
+      <BottomNav view={view} onNavigate={navigate} onRecord={() => openPanel('form')} />
 
       <SlideOver open={panel === 'form'} title={editing ? t('edit.title') : t('shell.action.record')} onClose={closePanel}>
         <RecordPanel

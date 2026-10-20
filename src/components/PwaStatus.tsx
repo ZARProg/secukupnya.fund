@@ -10,7 +10,7 @@ export function PwaStatus() {
   if (online && !updateReady) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-x-4 bottom-24 z-[70] space-y-2 lg:bottom-4 lg:left-auto lg:right-4 lg:w-96">
+    <div className="pointer-events-none fixed inset-x-4 bottom-28 z-[70] space-y-2 lg:bottom-4 lg:left-auto lg:right-4 lg:w-96">
       {updateReady && (
         <div role="status" data-testid="pwa-update" className="pointer-events-auto rounded-2xl border border-slate-200 bg-card p-4 shadow-lg">
           <div className="flex items-start gap-3">

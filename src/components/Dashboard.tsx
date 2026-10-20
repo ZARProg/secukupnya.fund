@@ -104,7 +104,7 @@ export function Dashboard({
           action={
             <button
               onClick={onSeeAll}
-              className="rounded-lg px-2 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
+              className="min-h-9 rounded-lg px-2.5 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
             >
               {t('shell.dashboard.seeAll', { n: listed.length })}
             </button>
@@ -141,7 +141,7 @@ function TabButton({
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${
+      className={`min-h-8 rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
         active ? `bg-card ${activeColor} shadow-sm` : 'text-slate-500 hover:text-slate-700'
       }`}
     >

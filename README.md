@@ -251,3 +251,6 @@ Tema memakai empat warna dasar: sage `#6A795D` (merek), olive `#8E9162`, lime `#
 - **Mode gelap (Pengaturan → Tampilan):** Terang, Gelap, atau ikut perangkat; tersimpan per perangkat. Warna berbasis variabel CSS (`src/theme-vars.css`) yang dibuat dari `scripts/theme-palette.json`; setelah mengubah palet jalankan `npm run theme`. Skrip `public/theme-init.js` mencegah layar berkedip terang saat tema gelap.
 - **Urungkan hapus:** toast setelah menghapus transaksi punya tombol Urungkan (memakai pemulihan yang sama dengan halaman Riwayat).
 - **Cocokkan saldo (Beranda → Rekening):** isi saldo asli bank/e-wallet, aplikasi menampilkan selisih dan mencatat transaksi kategori *Balance Adjustment*. Kategori ini mengubah saldo rekening tetapi tidak masuk total pemasukan/pengeluaran, grafik, anggaran, laporan, batas harian, maupun hitungan kebiasaan mencatat. Bila selisih ternyata pengeluaran/pemasukan yang lupa dicatat, centang opsi untuk menghitungnya sebagai transaksi biasa (kategori Others).
+
+## Navigasi HP
+Di layar kecil ada bilah navigasi bawah (Beranda, Transaksi, tombol Catat di tengah, Anggaran, Laporan) yang menghormati area aman iPhone (`viewport-fit=cover`). Halaman lain tetap lewat menu kiri atas. Di sidebar laptop, Sumber data dan Pengaturan dipaku di bawah agar tidak tersembunyi di layar pendek.

@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Copy, Gauge, PiggyBank, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, Plus, RefreshCw, Wallet, X, FileSpreadsheet, DatabaseZap, Download, Scale, Settings, type LucideIcon,
 } from 'lucide-react';
@@ -40,8 +41,6 @@ const GROUPS: { id: string; label: MessageKey | null; items: NavItem[] }[] = [
     items: [
       { view: 'rules', label: 'nav.rules', icon: Wand2 },
       { view: 'activity', label: 'nav.activity', icon: History },
-      { view: 'sources', label: 'shell.nav.sources', icon: DatabaseZap },
-      { view: 'settings', label: 'nav.settings', icon: Settings },
     ],
   },
   {
@@ -52,6 +51,12 @@ const GROUPS: { id: string; label: MessageKey | null; items: NavItem[] }[] = [
       { view: 'recap', label: 'nav.recap', icon: Share2 },
     ],
   },
+];
+
+// Dipaku di bawah sidebar (di luar area gulir): dibutuhkan untuk setup dan tidak boleh tersembunyi di layar pendek.
+const PINNED: NavItem[] = [
+  { view: 'sources', label: 'shell.nav.sources', icon: DatabaseZap },
+  { view: 'settings', label: 'nav.settings', icon: Settings },
 ];
 
 interface SidebarProps {
@@ -79,6 +84,23 @@ export function Sidebar({
   onNavigate, onSelectAccount, onManageAccounts, onNewTransaction, onImport, onTemplate, onRefresh, onClose,
 }: SidebarProps) {
   const { t } = useT();
+  // Di layar laptop yang pendek, menu paling bawah (Sumber data, Pengaturan) tersembunyi di dalam area gulir.
+  // Pudarkan tepi bawah selama masih ada isi di bawah, supaya jelas bisa digulir.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [moreBelow, setMoreBelow] = useState(false);
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (el) setMoreBelow(el.scrollHeight - el.scrollTop - el.clientHeight > 8);
+  }, []);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    checkScroll();
+    const ro = new ResizeObserver(checkScroll);
+    ro.observe(el);
+    if (el.firstElementChild) ro.observe(el.firstElementChild);
+    return () => ro.disconnect();
+  }, [checkScroll]);
   const statusLabel = !connected
     ? t('shell.sidebar.status.disconnected')
     : loading
@@ -127,22 +149,26 @@ export function Sidebar({
         </div>
 
         <div className="mt-6 space-y-2 px-5">
-          <button
-            onClick={onNewTransaction}
-            aria-keyshortcuts="n"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
-          >
-            <Plus className="h-4 w-4" />
-            {t('shell.action.record')}
-            <kbd aria-hidden="true" className="ml-1 hidden rounded border border-white/50 px-1.5 text-[10px] font-bold text-white lg:inline">N</kbd>
-          </button>
-          <button
-            onClick={onImport}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-card px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:border-brand-300 hover:text-brand-700 active:scale-[0.98]"
-          >
-            <FileSpreadsheet className="h-4 w-4" />
-            {t('shell.action.import')}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={onNewTransaction}
+              aria-keyshortcuts="n"
+              className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
+            >
+              <Plus className="h-4 w-4" />
+              {t('shell.action.record')}
+              <kbd aria-hidden="true" className="ml-1 hidden rounded border border-white/50 px-1.5 text-[10px] font-bold text-white lg:inline">N</kbd>
+            </button>
+            <button
+              onClick={onImport}
+              title={t('shell.action.import')}
+              aria-label={t('shell.action.import')}
+              className="flex shrink-0 items-center justify-center gap-2 rounded-xl border border-line bg-card px-3 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:border-brand-300 hover:text-brand-700 active:scale-[0.98]"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              <span className="sr-only">{t('shell.action.import')}</span>
+            </button>
+          </div>
           <button
             onClick={onTemplate}
             className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium text-slate-500 transition-colors hover:text-slate-800"
@@ -152,15 +178,20 @@ export function Sidebar({
           </button>
         </div>
 
-        <div className="mt-4 flex-1 overflow-y-auto px-3 pb-4">
-          <nav aria-label={t('shell.sidebar.pages')} className="space-y-5 px-2">
+        <div
+          ref={scrollRef}
+          onScroll={checkScroll}
+          className="mt-4 flex-1 overflow-y-auto px-3 pb-4"
+          style={moreBelow ? { maskImage: 'linear-gradient(to bottom, #000 calc(100% - 28px), transparent)', WebkitMaskImage: 'linear-gradient(to bottom, #000 calc(100% - 28px), transparent)' } : undefined}
+        >
+          <nav aria-label={t('shell.sidebar.pages')} className="space-y-5 px-2 lg:space-y-4">
             {GROUPS.map((group) => {
               const items: NavItem[] =
                 group.id === 'tools' && (conflictCount > 0 || view === 'conflicts')
                   ? [...group.items, { view: 'conflicts', label: 'nav.conflicts', icon: Copy }]
                   : group.items;
               return (
-                <div key={group.id} className="space-y-1" role="group" aria-label={group.label ? t(group.label) : t('nav.group.main')}>
+                <div key={group.id} className="space-y-1 lg:space-y-0.5" role="group" aria-label={group.label ? t(group.label) : t('nav.group.main')}>
                   {group.label && (
                     <p className="px-3.5 pb-1 text-xs font-semibold text-slate-500">{t(group.label)}</p>
                   )}
@@ -171,7 +202,7 @@ export function Sidebar({
                         key={v}
                         onClick={() => onNavigate(v)}
                         aria-current={active ? 'page' : undefined}
-                        className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
+                        className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all lg:min-h-9 lg:py-1.5 ${
                           active ? 'bg-brand-200 font-semibold text-brand-800' : 'text-slate-600 hover:bg-card hover:text-slate-900'
                         }`}
                       >
@@ -234,6 +265,25 @@ export function Sidebar({
             )}
           </section>
         </div>
+
+        <nav aria-label={t('nav.group.tools')} className="space-y-0.5 border-t border-line px-5 py-2">
+          {PINNED.map(({ view: v, label, icon: Icon }) => {
+            const active = v === view;
+            return (
+              <button
+                key={v}
+                onClick={() => onNavigate(v)}
+                aria-current={active ? 'page' : undefined}
+                className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all lg:min-h-9 lg:py-1.5 ${
+                  active ? 'bg-brand-200 font-semibold text-brand-800' : 'text-slate-600 hover:bg-card hover:text-slate-900'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {t(label)}
+              </button>
+            );
+          })}
+        </nav>
 
         <div className="border-t border-line pt-3">
           <LanguageSwitch />

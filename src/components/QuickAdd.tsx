@@ -148,6 +148,14 @@ export function QuickAdd({
     ...mem.favorites.map((f) => ({ id: f.id, label: chipLabel(f.description, f.category, f.total), line: suggestionLine(f), fav: f })),
     ...suggestions.map((s, i) => ({ id: `s${i}`, label: chipLabel(s.description, s.category, s.total), line: suggestionLine(s) })),
   ];
+  // Dua tombol yang sama persis di layar (hanya rekeningnya beda) terlihat seperti dobel: beri nama rekening pada keduanya.
+  const labelCount = new Map<string, number>();
+  for (const c of chips) labelCount.set(c.label, (labelCount.get(c.label) ?? 0) + 1);
+  const accountOf = (c: (typeof chips)[number]) => c.fav?.account ?? suggestions[Number(c.id.slice(1))]?.account ?? '';
+  for (const c of chips) {
+    const acc = accountOf(c);
+    if ((labelCount.get(c.label) ?? 0) > 1 && acc) c.label = `${c.label} · ${acc}`;
+  }
 
   return (
     <div className="flex flex-1 flex-col" data-testid="quick-add">
