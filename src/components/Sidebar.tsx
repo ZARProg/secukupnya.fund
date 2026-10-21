@@ -132,12 +132,12 @@ export function Sidebar({
           open ? 'translate-x-0' : 'invisible -translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between px-6 pt-6">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand">
-              <Wallet className="h-5 w-5 text-white" />
+        <div className="flex items-center justify-between px-5 pb-4 pt-5">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand">
+              <Wallet className="h-[18px] w-[18px] text-white" />
             </span>
-            <span className="font-display text-xl font-bold tracking-tight text-slate-900">Secukupnya.fund</span>
+            <span className="font-display text-[1.2rem] font-semibold leading-none tracking-tight text-slate-900">Secukupnya.fund</span>
           </div>
           <button
             onClick={onClose}
@@ -148,43 +148,45 @@ export function Sidebar({
           </button>
         </div>
 
-        <div className="mt-6 space-y-2 px-5">
-          <div className="flex gap-2">
-            <button
-              onClick={onNewTransaction}
-              aria-keyshortcuts="n"
-              className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
-            >
-              <Plus className="h-4 w-4" />
-              {t('shell.action.record')}
-              <kbd aria-hidden="true" className="ml-1 hidden rounded border border-white/50 px-1.5 text-[10px] font-bold text-white lg:inline">N</kbd>
-            </button>
+        <div className="space-y-2 px-4 pb-4">
+          <button
+            onClick={onNewTransaction}
+            aria-keyshortcuts="n"
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 text-sm font-semibold text-white shadow-xs transition-all hover:bg-brand-600 active:scale-[0.98]"
+          >
+            <Plus className="h-4 w-4" />
+            {t('shell.action.record')}
+            <kbd aria-hidden="true" className="ml-1 hidden rounded border border-white/40 px-1.5 text-[10px] font-semibold text-white/90 lg:inline">N</kbd>
+          </button>
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={onImport}
-              title={t('shell.action.import')}
               aria-label={t('shell.action.import')}
-              className="flex shrink-0 items-center justify-center gap-2 rounded-xl border border-line bg-card px-3 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:border-brand-300 hover:text-brand-700 active:scale-[0.98]"
+              title={t('shell.action.import')}
+              className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-line text-xs font-semibold text-slate-600 transition-colors hover:border-brand-300 hover:bg-card hover:text-brand-800"
             >
-              <FileSpreadsheet className="h-4 w-4" />
-              <span className="sr-only">{t('shell.action.import')}</span>
+              <FileSpreadsheet className="h-3.5 w-3.5" aria-hidden="true" />
+              {t('sidebar.import.short')}
+            </button>
+            <button
+              onClick={onTemplate}
+              aria-label={t('shell.sidebar.template')}
+              title={t('shell.sidebar.template')}
+              className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-line text-xs font-semibold text-slate-600 transition-colors hover:border-brand-300 hover:bg-card hover:text-brand-800"
+            >
+              <Download className="h-3.5 w-3.5" aria-hidden="true" />
+              {t('sidebar.template.short')}
             </button>
           </div>
-          <button
-            onClick={onTemplate}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium text-slate-500 transition-colors hover:text-slate-800"
-          >
-            <Download className="h-3.5 w-3.5" />
-            {t('shell.sidebar.template')}
-          </button>
         </div>
 
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className="mt-4 flex-1 overflow-y-auto px-3 pb-4"
+          className="flex-1 overflow-y-auto border-t border-line px-3 pb-4 pt-4"
           style={moreBelow ? { maskImage: 'linear-gradient(to bottom, #000 calc(100% - 28px), transparent)', WebkitMaskImage: 'linear-gradient(to bottom, #000 calc(100% - 28px), transparent)' } : undefined}
         >
-          <nav aria-label={t('shell.sidebar.pages')} className="space-y-5 px-2 lg:space-y-4">
+          <nav aria-label={t('shell.sidebar.pages')} className="space-y-5 lg:space-y-4">
             {GROUPS.map((group) => {
               const items: NavItem[] =
                 group.id === 'tools' && (conflictCount > 0 || view === 'conflicts')
@@ -193,7 +195,7 @@ export function Sidebar({
               return (
                 <div key={group.id} className="space-y-1 lg:space-y-0.5" role="group" aria-label={group.label ? t(group.label) : t('nav.group.main')}>
                   {group.label && (
-                    <p className="px-3.5 pb-1 text-xs font-semibold text-slate-500">{t(group.label)}</p>
+                    <p className="px-3 pb-1 font-display text-[13px] font-medium italic text-slate-500">{t(group.label)}</p>
                   )}
                   {items.map(({ view: v, label, icon: Icon }) => {
                     const active = v === view;
@@ -202,11 +204,12 @@ export function Sidebar({
                         key={v}
                         onClick={() => onNavigate(v)}
                         aria-current={active ? 'page' : undefined}
-                        className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all lg:min-h-9 lg:py-1.5 ${
-                          active ? 'bg-brand-200 font-semibold text-brand-800' : 'text-slate-600 hover:bg-card hover:text-slate-900'
+                        className={`relative flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors lg:min-h-9 lg:py-1.5 ${
+                          active ? 'bg-brand-100 font-semibold text-brand-800' : 'font-medium text-slate-600 hover:bg-card hover:text-slate-900'
                         }`}
                       >
-                        <Icon className="h-4 w-4" />
+                        {active && <span aria-hidden="true" className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-ochre" />}
+                        <Icon className="h-4 w-4" strokeWidth={active ? 2.2 : 1.8} />
                         {t(label)}
                         {v === 'conflicts' && conflictCount > 0 && (
                           <span className="ml-auto rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-ink" data-testid="conflict-count">{conflictCount}</span>
@@ -219,9 +222,9 @@ export function Sidebar({
             })}
           </nav>
 
-          <section className="mt-7 px-2" aria-labelledby="sidebar-accounts">
+          <section className="mt-6 border-t border-line pt-5" aria-labelledby="sidebar-accounts">
             <div className="flex items-center justify-between px-3">
-              <h2 id="sidebar-accounts" className="text-sm font-semibold text-slate-600">
+              <h2 id="sidebar-accounts" className="font-display text-[13px] font-medium italic text-slate-500">
                 {t('shell.accounts')}
               </h2>
               <button
@@ -266,44 +269,43 @@ export function Sidebar({
           </section>
         </div>
 
-        <nav aria-label={t('nav.group.tools')} className="space-y-0.5 border-t border-line px-5 py-2">
-          {PINNED.map(({ view: v, label, icon: Icon }) => {
-            const active = v === view;
-            return (
-              <button
-                key={v}
-                onClick={() => onNavigate(v)}
-                aria-current={active ? 'page' : undefined}
-                className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all lg:min-h-9 lg:py-1.5 ${
-                  active ? 'bg-brand-200 font-semibold text-brand-800' : 'text-slate-600 hover:bg-card hover:text-slate-900'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {t(label)}
-              </button>
-            );
-          })}
-        </nav>
-
-        <div className="border-t border-line pt-3">
-          <LanguageSwitch />
-        </div>
-
-        <div className="flex items-center justify-between border-t border-line px-6 py-4">
-          <div className="flex min-w-0 items-center gap-2">
-            <span className={`h-2 w-2 shrink-0 rounded-full ${statusDot}`} aria-hidden="true" />
-            <span className="truncate text-xs font-medium text-slate-600" role="status">
-              {statusLabel}
-            </span>
+        <div className="border-t border-line px-3 pb-3 pt-2">
+          <nav aria-label={t('nav.group.tools')} className="space-y-0.5">
+            {PINNED.map(({ view: v, label, icon: Icon }) => {
+              const active = v === view;
+              return (
+                <button
+                  key={v}
+                  onClick={() => onNavigate(v)}
+                  aria-current={active ? 'page' : undefined}
+                  className={`relative flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors lg:min-h-9 lg:py-1.5 ${
+                    active ? 'bg-brand-100 font-semibold text-brand-800' : 'font-medium text-slate-600 hover:bg-card hover:text-slate-900'
+                  }`}
+                >
+                  {active && <span aria-hidden="true" className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-ochre" />}
+                  <Icon className="h-4 w-4" strokeWidth={active ? 2.2 : 1.8} />
+                  {t(label)}
+                </button>
+              );
+            })}
+          </nav>
+          <div className="mt-2 flex items-center justify-between gap-2 border-t border-line px-3 pt-3">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className={`h-2 w-2 shrink-0 rounded-full ${statusDot}`} aria-hidden="true" />
+              <span className="truncate text-xs font-medium text-slate-600" role="status">
+                {statusLabel}
+              </span>
+            </div>
+            <button
+              onClick={onRefresh}
+              disabled={loading || !connected}
+              className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40"
+              aria-label={t('shell.sidebar.refresh')}
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
           </div>
-          <button
-            onClick={onRefresh}
-            disabled={loading || !connected}
-            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40"
-            aria-label={t('shell.sidebar.refresh')}
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          </button>
+          <LanguageSwitch />
         </div>
       </aside>
     </>

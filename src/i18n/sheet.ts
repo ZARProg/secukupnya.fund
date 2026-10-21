@@ -1,5 +1,7 @@
 // Teks lembar filter di HP (Transaksi).
 export const id = {
+  'sidebar.import.short': 'Impor Excel',
+  'sidebar.template.short': 'Template',
   'sheet.open': 'Filter',
   'sheet.title': 'Filter transaksi',
   'sheet.close': 'Tutup filter',
@@ -28,6 +30,8 @@ export const id = {
 };
 
 export const en: Record<keyof typeof id, string> = {
+  'sidebar.import.short': 'Import Excel',
+  'sidebar.template.short': 'Template',
   'sheet.open': 'Filter',
   'sheet.title': 'Filter transactions',
   'sheet.close': 'Close filters',
