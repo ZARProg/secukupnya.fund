@@ -254,3 +254,6 @@ Tema memakai empat warna dasar: sage `#6A795D` (merek), olive `#8E9162`, lime `#
 
 ## Navigasi HP
 Di layar kecil ada bilah navigasi bawah (Beranda, Transaksi, tombol Catat di tengah, Anggaran, Laporan) yang menghormati area aman iPhone (`viewport-fit=cover`). Halaman lain tetap lewat menu kiri atas. Di sidebar laptop, Sumber data dan Pengaturan dipaku di bawah agar tidak tersembunyi di layar pendek.
+
+## Filter Transaksi di HP
+Di layar kecil, filter Transaksi berupa tombol **Filter** yang membuka lembar dari bawah: chip Rekening/Bulan/Kategori dengan jumlah hasil tiap pilihan (dihitung dengan filter lain tetap berlaku), grafik sebaran nominal dengan kolom min/maks, rentang tanggal, dan tombol bawah yang menampilkan jumlah hasil langsung ("Tampilkan 41 transaksi"). Pilihan langsung berlaku, filter aktif tampil sebagai chip yang bisa dihapus satu per satu. Di laptop tampilan dropdown lama dipertahankan.

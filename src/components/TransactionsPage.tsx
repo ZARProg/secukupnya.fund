@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Bookmark, ChevronDown, Download, Search, X } from 'lucide-react';
+import { Bookmark, ChevronDown, Download, Search, SlidersHorizontal, X } from 'lucide-react';
+import { FilterSheet } from '@/components/FilterSheet';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { TransactionList } from '@/components/TransactionList';
 import { isNonSpendingCategory } from '@/lib/categories';
 import { formatRupiah, parseRupiah, rupiahLabel } from '@/lib/format';
@@ -43,6 +45,8 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
   const setCategory = (v: string) => setF((p) => ({ ...p, category: v }));
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const isPhone = useMediaQuery('(max-width: 639px)');
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [naming, setNaming] = useState(false);
   const [presetName, setPresetName] = useState('');
   const { saved, save, remove, full } = useSavedFilters();
@@ -96,6 +100,17 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
   }, [filtered]);
 
   const hasFilter = hasAnyFilter(full_);
+  const sheetCount = (account ? 1 : 0) + (month ? 1 : 0) + (category ? 1 : 0) + advanced;
+  const activeChips: { key: string; label: string; clear: () => void }[] = [];
+  if (account) activeChips.push({ key: 'account', label: account, clear: () => onAccountChange('') });
+  if (month) activeChips.push({ key: 'month', label: monthLabel(month), clear: () => setMonth('') });
+  if (category) activeChips.push({ key: 'category', label: category, clear: () => setCategory('') });
+  if (f.from) activeChips.push({ key: 'from', label: t('sheet.chip.from', { d: f.from }), clear: () => setF((p) => ({ ...p, from: '' })) });
+  if (f.to) activeChips.push({ key: 'to', label: t('sheet.chip.to', { d: f.to }), clear: () => setF((p) => ({ ...p, to: '' })) });
+  if (f.min !== null) activeChips.push({ key: 'min', label: t('sheet.chip.min', { v: rupiahLabel(f.min) }), clear: () => setF((p) => ({ ...p, min: null })) });
+  if (f.max !== null) activeChips.push({ key: 'max', label: t('sheet.chip.max', { v: rupiahLabel(f.max) }), clear: () => setF((p) => ({ ...p, max: null })) });
+  if (f.overBudget) activeChips.push({ key: 'over', label: t('sheet.chip.over'), clear: () => setF((p) => ({ ...p, overBudget: false })) });
+  if (f.noDescription) activeChips.push({ key: 'nodesc', label: t('sheet.chip.nodesc'), clear: () => setF((p) => ({ ...p, noDescription: false })) });
 
   function applySaved(preset: TxFilter) {
     const next = sanitizeForUse(preset, { accounts, months, categories });
@@ -130,6 +145,8 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
             ))}
           </div>
 
+          {!isPhone && (
+            <>
           <div className="grid w-full grid-cols-2 gap-2 sm:contents">
           <select
             value={account}
@@ -185,7 +202,10 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
             <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
           </button>
 
-          {hasFilter && (
+            </>
+          )}
+
+          {!isPhone && hasFilter && (
             <button
               onClick={() => { setF(EMPTY_FILTER); onAccountChange(''); }}
               className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
@@ -195,19 +215,55 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
           )}
         </div>
 
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t('shell.tx.searchPlaceholder')}
-            className="form-input pl-9"
-            aria-label={t('shell.tx.search')}
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t('shell.tx.searchPlaceholder')}
+              className="form-input pl-9"
+              aria-label={t('shell.tx.search')}
+            />
+          </div>
+          {isPhone && (
+            <button
+              data-testid="filter-open"
+              onClick={() => setSheetOpen(true)}
+              aria-haspopup="dialog"
+              className="relative flex h-11 shrink-0 items-center gap-1.5 rounded-xl border border-line bg-card px-3.5 text-sm font-semibold text-slate-700 active:scale-[0.98]"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              {t('sheet.open')}
+              {sheetCount > 0 && <span data-testid="filter-badge" className="rounded-full bg-brand px-1.5 text-[11px] font-bold text-white">{sheetCount}</span>}
+            </button>
+          )}
         </div>
 
-        {showAdvanced && (
+        {isPhone && activeChips.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('sheet.active')} data-testid="filter-chips">
+            {activeChips.map((c) => (
+              <button
+                key={c.key}
+                onClick={c.clear}
+                aria-label={t('sheet.chip.remove', { name: c.label })}
+                className="flex min-h-8 items-center gap-1 rounded-full bg-brand-100 py-1 pl-3 pr-2 text-xs font-semibold text-brand-800"
+              >
+                {c.label}
+                <X className="h-3 w-3" />
+              </button>
+            ))}
+            <button
+              onClick={() => { setF((p) => ({ ...EMPTY_FILTER, type: p.type, query: p.query })); onAccountChange(''); }}
+              className="min-h-8 rounded-full px-2 text-xs font-semibold text-slate-600 underline-offset-2 hover:underline"
+            >
+              {t('sheet.clearAll')}
+            </button>
+          </div>
+        )}
+
+        {!isPhone && showAdvanced && (
           <div id="advanced-filters" className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/60 p-3">
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <label className="block text-xs font-semibold text-slate-500">
@@ -335,6 +391,19 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
           </button>
         </div>
       )}
+    
+      <FilterSheet
+        open={isPhone && sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        transactions={transactions}
+        filter={full_}
+        onChange={(next) => { const { account: a, ...rest } = next; setF({ ...rest, account: '' }); onAccountChange(a); }}
+        accounts={accounts}
+        months={months}
+        categories={categories}
+        budgets={budgets}
+        resultCount={filtered.length}
+      />
     </div>
   );
 }

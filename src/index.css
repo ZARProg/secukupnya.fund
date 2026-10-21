@@ -114,6 +114,17 @@
   }
 }
 
+@keyframes sheetIn {
+  from {
+    transform: translateY(32px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @keyframes panelIn {
   from {
     opacity: 0;
