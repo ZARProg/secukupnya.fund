@@ -3,7 +3,7 @@ import { ReconcileDialog } from '@/components/ReconcileDialog';
 import { readSafeSettings } from '@/hooks/useSafeSettings';
 import type { TransactionPayload } from '@/lib/transactions';
 import { Suspense, useState, useCallback, useEffect, useMemo } from 'react';
-import { Menu, TriangleAlert, Wallet } from 'lucide-react';
+import { Menu, Plus, TriangleAlert, Wallet } from 'lucide-react';
 import { Sidebar, type View } from '@/components/Sidebar';
 import { BottomNav } from '@/components/BottomNav';
 import { SlideOver } from '@/components/SlideOver';
@@ -382,9 +382,6 @@ function App() {
         onNavigate={navigate}
         onSelectAccount={selectAccount}
         onManageAccounts={manageAccounts}
-        onTemplate={handleTemplate}
-        onNewTransaction={() => openPanel('form')}
-        onImport={() => openPanel('import')}
         onRefresh={refresh}
         onClose={closeNav}
       />
@@ -408,9 +405,20 @@ function App() {
         </div>
 
         <main className="mx-auto max-w-5xl px-4 pb-32 pt-6 sm:px-8 sm:pt-10 lg:pb-10">
-          <header className="mb-6 sm:mb-8">
-            <h1 className="font-display text-[1.75rem] font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">{heading.title}</h1>
-            <p className="mt-1 text-sm text-slate-500">{heading.subtitle}</p>
+          <header className="mb-6 flex items-end justify-between gap-4 sm:mb-8">
+            <div className="min-w-0">
+              <h1 className="font-display text-[1.75rem] font-semibold leading-tight tracking-tight text-slate-900 sm:text-4xl">{heading.title}</h1>
+              <p className="mt-1 text-sm text-slate-500">{heading.subtitle}</p>
+            </div>
+            <button
+              onClick={() => openPanel('form')}
+              aria-keyshortcuts="n"
+              className="hidden h-10 shrink-0 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-semibold text-white shadow-xs transition-all hover:bg-brand-600 active:scale-[0.98] lg:flex"
+            >
+              <Plus className="h-4 w-4" />
+              {t('shell.action.record')}
+              <kbd aria-hidden="true" className="ml-1 rounded border border-white/40 px-1.5 text-[10px] font-semibold text-white/90">N</kbd>
+            </button>
           </header>
 
           {error && view !== 'sources' && (

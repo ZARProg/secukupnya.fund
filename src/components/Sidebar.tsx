@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Copy, Gauge, PiggyBank, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, Plus, RefreshCw, Wallet, X, FileSpreadsheet, DatabaseZap, Download, Scale, Settings, type LucideIcon,
+  Copy, Gauge, PiggyBank, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, RefreshCw, Wallet, DatabaseZap, Scale, Settings, type LucideIcon,
 } from 'lucide-react';
 import { AccountAvatar } from '@/components/AccountAvatar';
 import { LanguageSwitch } from '@/components/LanguageSwitch';
@@ -72,22 +72,25 @@ interface SidebarProps {
   onNavigate: (view: View) => void;
   onSelectAccount: (account: string) => void;
   onManageAccounts: () => void;
-  onNewTransaction: () => void;
-  onImport: () => void;
-  onTemplate: () => void;
   onRefresh: () => void;
   onClose: () => void;
 }
 
 export function Sidebar({
   open, view, accounts, activeAccount, connected, loading, error, conflictCount,
-  onNavigate, onSelectAccount, onManageAccounts, onNewTransaction, onImport, onTemplate, onRefresh, onClose,
+  onNavigate, onSelectAccount, onManageAccounts, onRefresh, onClose,
 }: SidebarProps) {
   const { t } = useT();
   // Di layar laptop yang pendek, menu paling bawah (Sumber data, Pengaturan) tersembunyi di dalam area gulir.
   // Pudarkan tepi bawah selama masih ada isi di bawah, supaya jelas bisa digulir.
   const scrollRef = useRef<HTMLDivElement>(null);
   const [moreBelow, setMoreBelow] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
     if (el) setMoreBelow(el.scrollHeight - el.scrollTop - el.clientHeight > 8);
@@ -132,61 +135,20 @@ export function Sidebar({
           open ? 'translate-x-0' : 'invisible -translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between px-5 pb-4 pt-5">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand">
-              <Wallet className="h-[18px] w-[18px] text-white" />
-            </span>
-            <span className="font-display text-[1.2rem] font-semibold leading-none tracking-tight text-slate-900">Secukupnya.fund</span>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 lg:hidden"
-            aria-label={t('shell.sidebar.close')}
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="space-y-2 px-4 pb-4">
-          <button
-            onClick={onNewTransaction}
-            aria-keyshortcuts="n"
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 text-sm font-semibold text-white shadow-xs transition-all hover:bg-brand-600 active:scale-[0.98]"
-          >
-            <Plus className="h-4 w-4" />
-            {t('shell.action.record')}
-            <kbd aria-hidden="true" className="ml-1 hidden rounded border border-white/40 px-1.5 text-[10px] font-semibold text-white/90 lg:inline">N</kbd>
-          </button>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={onImport}
-              aria-label={t('shell.action.import')}
-              title={t('shell.action.import')}
-              className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-line text-xs font-semibold text-slate-600 transition-colors hover:border-brand-300 hover:bg-card hover:text-brand-800"
-            >
-              <FileSpreadsheet className="h-3.5 w-3.5" aria-hidden="true" />
-              {t('sidebar.import.short')}
-            </button>
-            <button
-              onClick={onTemplate}
-              aria-label={t('shell.sidebar.template')}
-              title={t('shell.sidebar.template')}
-              className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-line text-xs font-semibold text-slate-600 transition-colors hover:border-brand-300 hover:bg-card hover:text-brand-800"
-            >
-              <Download className="h-3.5 w-3.5" aria-hidden="true" />
-              {t('sidebar.template.short')}
-            </button>
-          </div>
+        <div className="flex items-center gap-3 px-6 pb-6 pt-7">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand">
+            <Wallet className="h-[17px] w-[17px] text-white" />
+          </span>
+          <span className="font-display text-[1.3rem] font-semibold leading-none tracking-tight text-slate-900">Secukupnya.fund</span>
         </div>
 
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className="flex-1 overflow-y-auto border-t border-line px-3 pb-4 pt-4"
+          className="flex-1 overflow-y-auto px-3 pb-4"
           style={moreBelow ? { maskImage: 'linear-gradient(to bottom, #000 calc(100% - 28px), transparent)', WebkitMaskImage: 'linear-gradient(to bottom, #000 calc(100% - 28px), transparent)' } : undefined}
         >
-          <nav aria-label={t('shell.sidebar.pages')} className="space-y-5 lg:space-y-4">
+          <nav aria-label={t('shell.sidebar.pages')} className="space-y-6 lg:space-y-5">
             {GROUPS.map((group) => {
               const items: NavItem[] =
                 group.id === 'tools' && (conflictCount > 0 || view === 'conflicts')
@@ -195,7 +157,10 @@ export function Sidebar({
               return (
                 <div key={group.id} className="space-y-1 lg:space-y-0.5" role="group" aria-label={group.label ? t(group.label) : t('nav.group.main')}>
                   {group.label && (
-                    <p className="px-3 pb-1 font-display text-[13px] font-medium italic text-slate-500">{t(group.label)}</p>
+                    <p className="flex items-center gap-3 px-3 pb-1.5 font-display text-[13px] font-medium italic text-slate-500">
+                      {t(group.label)}
+                      <span aria-hidden="true" className="h-px flex-1 bg-line" />
+                    </p>
                   )}
                   {items.map(({ view: v, label, icon: Icon }) => {
                     const active = v === view;
