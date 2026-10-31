@@ -27,7 +27,7 @@ export function AchievementsPage({ eng }: { eng: Engagement }) {
           className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100"
           role="progressbar" aria-valuenow={eng.level.percent} aria-valuemin={0} aria-valuemax={100}
         >
-          <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${eng.level.percent}%` }} />
+          <div className="h-full rounded-full bg-brand" style={{ width: `${eng.level.percent}%` }} />
         </div>
         <p className="mt-2 text-sm text-slate-600" data-testid="level-next">
           {next ? t('ach.toNext', { n: next.min - eng.xp, name: levelName(next.key) }) : t('ach.maxLevel')}

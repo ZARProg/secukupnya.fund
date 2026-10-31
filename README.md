@@ -257,3 +257,6 @@ Di layar kecil ada bilah navigasi bawah (Beranda, Transaksi, tombol Catat di ten
 
 ## Filter Transaksi di HP
 Di layar kecil, filter Transaksi berupa tombol **Filter** yang membuka lembar dari bawah: chip Rekening/Bulan/Kategori dengan jumlah hasil tiap pilihan (dihitung dengan filter lain tetap berlaku), grafik sebaran nominal dengan kolom min/maks, rentang tanggal, dan tombol bawah yang menampilkan jumlah hasil langsung ("Tampilkan 41 transaksi"). Pilihan langsung berlaku, filter aktif tampil sebagai chip yang bisa dihapus satu per satu. Di laptop tampilan dropdown lama dipertahankan.
+
+## Performa
+Skor Lighthouse (mobile, simulasi 4x CPU) diukur ulang setelah perbaikan: sekitar 97–99 di mesin uji (sebelumnya 73–84 pada data yang sama). Yang diubah: font judul diperkecil (132 KB menjadi 37 KB) dan di-preload, animasi masuk kartu dihapus (elemen yang mulai dari transparan menunda cat pertama), transisi lebar bar dihapus (animasi di main thread), panel Catat dan dialog Cocokkan saldo dimuat terpisah (bundle utama 532 KB menjadi 466 KB), logo bank diperkecil, bagian Beranda di bawah layar memakai `content-visibility: auto`, dan file berhash/font diberi cache setahun di `vercel.json`. Ukur ulang di jendela Incognito tanpa ekstensi, karena ekstensi browser ikut memperlambat skor.

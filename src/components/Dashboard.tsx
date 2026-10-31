@@ -76,13 +76,13 @@ export function Dashboard({
         <InsightsPanel transactions={listed} month={todayISO().slice(0, 7)} max={3} hideWhenEmpty onSeeAll={onSeeInsights} />
       </div>
 
-      <div className="rise" style={{ animationDelay: '120ms' }}>
+      <div className="rise defer-render" style={{ animationDelay: '120ms' }}>
         <Panel title={t('shell.dashboard.daily')}>
           <DailyChart transactions={transactions} />
         </Panel>
       </div>
 
-      <div className="rise grid grid-cols-1 items-start gap-5 lg:grid-cols-2" style={{ animationDelay: '180ms' }}>
+      <div className="rise defer-render grid grid-cols-1 items-start gap-5 lg:grid-cols-2" style={{ animationDelay: '180ms' }}>
         <Panel
           title={t('ux.cat.period', { month: monthLabel(month) })}
           action={

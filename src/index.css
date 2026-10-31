@@ -10,9 +10,9 @@
 @font-face {
   font-family: 'Newsreader';
   font-style: normal;
-  font-weight: 200 800;
+  font-weight: 400 700;
   font-display: swap;
-  src: url('/fonts/newsreader-latin-opsz.woff2') format('woff2');
+  src: url('/fonts/newsreader-latin-wght.woff2') format('woff2');
 }
 
 @tailwind base;
@@ -34,7 +34,6 @@
   h2,
   h3 {
     @apply font-display font-semibold tracking-tight;
-    font-optical-sizing: auto;
   }
 
   select {
@@ -67,6 +66,12 @@
   @apply bg-slate-200 rounded-full hover:bg-slate-300;
 }
 
+.defer-render {
+  /* Bagian di bawah layar tidak dihitung style/layout/cat-nya sampai mendekati layar: mempercepat tampilan pertama. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 340px;
+}
+
 @keyframes toastIn {
   from {
     opacity: 0;
@@ -91,7 +96,7 @@
 }
 
 .rise {
-  animation: riseIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Tanpa animasi masuk: elemen yang mulai dari opacity 0 menunda cat pertama (LCP & Speed Index). */
 }
 
 @keyframes fadeSlide {

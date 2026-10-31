@@ -106,7 +106,7 @@ export function StatsCards({ transactions }: StatsProps) {
           aria-label={t('shell.stats.progress')}
         >
           <div
-            className={`h-full rounded-full transition-all duration-500 ${over ? 'bg-[#F8E69F]' : 'bg-[#FCF0DA]'}`}
+            className={`h-full rounded-full ${over ? 'bg-[#F8E69F]' : 'bg-[#FCF0DA]'}`}
             style={{ width: `${pct}%` }}
           />
         </div>

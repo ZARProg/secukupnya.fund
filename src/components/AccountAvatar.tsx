@@ -33,7 +33,7 @@ export function AccountAvatar({ name, size = 'sm' }: { name: string; size?: keyo
         aria-hidden="true"
         className={`inline-flex shrink-0 items-center justify-center bg-white ring-1 ring-black/10 ${LOGO_BOX[size]}`}
       >
-        <img src={logo} alt="" draggable={false} className="h-full w-full object-contain" />
+        <img src={logo} alt="" width={72} height={24} loading="lazy" decoding="async" draggable={false} className="h-full w-full object-contain" />
       </span>
     );
   }

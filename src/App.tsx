@@ -1,5 +1,4 @@
 import { getEntries } from '@/lib/activityStore';
-import { ReconcileDialog } from '@/components/ReconcileDialog';
 import { readSafeSettings } from '@/hooks/useSafeSettings';
 import type { TransactionPayload } from '@/lib/transactions';
 import { Suspense, useState, useCallback, useEffect, useMemo } from 'react';
@@ -13,13 +12,12 @@ import { DueBanner } from '@/components/DueBanner';
 import { usePlans } from '@/hooks/usePlans';
 import { useBudgets } from '@/hooks/useBudgets';
 import { dueRules, monthKey, type Recurring } from '@/lib/plans';
-import { RecordPanel } from '@/components/RecordPanel';
 import { SecurityBanner } from '@/components/SecurityBanner';
 import { DebtDueBanner } from '@/components/DebtDueBanner';
 import { Dashboard } from '@/components/Dashboard';
 import {
   AchievementsPage, ActivityPage, BudgetsPage, CalendarPage, ConflictsPage, DebtsPage, GoalsPage, ImportPanel, NetWorthPage,
-  PlansPage, RecapPage, ReportPage, RulesPage, SettingsPage, SourcesPage, TransactionsPage,
+  PlansPage, ReconcileDialog, RecapPage, RecordPanel, ReportPage, RulesPage, SettingsPage, SourcesPage, TransactionsPage, prefetchPanels,
 } from '@/components/pages';
 import { PageFallback } from '@/components/PageFallback';
 import { PwaStatus } from '@/components/PwaStatus';
@@ -76,6 +74,8 @@ function App() {
   }, [transactions]);
   const sheetConnected = Boolean(sheetUrl);
   const sheetReady = sheetConnected && !loading && !error && sheetVersion >= MIN_BATCH_VERSION;
+
+  useEffect(() => { prefetchPanels(); }, []);
 
   // Batas harian: kalau pengguna belum mengaturnya di browser ini, pakai yang tersimpan di spreadsheet.
   const { isStored: limitStored, adopt: adoptLimit, limit: dailyLimit } = useDailyLimit();
@@ -360,13 +360,15 @@ function App() {
   return (
     <div className="min-h-screen bg-paper text-slate-900">
       {reconcileOpen && (
-        <ReconcileDialog
-          accounts={balances}
-          toSheet={sheetConnected}
-          startingBalanceSet={startingSet}
-          onClose={() => setReconcileOpen(false)}
-          onSave={handleReconcile}
-        />
+        <Suspense fallback={null}>
+          <ReconcileDialog
+            accounts={balances}
+            toSheet={sheetConnected}
+            startingBalanceSet={startingSet}
+            onClose={() => setReconcileOpen(false)}
+            onSave={handleReconcile}
+          />
+        </Suspense>
       )}
       <Toast toast={toast} onDismiss={dismissToast} />
 
@@ -569,6 +571,7 @@ function App() {
       <BottomNav view={view} onNavigate={navigate} onRecord={() => openPanel('form')} />
 
       <SlideOver open={panel === 'form'} title={editing ? t('edit.title') : t('shell.action.record')} onClose={closePanel}>
+        <Suspense fallback={<PageFallback />}>
         <RecordPanel
           editing={editing}
           transactions={transactions}
@@ -582,6 +585,7 @@ function App() {
           onToast={showToast}
           onSubmitted={closePanel}
         />
+        </Suspense>
       </SlideOver>
 
       <SlideOver open={panel === 'import'} title={t('shell.action.import')} onClose={closePanel} wide>

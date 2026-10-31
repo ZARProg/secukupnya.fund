@@ -57,7 +57,7 @@ export function CategoryChart({ transactions, type }: CategoryChartProps) {
             </div>
             <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-500 ease-out ${
+                className={`h-full rounded-full ${
                   type === 'expense' ? 'bg-brand' : 'bg-brand-300'
                 }`}
                 style={{ width: `${pct}%` }}

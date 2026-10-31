@@ -1,6 +1,7 @@
 import { lazyPage } from '@/lib/lazyPage';
 
-// Halaman dimuat saat pertama dibuka, bukan sekaligus di awal. Beranda dan panel Catat tetap dimuat langsung.
+// Halaman dan panel dimuat saat pertama dibuka, bukan sekaligus di awal (mengurangi kerja saat halaman pertama muncul). Beranda tetap dimuat langsung.
+// Panel Catat dan dialog Cocokkan saldo diambil diam-diam saat browser menganggur (lihat prefetchPanels), jadi terbuka tanpa jeda.
 export const CalendarPage = lazyPage(() => import('./CalendarPage').then((m) => ({ default: m.CalendarPage })));
 export const PlansPage = lazyPage(() => import('./PlansPage').then((m) => ({ default: m.PlansPage })));
 export const GoalsPage = lazyPage(() => import('./PlansPage').then((m) => ({ default: m.GoalsPage })));
@@ -17,3 +18,16 @@ export const ImportPanel = lazyPage(() => import('./ImportPanel').then((m) => ({
 export const RecapPage = lazyPage(() => import('./RecapPage').then((m) => ({ default: m.RecapPage })));
 export const AchievementsPage = lazyPage(() => import('./AchievementsPage').then((m) => ({ default: m.AchievementsPage })));
 export const SettingsPage = lazyPage(() => import('./SettingsPage').then((m) => ({ default: m.SettingsPage })));
+export const RecordPanel = lazyPage(() => import('./RecordPanel').then((m) => ({ default: m.RecordPanel })));
+export const ReconcileDialog = lazyPage(() => import('./ReconcileDialog').then((m) => ({ default: m.ReconcileDialog })));
+
+/** Ambil panel yang hampir pasti dipakai saat browser menganggur, setelah halaman pertama tampil. */
+export function prefetchPanels() {
+  const run = () => {
+    void import('./RecordPanel');
+    void import('./ReconcileDialog');
+  };
+  const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+  if (typeof w.requestIdleCallback === 'function') w.requestIdleCallback(run, { timeout: 4000 });
+  else window.setTimeout(run, 2500);
+}
