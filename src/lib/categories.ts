@@ -103,7 +103,7 @@ export const DAILY_TARGET = 50000;
 export interface AccountMeta {
   /** Nama yang disimpan di transaksi dan Google Sheets. */
   name: string;
-  kind: 'bank' | 'ewallet';
+  kind: 'bank' | 'ewallet' | 'invest';
   /** Singkatan di avatar bila logo tidak tersedia (lihat src/assets/banks). */
   mono: string;
   /** Kelas Tailwind untuk avatar (latar + teks). Ditulis utuh supaya ikut terbaca Tailwind. */
@@ -126,6 +126,9 @@ export const ACCOUNT_CATALOG: AccountMeta[] = [
   { name: 'OVO', kind: 'ewallet', mono: 'OVO', avatar: 'bg-[#735FB0] text-[#FFFFFF]', soft: 'bg-violet-50 text-violet-700', aliases: [] },
   { name: 'GOPAY', kind: 'ewallet', mono: 'GPY', avatar: 'bg-[#3F4B35] text-[#FFFFFF]', soft: 'bg-emerald-50 text-emerald-700', aliases: ['gopay'] },
   { name: 'SHOPEEPAY', kind: 'ewallet', mono: 'SPY', avatar: 'bg-[#B93418] text-[#FFFFFF]', soft: 'bg-orange-50 text-orange-700', aliases: ['shopee', 'spay'] },
+  { name: 'BIBIT', kind: 'invest', mono: 'BBT', avatar: 'bg-[#167A52] text-[#FFFFFF]', soft: 'bg-emerald-50 text-emerald-800', aliases: ['bibitid'] },
+  { name: 'AJAIB', kind: 'invest', mono: 'AJB', avatar: 'bg-[#2B5FC4] text-[#FFFFFF]', soft: 'bg-blue-50 text-blue-800', aliases: ['ajaibid'] },
+  { name: 'PLUANG', kind: 'invest', mono: 'PLG', avatar: 'bg-[#0A3A38] text-[#FFFFFF]', soft: 'bg-teal-50 text-teal-800', aliases: ['pluangid'] },
 ];
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');

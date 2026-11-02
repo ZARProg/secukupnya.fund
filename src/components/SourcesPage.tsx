@@ -278,9 +278,9 @@ export function SourcesPage({
         <p className="mb-4 text-sm leading-relaxed text-slate-600">
           {t('sources.accounts.intro')}
         </p>
-        {(['bank', 'ewallet'] as const).map((kind) => (
+        {(['bank', 'ewallet', 'invest'] as const).map((kind) => (
           <div key={kind} className="mb-4 last:mb-0">
-            <h3 className="mb-2 text-xs font-semibold text-slate-500">{kind === 'bank' ? t('sources.accounts.bank') : t('sources.accounts.ewallet')}</h3>
+            <h3 className="mb-2 text-xs font-semibold text-slate-500">{kind === 'bank' ? t('sources.accounts.bank') : kind === 'ewallet' ? t('sources.accounts.ewallet') : t('sources.accounts.invest')}</h3>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {ACCOUNT_CATALOG.filter((a) => a.kind === kind).map((a) => {
                 const selected = selectedAccounts.includes(a.name);

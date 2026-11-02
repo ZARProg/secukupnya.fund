@@ -163,12 +163,23 @@ export function manualEstimate(item: NetItem, today: string): { estimate: boolea
   return { estimate: false, reason: null, ageDays: age };
 }
 
-export function computeNetWorth(data: NetWorthData, accounts: AccountInput[], debts: Debt[], today: string): NetWorthResult {
+/** Nilai pasar rekening investasi dari pengguna (nama platform -> nilai + tanggal). Menggantikan saldo transaksi untuk rekening itu. */
+export type InvestValues = Record<string, { value: number; date: string }>;
+
+export function computeNetWorth(data: NetWorthData, accounts: AccountInput[], debts: Debt[], today: string, investValues: InvestValues = {}): NetWorthResult {
   const assetRows: NetRow[] = [];
   const liabilityRows: NetRow[] = [];
 
   if (data.includeAccounts) {
     for (const a of accounts) {
+      const market = investValues[a.account];
+      if (market) {
+        // Nilai dari aplikasi investasi (diketik pengguna) lebih tepat daripada modal; umurnya menentukan label estimasi.
+        const age = Math.max(0, daysBetween(market.date, today));
+        const stale = age > STALE_DAYS;
+        assetRows.push({ key: `acc:${a.account}`, source: 'account', name: a.account, kind: 'investment', value: market.value, estimate: stale, reason: stale ? 'stale' : null, ageDays: age });
+        continue;
+      }
       const opening = data.openings[a.account];
       const value = a.balance + (opening ?? 0);
       let reason: EstimateReason | null = null;

@@ -16,7 +16,7 @@ import { SecurityBanner } from '@/components/SecurityBanner';
 import { DebtDueBanner } from '@/components/DebtDueBanner';
 import { Dashboard } from '@/components/Dashboard';
 import {
-  AchievementsPage, ActivityPage, BudgetsPage, CalendarPage, ConflictsPage, DebtsPage, GoalsPage, ImportPanel, NetWorthPage,
+  AchievementsPage, ActivityPage, BudgetsPage, CalendarPage, ConflictsPage, DebtsPage, GoalsPage, ImportPanel, InvestPage, NetWorthPage,
   PlansPage, ReconcileDialog, RecapPage, RecordPanel, ReportPage, RulesPage, SettingsPage, SourcesPage, TransactionsPage, prefetchPanels,
 } from '@/components/pages';
 import { PageFallback } from '@/components/PageFallback';
@@ -211,6 +211,13 @@ function App() {
     showToast({ kind: 'success', message: t('recon.toast', { n: payloads.length }) });
   }, [addOne, sheetConnected, showToast, t]);
 
+  // Top up/tarik = dua baris Transfer. Satu kali simpan bila bisa, supaya tidak ada transfer setengah jadi.
+  const handleInvestMove = useCallback(async (payloads: TransactionPayload[]) => {
+    const target = sheetConnected ? 'sheet' : 'local';
+    if (target === 'sheet' && !sheetReady) for (const p of payloads) await addOne(p, target);
+    else await importTransactions(payloads, target);
+  }, [addOne, importTransactions, sheetConnected, sheetReady]);
+
   const handleSkipDue = useCallback((rule: Recurring) => {
     markDone(rule.id, monthKey(todayISO()));
     showToast({ kind: 'success', message: t('due.toast.skipped', { name: rule.description }) });
@@ -341,6 +348,8 @@ function App() {
               ? { title: t('nav.plans'), subtitle: t('plans.subtitle') }
               : view === 'debts'
                 ? { title: t('debt.title'), subtitle: t('debt.subtitle') }
+                : view === 'invest'
+                  ? { title: t('inv.title'), subtitle: t('inv.subtitle') }
                 : view === 'networth'
                   ? { title: t('nw.title'), subtitle: t('nw.subtitle') }
                 : view === 'conflicts'
@@ -511,6 +520,9 @@ function App() {
           {view === 'plans' && <PlansPage accounts={selectedAccounts} />}
           {view === 'goals' && <GoalsPage />}
           {view === 'budgets' && <BudgetsPage transactions={listedTransactions} />}
+          {view === 'invest' && (
+            <InvestPage balances={balances} selectedAccounts={selectedAccounts} onChangeAccounts={handleAccountsChange} onMove={handleInvestMove} onToast={showToast} />
+          )}
           {view === 'networth' && <NetWorthPage balances={balances} transactions={transactions} ready={!loading} onToast={showToast} />}
           {view === 'debts' && (
             <DebtsPage

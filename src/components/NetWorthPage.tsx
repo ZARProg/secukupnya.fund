@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 're
 import { AlertTriangle, Plus, Trash2, TrendingDown, TrendingUp } from 'lucide-react';
 import { useT, locale, type MessageKey } from '@/i18n';
 import { useDebts } from '@/hooks/useDebts';
+import { useInvest } from '@/hooks/useInvest';
+import { valuesForNetWorth } from '@/lib/invest';
 import { useNetWorth } from '@/hooks/useNetWorth';
 import { usePrivacy } from '@/hooks/usePrivacy';
 import { todayISO } from '@/lib/date';
@@ -31,6 +33,7 @@ export function NetWorthPage({ balances, transactions, ready, onToast }: NetWort
   const { debts } = useDebts();
   const nw = useNetWorth();
   const { data } = nw;
+  const { data: investData } = useInvest();
   const today = todayISO();
 
   const accountInputs = useMemo(() => {
@@ -43,7 +46,8 @@ export function NetWorthPage({ balances, transactions, ready, onToast }: NetWort
     return balances.map((b) => ({ account: b.account, balance: b.balance, lastTx: last.get(b.account) ?? null }));
   }, [balances, transactions]);
 
-  const result = useMemo(() => computeNetWorth(data, accountInputs, debts, today), [data, accountInputs, debts, today]);
+  const investValues = useMemo(() => valuesForNetWorth(investData, today), [investData, today]);
+  const result = useMemo(() => computeNetWorth(data, accountInputs, debts, today, investValues), [data, accountInputs, debts, today, investValues]);
   const hasAnything = result.assetRows.length > 0 || result.liabilityRows.length > 0;
 
   // Catat satu riwayat per hari setelah data selesai dimuat.
@@ -376,7 +380,7 @@ function ItemRow({ row, list, onToast }: { row: NetRow; list: ListKey; onToast: 
         {negativeAccount && <span className="text-[11px] text-red-600">{t('nw.negative')}</span>}
 
         <span className="ml-auto flex items-center gap-1">
-          {row.source !== 'debt' && !editing && (
+          {row.source !== 'debt' && !(row.source === 'account' && row.kind === 'investment') && !editing && (
             <button
               onClick={startEdit}
               aria-label={row.source === 'account' ? `${t('nw.opening.edit')}: ${row.name}` : t('nw.update.aria', { name: row.name })}

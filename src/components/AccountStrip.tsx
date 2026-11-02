@@ -48,7 +48,8 @@ export function AccountStrip({ accounts, onSelect, onManage, onReconcile }: Acco
 
       <ul className="-mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0">
         {accounts.map(({ account, balance }) => {
-          const kind = getAccountMeta(account).kind === 'ewallet' ? 'E-wallet' : 'Bank';
+          const k = getAccountMeta(account).kind;
+          const kind = k === 'ewallet' ? 'E-wallet' : k === 'invest' ? t('nav.invest') : 'Bank';
           return (
             <li key={account} className="snap-start">
               <button

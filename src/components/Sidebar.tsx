@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Copy, Gauge, PiggyBank, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, RefreshCw, Wallet, DatabaseZap, Scale, Settings, type LucideIcon,
+  Copy, Gauge, PiggyBank, LayoutDashboard, Receipt, BarChart3, CalendarClock, CalendarDays, History, Landmark, Wand2, Trophy, Share2, RefreshCw, Wallet, DatabaseZap, Scale, Settings, TrendingUp, type LucideIcon,
 } from 'lucide-react';
 import { AccountAvatar } from '@/components/AccountAvatar';
 import { LanguageSwitch } from '@/components/LanguageSwitch';
@@ -8,7 +8,7 @@ import { rupiahSigned } from '@/lib/format';
 import { useT, type MessageKey } from '@/i18n';
 import type { AccountBalance } from '@/lib/summary';
 
-export type View = 'overview' | 'transactions' | 'budgets' | 'goals' | 'report' | 'calendar' | 'plans' | 'debts' | 'networth' | 'rules' | 'activity' | 'conflicts' | 'achievements' | 'recap' | 'sources' | 'settings';
+export type View = 'overview' | 'transactions' | 'budgets' | 'goals' | 'report' | 'calendar' | 'plans' | 'debts' | 'networth' | 'invest' | 'rules' | 'activity' | 'conflicts' | 'achievements' | 'recap' | 'sources' | 'settings';
 
 type NavItem = { view: View; label: MessageKey; icon: LucideIcon };
 
@@ -32,6 +32,7 @@ const GROUPS: { id: string; label: MessageKey | null; items: NavItem[] }[] = [
       { view: 'calendar', label: 'nav.calendar', icon: CalendarDays },
       { view: 'plans', label: 'nav.plans', icon: CalendarClock },
       { view: 'debts', label: 'nav.debts', icon: Landmark },
+      { view: 'invest', label: 'nav.invest', icon: TrendingUp },
       { view: 'networth', label: 'nav.networth', icon: Scale },
     ],
   },

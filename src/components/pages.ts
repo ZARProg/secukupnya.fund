@@ -11,6 +11,7 @@ export const RulesPage = lazyPage(() => import('./RulesPage').then((m) => ({ def
 export const DebtsPage = lazyPage(() => import('./DebtsPage').then((m) => ({ default: m.DebtsPage })));
 export const BudgetsPage = lazyPage(() => import('./BudgetsPage').then((m) => ({ default: m.BudgetsPage })));
 export const NetWorthPage = lazyPage(() => import('./NetWorthPage').then((m) => ({ default: m.NetWorthPage })));
+export const InvestPage = lazyPage(() => import('./InvestPage').then((m) => ({ default: m.InvestPage })));
 export const ReportPage = lazyPage(() => import('./ReportPage').then((m) => ({ default: m.ReportPage })));
 export const TransactionsPage = lazyPage(() => import('./TransactionsPage').then((m) => ({ default: m.TransactionsPage })));
 export const SourcesPage = lazyPage(() => import('./SourcesPage').then((m) => ({ default: m.SourcesPage })));

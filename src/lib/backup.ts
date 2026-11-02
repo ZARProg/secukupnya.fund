@@ -3,6 +3,7 @@ import { cleanEntries } from './activity';
 import { cleanDebts } from './debts';
 import { cleanSavedFilters } from './filters';
 import { cleanLocal } from './localStore';
+import { cleanInvest, isEmptyInvest } from './invest';
 import { cleanHistory, cleanNetWorth, isEmptyNetWorth } from './networth';
 import { cleanBudgets, cleanGoals, cleanRecurring } from './plans';
 import { cleanMemory } from './quickMemory';
@@ -29,11 +30,11 @@ const P = 'budgettracker.';
 /** Pengaturan yang ikut sinkron antar perangkat lewat spreadsheet. */
 export const SYNC_KEYS = [
   `${P}accounts.v1`, `${P}dailyLimit.v1`, `${P}budgets.v1`, `${P}recurring.v1`, `${P}goals.v1`,
-  `${P}debts.v1`, `${P}rules.v1`, `${P}safe.v1`, `${P}savedFilters.v1`, `${P}networth.v1`,
+  `${P}debts.v1`, `${P}rules.v1`, `${P}safe.v1`, `${P}savedFilters.v1`, `${P}networth.v1`, `${P}invest.v1`,
 ] as const;
 
 /** Kunci sinkron yang sudah ada sebelum Kekayaan bersih. Blob lama tanpa daftar `keys` hanya mencakup ini, jadi menarik blob lama tidak menghapus kunci yang lebih baru. */
-export const LEGACY_SYNC_KEYS: readonly string[] = SYNC_KEYS.filter((k) => k !== `${P}networth.v1`);
+export const LEGACY_SYNC_KEYS: readonly string[] = SYNC_KEYS.filter((k) => k !== `${P}networth.v1` && k !== `${P}invest.v1`);
 
 /** Tambahan khusus backup: data yang hanya ada di browser ini. */
 const BACKUP_ONLY_KEYS = [
@@ -130,6 +131,10 @@ export function cleanValue(key: string, raw: string): string | null {
       return isEmptyNetWorth(nw) ? null : JSON.stringify(nw);
     }
     case 'nwhistory.v1': return list(cleanHistory(v));
+    case 'invest.v1': {
+      const iv = cleanInvest(v);
+      return isEmptyInvest(iv) ? null : JSON.stringify(iv);
+    }
     case 'rules.v1': return list(cleanRules(v));
     case 'savedFilters.v1': return list(cleanSavedFilters(v));
     case 'local.v1': return list(cleanLocal(v));

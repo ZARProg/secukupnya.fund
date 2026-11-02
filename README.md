@@ -260,3 +260,11 @@ Di layar kecil, filter Transaksi berupa tombol **Filter** yang membuka lembar da
 
 ## Performa
 Skor Lighthouse (mobile, simulasi 4x CPU) diukur ulang setelah perbaikan: sekitar 97–99 di mesin uji (sebelumnya 73–84 pada data yang sama). Yang diubah: font judul diperkecil (132 KB menjadi 37 KB) dan di-preload, animasi masuk kartu dihapus (elemen yang mulai dari transparan menunda cat pertama), transisi lebar bar dihapus (animasi di main thread), panel Catat dan dialog Cocokkan saldo dimuat terpisah (bundle utama 532 KB menjadi 466 KB), logo bank diperkecil, bagian Beranda di bawah layar memakai `content-visibility: auto`, dan file berhash/font diberi cache setahun di `vercel.json`. Ukur ulang di jendela Incognito tanpa ekstensi, karena ekstensi browser ikut memperlambat skor.
+
+## Investasi (Bibit, Ajaib, Pluang)
+Menu **Perencanaan → Investasi**. Pilih aplikasi (BIBIT, AJAIB, PLUANG), lalu:
+- **Top up**: uang pindah dari bank/e-wallet ke platform lewat dua baris *Transfer* (bukan pengeluaran, tidak mengubah laporan belanja). **Tarik** kebalikannya.
+- **Perbarui nilai**: aplikasi tidak mengambil harga pasar. Ketik total nilai dari aplikasi platform; untung/rugi = nilai − modal (setoran − penarikan). Tanpa angka itu, nilai dianggap sama dengan modal dan ditandai "belum diperbarui".
+- Saat top up/tarik, kotak "ikut perbarui nilai" menjaga untung/rugi tetap sama (aktif bila sudah ada nilai).
+- Nilai terbaru ikut dihitung di **Kekayaan bersih**. Riwayat nilai tersimpan di `budgettracker.invest.v1` dan ikut backup/sinkron.
+- Logo: `src/assets/banks/{bibit,ajaib,pluang}.png`.

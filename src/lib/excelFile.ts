@@ -61,6 +61,7 @@ function guideSheet() {
   const head = (value: string) => ({ value, fontWeight: 'bold' as const, textColor: '#ffffff', backgroundColor: BRAND });
   const banks = ACCOUNT_CATALOG.filter((a) => a.kind === 'bank').map((a) => a.name);
   const wallets = ACCOUNT_CATALOG.filter((a) => a.kind === 'ewallet').map((a) => a.name);
+  const invests = ACCOUNT_CATALOG.filter((a) => a.kind === 'invest').map((a) => a.name);
 
   const guide = tr('importer.guide.sheetName');
   const rows: unknown[][] = [
@@ -96,6 +97,7 @@ function guideSheet() {
     [bold(tr('importer.guide.accountChoices'))],
     ['Bank', banks.join(', ')],
     ['E-wallet', wallets.join(', ')],
+    ['Investment', invests.join(', ')],
     [],
     [bold(tr('importer.guide.notes'))],
     [tr('importer.guide.note1')],
