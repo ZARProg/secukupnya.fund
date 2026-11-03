@@ -83,6 +83,7 @@ export const id = {
   // AccountStrip
   'shell.strip.choose': 'Pilih bank dan e-wallet',
   'shell.strip.open': 'Lihat transaksi {account}, saldo {balance}',
+  'shell.strip.openHint': 'Lihat transaksi',
 
   // Grafik
   'shell.daily.average': 'Rata-rata {amount} per hari',
@@ -201,6 +202,7 @@ export const en: Record<keyof typeof id, string> = {
 
   'shell.strip.choose': 'Choose banks and e-wallets',
   'shell.strip.open': 'View {account} transactions, balance {balance}',
+  'shell.strip.openHint': 'View transactions',
 
   'shell.daily.average': 'Average {amount} per day',
   'shell.daily.over_one': ', {n} day over the limit',

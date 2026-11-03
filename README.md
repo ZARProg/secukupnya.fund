@@ -268,3 +268,10 @@ Menu **Perencanaan → Investasi**. Pilih aplikasi (BIBIT, AJAIB, PLUANG), lalu:
 - Saat top up/tarik, kotak "ikut perbarui nilai" menjaga untung/rugi tetap sama (aktif bila sudah ada nilai).
 - Nilai terbaru ikut dihitung di **Kekayaan bersih**. Riwayat nilai tersimpan di `budgettracker.invest.v1` dan ikut backup/sinkron.
 - Logo: `src/assets/banks/{bibit,ajaib,pluang}.png`.
+
+## Beranda dua kolom dan penyempurnaan
+- Desktop: kolom utama (Aman dipakai, grafik harian, kategori, transaksi) + kolom samping (Rekening, Investasi, Wawasan, Level). HP: saldo → rekening → investasi → Aman dipakai → ...
+- Kartu **Investasi** di Beranda: total nilai, untung/rugi, komposisi per platform. Platform investasi tidak lagi muncul di daftar Rekening (saldonya = modal, bukan nilai pasar).
+- **Aman dipakai** punya bar pembagian saldo (aman / tagihan / target) dan kerangka pemuatan seukuran kartu (mencegah halaman bergeser saat data Sheets datang).
+- **Grafik harian**: geser jari/kursor atau pakai panah kiri/kanan, Home, End. Muncul tooltip di atas batang.
+- Halaman Investasi: bar komposisi dan riwayat nilai per platform (bisa dihapus bila salah ketik).

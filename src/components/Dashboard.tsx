@@ -8,6 +8,7 @@ import { LevelChip } from '@/components/LevelChip';
 import type { Engagement } from '@/hooks/useEngagement';
 import { SafeToSpendCard } from '@/components/SafeToSpendCard';
 import { InsightsPanel } from '@/components/InsightsPanel';
+import { InvestGlance } from '@/components/InvestGlance';
 import { todayISO } from '@/lib/date';
 import { monthLabel } from '@/lib/report';
 import { TransactionList } from '@/components/TransactionList';
@@ -24,6 +25,7 @@ interface DashboardProps {
   onEdit?: (tx: Transaction) => void;
   onSeeAll: () => void;
   onSeeInsights?: () => void;
+  onSeeInvest?: () => void;
   engagement?: Engagement;
   onSeeAchievements?: () => void;
   onConnect: () => void;
@@ -36,7 +38,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({
-  transactions, accounts, loading, onDelete, onEdit, onSeeAll, onSeeInsights, engagement, onSeeAchievements, onConnect, onImport, onAdd, onTemplate, onSelectAccount, onManageAccounts, onReconcile,
+  transactions, accounts, loading, onDelete, onEdit, onSeeAll, onSeeInsights, onSeeInvest, engagement, onSeeAchievements, onConnect, onImport, onAdd, onTemplate, onSelectAccount, onManageAccounts, onReconcile,
 }: DashboardProps) {
   const { t } = useT();
   const [chartTab, setChartTab] = useState<'expense' | 'income'>('expense');
@@ -52,66 +54,78 @@ export function Dashboard({
     return <GettingStarted onConnect={onConnect} onImport={onImport} onAdd={onAdd} onTemplate={onTemplate} />;
   }
 
+  const rail = 'contents lg:flex lg:min-w-0 lg:flex-col lg:gap-5';
   return (
-    <div className="space-y-5">
-      <div className="rise">
+    <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start xl:grid-cols-[minmax(0,1fr)_22rem]">
+      {/* Mobile: urutan disusun dengan order (saldo, rekening, investasi, aman dipakai, ...). Desktop: kolom utama + kolom samping. */}
+      <div className="max-lg:order-1 lg:col-span-2">
         <StatsCards transactions={transactions} />
       </div>
 
-      <div className="rise" style={{ animationDelay: '40ms' }}>
-        <SafeToSpendCard transactions={transactions} accounts={accounts.map((a) => a.account)} />
-      </div>
-
-      <div className="rise" style={{ animationDelay: '60ms' }}>
-        <AccountStrip accounts={accounts} onSelect={onSelectAccount} onManage={onManageAccounts} onReconcile={onReconcile} />
-      </div>
-
-      {engagement && onSeeAchievements && (
-        <div className="rise" style={{ animationDelay: '82ms' }}>
-          <LevelChip eng={engagement} onOpen={onSeeAchievements} />
+      <div className={rail}>
+        <div className="max-lg:order-4">
+          <SafeToSpendCard transactions={transactions} accounts={accounts.map((a) => a.account)} loading={loading} />
         </div>
-      )}
 
-      <div className="rise" style={{ animationDelay: '90ms' }}>
-        <InsightsPanel transactions={listed} month={todayISO().slice(0, 7)} max={3} hideWhenEmpty onSeeAll={onSeeInsights} />
+        <div className="defer-render max-lg:order-6">
+          <Panel title={t('shell.dashboard.daily')}>
+            <DailyChart transactions={transactions} />
+          </Panel>
+        </div>
+
+        <div className="defer-render grid grid-cols-1 items-start gap-5 max-lg:order-7 2xl:grid-cols-2">
+          <Panel
+            title={t('ux.cat.period', { month: monthLabel(month) })}
+            action={
+              <div className="flex gap-1 rounded-lg bg-slate-100 p-0.5" role="group" aria-label={t('shell.type.group')}>
+                <TabButton active={chartTab === 'expense'} activeColor="text-brand-600" onClick={() => setChartTab('expense')}>
+                  {t('shell.type.expense')}
+                </TabButton>
+                <TabButton active={chartTab === 'income'} activeColor="text-emerald-600" onClick={() => setChartTab('income')}>
+                  {t('shell.type.income')}
+                </TabButton>
+              </div>
+            }
+          >
+            <CategoryChart transactions={spendingMonth} type={chartTab} />
+          </Panel>
+
+          <Panel
+            title={t('shell.dashboard.recent')}
+            action={
+              <button
+                onClick={onSeeAll}
+                className="min-h-9 rounded-lg px-2.5 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
+              >
+                {t('shell.dashboard.seeAll', { n: listed.length })}
+              </button>
+            }
+          >
+            <TransactionList transactions={listed} onDelete={onDelete} onEdit={onEdit} limit={6} />
+          </Panel>
+        </div>
       </div>
 
-      <div className="rise defer-render" style={{ animationDelay: '120ms' }}>
-        <Panel title={t('shell.dashboard.daily')}>
-          <DailyChart transactions={transactions} />
-        </Panel>
-      </div>
+      <div className={rail}>
+        <div className="max-lg:order-2">
+          <AccountStrip accounts={accounts} onSelect={onSelectAccount} onManage={onManageAccounts} onReconcile={onReconcile} />
+        </div>
 
-      <div className="rise defer-render grid grid-cols-1 items-start gap-5 lg:grid-cols-2" style={{ animationDelay: '180ms' }}>
-        <Panel
-          title={t('ux.cat.period', { month: monthLabel(month) })}
-          action={
-            <div className="flex gap-1 rounded-lg bg-slate-100 p-0.5" role="group" aria-label={t('shell.type.group')}>
-              <TabButton active={chartTab === 'expense'} activeColor="text-brand-600" onClick={() => setChartTab('expense')}>
-                {t('shell.type.expense')}
-              </TabButton>
-              <TabButton active={chartTab === 'income'} activeColor="text-emerald-600" onClick={() => setChartTab('income')}>
-                {t('shell.type.income')}
-              </TabButton>
-            </div>
-          }
-        >
-          <CategoryChart transactions={spendingMonth} type={chartTab} />
-        </Panel>
+        {onSeeInvest && (
+          <div className="max-lg:order-3 empty:hidden">
+            <InvestGlance accounts={accounts} onOpen={onSeeInvest} />
+          </div>
+        )}
 
-        <Panel
-          title={t('shell.dashboard.recent')}
-          action={
-            <button
-              onClick={onSeeAll}
-              className="min-h-9 rounded-lg px-2.5 py-1 text-xs font-semibold text-brand-600 transition-colors hover:bg-rose-50"
-            >
-              {t('shell.dashboard.seeAll', { n: listed.length })}
-            </button>
-          }
-        >
-          <TransactionList transactions={listed} onDelete={onDelete} onEdit={onEdit} limit={6} />
-        </Panel>
+        <div className="max-lg:order-5 empty:hidden">
+          <InsightsPanel transactions={listed} month={todayISO().slice(0, 7)} max={3} hideWhenEmpty onSeeAll={onSeeInsights} />
+        </div>
+
+        {engagement && onSeeAchievements && (
+          <div className="max-lg:order-8">
+            <LevelChip eng={engagement} onOpen={onSeeAchievements} />
+          </div>
+        )}
       </div>
     </div>
   );

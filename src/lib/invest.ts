@@ -1,4 +1,4 @@
-import { ACCOUNT_CATALOG, TRANSFER_CATEGORY } from './categories';
+import { ACCOUNT_CATALOG, TRANSFER_CATEGORY, getAccountMeta } from './categories';
 import { daysBetween } from './debts';
 import { MAX_AMOUNT } from './plans';
 import type { TransactionPayload } from './transactions';
@@ -176,3 +176,6 @@ export function valueAfterMove(current: number, kind: MoveKind, amount: number):
 export function valueSeries(list: Valuation[] | undefined, n = 24): Valuation[] {
   return (list ?? []).slice(-n);
 }
+
+/** Warna segmen grafik, diambil dari warna lencana platform (kelas bg-[#...]) supaya cocok dengan logonya. */
+export const platformColor = (name: string) => /bg-\[#[0-9A-Fa-f]{6}\]/.exec(getAccountMeta(name).avatar)?.[0] ?? 'bg-brand';

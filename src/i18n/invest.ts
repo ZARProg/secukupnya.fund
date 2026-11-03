@@ -59,6 +59,17 @@ export const id = {
   'inv.how.3': 'Nilai terbaru ikut dihitung di Kekayaan bersih.',
   'inv.trend': 'Grafik nilai {platform}',
   'sources.accounts.invest': 'Investasi',
+  'inv.glance.title': 'Investasi',
+  'inv.glance.hint': 'Lihat rincian',
+  'inv.alloc': 'Komposisi',
+  'inv.hist.title': 'Riwayat nilai',
+  'inv.hist.delete': 'Hapus nilai tanggal {date}',
+  'inv.hist.empty': 'Belum ada nilai yang tercatat.',
+  'inv.hist.toast': 'Nilai tanggal {date} dihapus.',
+  'safe.bar.label': 'Pembagian saldo rekening',
+  'safe.legend.free': 'Aman dipakai',
+  'safe.legend.bills': 'Tagihan & cicilan',
+  'safe.legend.goals': 'Target & kebutuhan',
 } as const;
 
 export const en: Record<keyof typeof id, string> = {
@@ -121,4 +132,15 @@ export const en: Record<keyof typeof id, string> = {
   'inv.how.3': 'The latest value is also counted in Net worth.',
   'inv.trend': '{platform} value chart',
   'sources.accounts.invest': 'Investments',
+  'inv.glance.title': 'Investments',
+  'inv.glance.hint': 'See details',
+  'inv.alloc': 'Allocation',
+  'inv.hist.title': 'Value history',
+  'inv.hist.delete': 'Delete value from {date}',
+  'inv.hist.empty': 'No values recorded yet.',
+  'inv.hist.toast': 'Value from {date} deleted.',
+  'safe.bar.label': 'How your account balance is split',
+  'safe.legend.free': 'Safe to spend',
+  'safe.legend.bills': 'Bills & installments',
+  'safe.legend.goals': 'Goals & needs',
 };

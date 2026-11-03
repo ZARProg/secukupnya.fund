@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowDownToLine, ArrowUpFromLine, Pencil, Plus, TrendingDown, TrendingUp } from 'lucide-react';
+import { ArrowDownToLine, ArrowUpFromLine, Pencil, Plus, Trash2, TrendingDown, TrendingUp } from 'lucide-react';
 import { useT } from '@/i18n';
 import { AccountAvatar } from '@/components/AccountAvatar';
 import { InvestDialog, type InvestMode, type MoveInput } from '@/components/InvestDialog';
@@ -10,7 +10,7 @@ import { usePrivacy } from '@/hooks/usePrivacy';
 import { todayISO } from '@/lib/date';
 import { shortDate } from '@/lib/format';
 import {
-  INVEST_PLATFORMS, STALE_VALUE_DAYS, isInvestAccount, movePayloads, positionOf, summarize, valueAfterMove, valueSeries,
+  INVEST_PLATFORMS, STALE_VALUE_DAYS, isInvestAccount, movePayloads, platformColor, positionOf, summarize, valueAfterMove, valueSeries,
   type MoveKind, type Position, type Valuation,
 } from '@/lib/invest';
 import type { AccountBalance } from '@/lib/summary';
@@ -27,7 +27,7 @@ interface Props {
 }
 
 const pct = (n: number) => `${n > 0 ? '+' : ''}${n.toFixed(1)}%`;
-const tone = (n: number) => (n > 0 ? 'text-emerald-700' : n < 0 ? 'text-rose-700' : 'text-slate-600');
+const tone = (n: number) => (n > 0 ? 'text-emerald-700' : n < 0 ? 'text-red-700' : 'text-slate-600');
 
 function Spark({ list, label }: { list: Valuation[]; label: string }) {
   if (list.length < 2) return null;
@@ -48,7 +48,7 @@ function Spark({ list, label }: { list: Valuation[]; label: string }) {
 export function InvestPage({ balances, selectedAccounts, onChangeAccounts, onMove, onToast }: Props) {
   const { t } = useT();
   const { money, moneySigned } = usePrivacy();
-  const { data, setValue } = useInvest();
+  const { data, setValue, removeValue } = useInvest();
   const { data: nw } = useNetWorth();
   const today = todayISO();
   const [dialog, setDialog] = useState<{ mode: InvestMode; platform: string } | null>(null);
@@ -102,12 +102,30 @@ export function InvestPage({ balances, selectedAccounts, onChangeAccounts, onMov
         ) : (
           <p className="mt-3 text-sm text-white">{t('inv.hero.empty')}</p>
         )}
+        {positions.filter((p) => p.value > 0).length > 1 && sum.value > 0 && (
+          <div className="mt-5" data-testid="invest-alloc">
+            <div className="flex h-2 gap-0.5 overflow-hidden rounded-full bg-white/15" role="img" aria-label={t('inv.alloc')}>
+              {positions.filter((p) => p.value > 0).map((p) => (
+                <span key={p.platform} className={`h-full ${platformColor(p.platform)} ring-1 ring-inset ring-white/30`} style={{ width: `${(p.value / sum.value) * 100}%` }} />
+              ))}
+            </div>
+            <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white">
+              {positions.filter((p) => p.value > 0).map((p) => (
+                <li key={p.platform} className="flex items-center gap-1.5">
+                  <span className={`h-2 w-2 rounded-full ring-1 ring-white/60 ${platformColor(p.platform)}`} aria-hidden="true" />
+                  {p.platform} <span className="tabular-nums">{Math.round((p.value / sum.value) * 100)}%</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       {positions.length > 0 && (
         <section aria-label={t('inv.platforms')} className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {positions.map((p) => {
-            const list = valueSeries(data.valuations[p.platform]);
+            const all = data.valuations[p.platform] ?? [];
+            const list = valueSeries(all);
             return (
               <article key={p.platform} className="rounded-2xl border border-line bg-card p-5 shadow-card" data-testid={`invest-card-${p.platform}`}>
                 <header className="flex items-center gap-3">
@@ -150,6 +168,28 @@ export function InvestPage({ balances, selectedAccounts, onChangeAccounts, onMov
                     <Pencil className="h-4 w-4" aria-hidden="true" />{t('inv.act.value')}
                   </button>
                 </div>
+                {all.length > 0 && (
+                  <details className="mt-3 border-t border-line pt-1">
+                    <summary className="flex min-h-11 cursor-pointer items-center text-xs font-semibold text-slate-600">{t('inv.hist.title')} ({all.length})</summary>
+                    <ul className="divide-y divide-line">
+                      {[...all].reverse().map((v) => (
+                        <li key={v.date} className="flex items-center justify-between gap-3 py-1 text-sm">
+                          <span className="text-slate-600">{shortDate(v.date)}</span>
+                          <span className="ml-auto font-semibold tabular-nums text-slate-900">{money(v.value)}</span>
+                          <button
+                            type="button"
+                            onClick={() => { removeValue(p.platform, v.date); onToast({ kind: 'success', message: t('inv.hist.toast', { date: shortDate(v.date) }) }); }}
+                            className="grid h-11 w-11 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-red-700"
+                            aria-label={t('inv.hist.delete', { date: shortDate(v.date) })}
+                            data-testid={`invest-hist-del-${p.platform}-${v.date}`}
+                          >
+                            <Trash2 className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
               </article>
             );
           })}

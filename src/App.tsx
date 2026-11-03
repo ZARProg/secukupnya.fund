@@ -500,6 +500,7 @@ function App() {
               engagement={engagement}
               onSeeAchievements={() => navigate('achievements')}
               onSeeInsights={() => navigate('report')}
+              onSeeInvest={() => navigate('invest')}
               onSeeAll={() => navigate('transactions')}
               onConnect={() => navigate('sources')}
               onImport={() => openPanel('import')}

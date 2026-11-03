@@ -15,9 +15,11 @@ interface Props {
   transactions: Transaction[];
   /** Nama rekening yang dipilih pengguna. */
   accounts: string[];
+  /** Data masih diambil: tampilkan kerangka seukuran kartu supaya halaman tidak bergeser saat angka muncul. */
+  loading?: boolean;
 }
 
-export function SafeToSpendCard({ transactions, accounts }: Props) {
+export function SafeToSpendCard({ transactions, accounts, loading = false }: Props) {
   const { t, tp } = useT();
   const { money, moneySigned } = usePrivacy();
   const { recurring, goals } = usePlans();
@@ -62,7 +64,16 @@ export function SafeToSpendCard({ transactions, accounts }: Props) {
         </button>
       </div>
 
-      {!r.ready ? (
+      {loading && !r.ready ? (
+        <div className="motion-safe:animate-pulse" aria-busy="true" data-testid="safe-loading">
+          <div className="h-9 w-44 rounded-lg bg-slate-100" />
+          <div className="mt-3 h-3.5 w-3/4 rounded bg-slate-100" />
+          <div className="mt-2 h-3.5 w-1/2 rounded bg-slate-100" />
+          <div className="mt-5 space-y-3 border-t border-line pt-4">
+            {[0, 1, 2, 3].map((i) => <div key={i} className="h-3.5 rounded bg-slate-100" />)}
+          </div>
+        </div>
+      ) : !r.ready ? (
         <p className="text-sm text-slate-500" data-testid="safe-notready">
           {t(r.reason === 'noAccounts' ? 'safe.notReady.noAccounts' : 'safe.notReady.noData')}
         </p>
@@ -79,6 +90,28 @@ export function SafeToSpendCard({ transactions, accounts }: Props) {
                 ? t('safe.perDay', { amount: money(r.perDay), n: r.daysLeft })
                 : t('safe.perDay.none')}
           </p>
+
+          {r.balance > 0 && (() => {
+            const free = Math.max(0, r.safe);
+            const bills = r.billsTotal + r.debtTotal;
+            const goals = r.reservedTotal + r.needTotal;
+            const total = free + bills + goals;
+            if (total <= 0) return null;
+            return (
+              <div className="mt-4" data-testid="safe-bar">
+                <div className="flex h-2.5 gap-0.5 overflow-hidden rounded-full bg-slate-100" role="img" aria-label={t('safe.bar.label')}>
+                  {free > 0 && <span className="h-full bg-brand" style={{ width: `${(free / total) * 100}%` }} />}
+                  {bills > 0 && <span className="h-full bg-ochre" style={{ width: `${(bills / total) * 100}%` }} />}
+                  {goals > 0 && <span className="h-full bg-slate-400" style={{ width: `${(goals / total) * 100}%` }} />}
+                </div>
+                <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
+                  <li className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand" aria-hidden="true" />{t('safe.legend.free')}</li>
+                  <li className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-ochre" aria-hidden="true" />{t('safe.legend.bills')}</li>
+                  <li className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-slate-400" aria-hidden="true" />{t('safe.legend.goals')}</li>
+                </ul>
+              </div>
+            );
+          })()}
 
           <dl className="mt-4 space-y-1.5 border-t border-line pt-3 text-sm">
             <Row label={t('safe.row.balance')} value={moneySigned(r.balance)} sub={r.adjust !== 0 ? t('safe.row.adjust', { amount: moneySigned(r.adjust) }) : undefined} />
