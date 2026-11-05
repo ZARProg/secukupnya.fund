@@ -27,7 +27,7 @@ export async function readWorkbook(file: File): Promise<RawSheet[]> {
 // bisa diimpor ke website, dan bisa juga ditempel langsung ke Google Sheets yang dipakai Apps Script.
 const HEADER = ['Date', 'Category', 'Account/Bank', 'Description', 'Total (Rp)'];
 const COLUMNS = [{ width: 14 }, { width: 18 }, { width: 18 }, { width: 38 }, { width: 16 }];
-const BRAND = '#6A795D';
+const BRAND = '#1E4D3A';
 
 function headerRow() {
   return HEADER.map((value) => ({

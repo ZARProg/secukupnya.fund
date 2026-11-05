@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { ChevronRight, TrendingDown, TrendingUp } from 'lucide-react';
+import { BellRing, ChevronRight, TrendingDown, TrendingUp } from 'lucide-react';
 import { useT } from '@/i18n';
 import { useInvest } from '@/hooks/useInvest';
 import { useNetWorth } from '@/hooks/useNetWorth';
 import { usePrivacy } from '@/hooks/usePrivacy';
 import { todayISO } from '@/lib/date';
-import { isInvestAccount, platformColor, positionOf, summarize } from '@/lib/invest';
+import { STALE_VALUE_DAYS, isInvestAccount, platformColor, positionOf, summarize } from '@/lib/invest';
 import type { AccountBalance } from '@/lib/summary';
 
 /** Ringkasan investasi di Beranda: total nilai, untung/rugi, dan komposisi per platform. Tidak tampil bila belum ada platform. */
@@ -24,6 +24,9 @@ export function InvestGlance({ accounts, onOpen }: { accounts: AccountBalance[];
   const parts = positions.filter((p) => p.value > 0);
   const total = parts.reduce((s, p) => s + p.value, 0);
   const hasGain = positions.some((p) => p.hasValue);
+  const stale = positions.filter((p) => p.stale).map((p) => p.platform);
+  const missing = positions.filter((p) => !p.hasValue && p.cost > 0).map((p) => p.platform);
+  const nudge = stale.length ? t('inv.glance.stale', { platform: stale.join(', '), days: STALE_VALUE_DAYS }) : missing.length ? t('inv.glance.missing', { platform: missing.join(', ') }) : null;
 
   return (
     <button
@@ -64,6 +67,12 @@ export function InvestGlance({ accounts, onOpen }: { accounts: AccountBalance[];
             ))}
           </span>
         </>
+      )}
+      {nudge && (
+        <span className="mt-4 flex items-start gap-2 rounded-xl bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900" data-testid="invest-nudge">
+          <BellRing className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          {nudge}
+        </span>
       )}
     </button>
   );

@@ -46,12 +46,12 @@ export function DueBanner({ due, onRecord, onSkip }: DueBannerProps) {
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-slate-900">{rule.description}</p>
               <p className="truncate text-xs text-slate-500">
-                {parseISODate(date).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })} · {rule.category}
-                {rule.account ? ` · ${rule.account}` : ''}
+                {parseISODate(date).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })} · {rule.toAccount ? `${rule.account} → ${rule.toAccount}` : rule.category}
+                {!rule.toAccount && rule.account ? ` · ${rule.account}` : ''}
               </p>
             </div>
             <p className={`text-sm font-bold tabular-nums ${rule.type === 'expense' ? 'text-slate-900' : 'text-emerald-600'}`}>
-              {rule.type === 'expense' ? '−' : '+'}{money(rule.total)}
+              {rule.toAccount ? '' : rule.type === 'expense' ? '−' : '+'}{money(rule.total)}
             </p>
             <div className="flex gap-1.5">
               <button

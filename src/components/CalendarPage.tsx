@@ -185,7 +185,7 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
                         {parseISODate(date).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })} · {inDays === 0 ? t('cal.upcoming.today') : tp('cal.upcoming.in', inDays)}
                       </span>
                     </span>
-                    <b className="tabular-nums text-brand-600">−{money(rule.total)}</b>
+                    <b className="tabular-nums text-brand-600">{rule.toAccount ? '' : '−'}{money(rule.total)}</b>
                   </li>
                 ))}
               </ul>
@@ -225,7 +225,7 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
                         <span className="block truncate font-semibold text-slate-800">{item.rule.description}</span>
                         <span className="text-xs text-slate-500">{t(`cal.status.${item.status}` as const)}</span>
                       </span>
-                      <b className={`tabular-nums ${item.rule.type === 'expense' ? 'text-slate-900' : 'text-emerald-600'}`}>{item.rule.type === 'expense' ? '−' : '+'}{money(item.rule.total)}</b>
+                      <b className={`tabular-nums ${item.rule.type === 'expense' ? 'text-slate-900' : 'text-emerald-600'}`}>{item.rule.toAccount ? '' : item.rule.type === 'expense' ? '−' : '+'}{money(item.rule.total)}</b>
                       {item.status === 'due' && (
                         <span className="flex gap-1.5">
                           <button

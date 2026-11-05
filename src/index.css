@@ -7,13 +7,6 @@
   font-display: swap;
   src: url('/fonts/figtree-latin-wght.woff2') format('woff2');
 }
-@font-face {
-  font-family: 'Newsreader';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url('/fonts/newsreader-latin-wght.woff2') format('woff2');
-}
 
 @tailwind base;
 @tailwind components;
@@ -93,6 +86,23 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.font-display { letter-spacing: -0.02em; }
+.font-display.font-medium { font-weight: 650; }
+.font-display.font-semibold { font-weight: 700; }
+.font-display.italic { font-style: normal; }
+
+.page-in {
+  /* Hanya opacity: transform pada pembungkus akan menjadikannya acuan posisi untuk sheet/dialog fixed di dalamnya. */
+  animation: pageIn 0.2s ease-out;
+}
+@keyframes pageIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-in { animation: none; }
 }
 
 .rise {

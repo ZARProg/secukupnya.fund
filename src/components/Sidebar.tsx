@@ -188,7 +188,7 @@ export function Sidebar({
             })}
           </nav>
 
-          <section className="mt-6 border-t border-line pt-5" aria-labelledby="sidebar-accounts">
+          <div className="mt-6 border-t border-line pt-5" role="group" aria-labelledby="sidebar-accounts">
             <div className="flex items-center justify-between px-3">
               <h2 id="sidebar-accounts" className="font-display text-[13px] font-medium italic text-slate-500">
                 {t('shell.accounts')}
@@ -232,7 +232,7 @@ export function Sidebar({
                 {t('shell.sidebar.balanceNote')}
               </p>
             )}
-          </section>
+          </div>
         </div>
 
         <div className="border-t border-line px-3 pb-3 pt-2">

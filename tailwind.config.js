@@ -28,14 +28,14 @@ export default {
       colors,
       fontFamily: {
         sans: ['Figtree', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
-        display: ['Newsreader', 'Georgia', 'Times New Roman', 'serif'],
+        display: ['Figtree', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
       },
-      borderRadius: { xl: '0.625rem', '2xl': '0.875rem', '3xl': '1.125rem' },
+      borderRadius: { xl: '0.875rem', '2xl': '1.25rem', '3xl': '1.75rem' },
       // Tailwind v3 belum punya ukuran xs/2xs (itu fitur v4), jadi didefinisikan di sini.
       boxShadow: {
-        '2xs': '0 1px 0 0 rgb(44 41 28 / 0.04)',
-        xs: '0 1px 2px 0 rgb(44 41 28 / 0.06)',
-        card: '0 1px 0 rgb(44 41 28 / 0.03)',
+        '2xs': '0 1px 0 0 rgb(18 37 27 / 0.04)',
+        xs: '0 1px 2px 0 rgb(18 37 27 / 0.06)',
+        card: '0 1px 2px rgb(18 37 27 / 0.04)',
       },
       backdropBlur: { xs: '2px' },
     },

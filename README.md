@@ -243,7 +243,7 @@ Halaman selain Beranda dimuat saat pertama dibuka (`src/components/pages.ts`), d
 
 ## Tampilan & palet warna
 
-Tema memakai empat warna dasar: sage `#6A795D` (merek), olive `#8E9162`, lime `#B2BD7E`, dan krem `#FCF0DA` (latar). Warna turunan (gelap/terang) dibuat dari keempatnya agar teks kecil tetap lolos kontras WCAG AA — teks kecil memakai sage gelap `#505D44`, bukan sage murni. Pengeluaran ditampilkan netral dengan tanda −, pemasukan hijau. Gaya modern klasik: judul & angka utama memakai serif Newsreader, isi memakai Figtree, sudut lebih tegas, garis tipis. Font (Figtree & Newsreader) di-host sendiri di `public/fonts` sehingga tetap tampil saat offline. Warna diatur di `tailwind.config.js`. Logo bank/e-wallet opsional: logo resmi sudah dipasang di `src/assets/banks` (11 bank/e-wallet); bank tanpa berkas dipakai monogram.
+Tema memakai empat warna dasar: sage `#6A795D` (merek), olive `#8E9162`, lime `#B2BD7E`, dan krem `#FCF0DA` (latar). Warna turunan (gelap/terang) dibuat dari keempatnya agar teks kecil tetap lolos kontras WCAG AA — teks kecil memakai sage gelap `#505D44`, bukan sage murni. Pengeluaran ditampilkan netral dengan tanda −, pemasukan hijau. Gaya modern bersih mengikuti referensi: hijau hutan + putih gading dingin, semua teks Figtree, sudut lebih tegas, garis tipis. Font Figtree di-host sendiri di `public/fonts` sehingga tetap tampil saat offline. Warna diatur di `tailwind.config.js`. Logo bank/e-wallet opsional: logo resmi sudah dipasang di `src/assets/banks` (11 bank/e-wallet); bank tanpa berkas dipakai monogram.
 
 ## Keamanan, tema, dan penyesuaian saldo
 
@@ -275,3 +275,18 @@ Menu **Perencanaan → Investasi**. Pilih aplikasi (BIBIT, AJAIB, PLUANG), lalu:
 - **Aman dipakai** punya bar pembagian saldo (aman / tagihan / target) dan kerangka pemuatan seukuran kartu (mencegah halaman bergeser saat data Sheets datang).
 - **Grafik harian**: geser jari/kursor atau pakai panah kiri/kanan, Home, End. Muncul tooltip di atas batang.
 - Halaman Investasi: bar komposisi dan riwayat nilai per platform (bisa dihapus bila salah ketik).
+
+## Fitur baru (November)
+- **Top up investasi rutin**: di *Tagihan rutin* pilih tipe "Top up investasi", pilih rekening asal dan platform (BIBIT/AJAIB/PLUANG). Saat jatuh tempo, tekan Catat: dua baris Transfer tercatat, dan nilai platform ikut naik bila kamu sudah pernah mengisi nilainya.
+- **Pengingat nilai investasi**: kartu Investasi di Beranda memberi tahu bila nilai belum diisi atau sudah lebih dari 30 hari.
+- **Palet perintah**: `Ctrl/Cmd+K` atau `/` (HP: ikon cari di bilah atas) untuk pindah halaman dan menjalankan aksi (catat, top up, cocokkan saldo, sembunyikan saldo, ganti tema/bahasa). Pencarian mengenali kata kunci seperti "cicilan", "saham", "tagihan".
+- **Anggaran**: ringkasan berupa cincin persen, sisa anggaran, laju harian aman, dan jumlah kategori hampir habis/lewat. Kategori tanpa anggaran tidak lagi memakai bar abu-abu.
+- Sapaan sesuai jam di Beranda dan transisi halaman halus (mengikuti pengaturan "kurangi gerakan").
+
+## Tampilan hijau hutan (November 2026)
+
+- Palet hijau hutan + putih keabuan dingin, font Figtree untuk semua teks (serif dihapus).
+- Kartu saldo hijau tua dengan "Rp" kecil, baris aksi cepat (Catat, Investasi, Cocokkan, Lainnya) di HP.
+- Transaksi terakhir berbentuk baris datar dengan tanggal di bawah nominal.
+- Donat pengeluaran per kategori dengan legenda persen.
+- Layar pengenalan 3 slide untuk pengguna baru. Lewati dengan `?intro=0`.

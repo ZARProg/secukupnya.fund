@@ -2,7 +2,7 @@ import { getEntries } from '@/lib/activityStore';
 import { readSafeSettings } from '@/hooks/useSafeSettings';
 import type { TransactionPayload } from '@/lib/transactions';
 import { Suspense, useState, useCallback, useEffect, useMemo } from 'react';
-import { Menu, Plus, TriangleAlert, Wallet } from 'lucide-react';
+import { Menu, Plus, Search, TriangleAlert, Wallet } from 'lucide-react';
 import { Sidebar, type View } from '@/components/Sidebar';
 import { BottomNav } from '@/components/BottomNav';
 import { SlideOver } from '@/components/SlideOver';
@@ -10,6 +10,8 @@ import { todayISO } from '@/lib/date';
 import { PickAccountsBanner } from '@/components/PickAccountsBanner';
 import { DueBanner } from '@/components/DueBanner';
 import { usePlans } from '@/hooks/usePlans';
+import { useInvest } from '@/hooks/useInvest';
+import { movePayloads, syncAfterMove } from '@/lib/invest';
 import { useBudgets } from '@/hooks/useBudgets';
 import { dueRules, monthKey, type Recurring } from '@/lib/plans';
 import { SecurityBanner } from '@/components/SecurityBanner';
@@ -17,7 +19,7 @@ import { DebtDueBanner } from '@/components/DebtDueBanner';
 import { Dashboard } from '@/components/Dashboard';
 import {
   AchievementsPage, ActivityPage, BudgetsPage, CalendarPage, ConflictsPage, DebtsPage, GoalsPage, ImportPanel, InvestPage, NetWorthPage,
-  PlansPage, ReconcileDialog, RecapPage, RecordPanel, ReportPage, RulesPage, SettingsPage, SourcesPage, TransactionsPage, prefetchPanels,
+  CommandPalette, PlansPage, ReconcileDialog, RecapPage, RecordPanel, ReportPage, RulesPage, SettingsPage, SourcesPage, TransactionsPage, prefetchPanels,
 } from '@/components/pages';
 import { PageFallback } from '@/components/PageFallback';
 import { PwaStatus } from '@/components/PwaStatus';
@@ -32,10 +34,15 @@ import { accountBalances } from '@/lib/summary';
 import { isTransferCategory } from '@/lib/categories';
 import { fetchTransactions, EDIT_VERSION, LIMIT_SYNC_VERSION, MIN_BATCH_VERSION, setSheetLimit, type Transaction } from '@/lib/transactions';
 import { useDailyLimit } from '@/hooks/useDailyLimit';
-import { locale, useT } from '@/i18n';
+import { locale, useT, type MessageKey } from '@/i18n';
 import { rich } from '@/i18n/rich';
+import { Onboarding } from '@/components/Onboarding';
+import { shouldShowIntro } from '@/lib/intro';
 
 type Panel = 'none' | 'form' | 'import';
+
+/** Sapaan menurut jam: pagi 4-10, siang 11-14, sore 15-17, malam sisanya. */
+const greetingKey = (h: number): MessageKey => (h >= 4 && h < 11 ? 'greet.morning' : h >= 11 && h < 15 ? 'greet.afternoon' : h >= 15 && h < 18 ? 'greet.evening' : 'greet.night');
 
 function App() {
   const { t, tp } = useT();
@@ -124,6 +131,9 @@ function App() {
     }, 800);
     return () => clearTimeout(timer);
   }, [freshBadges, toast, clearFresh, t]);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  // Transisi halaman hanya setelah pengguna berpindah halaman (bukan di pemuatan pertama, supaya tidak menunda cat pertama).
+  const [pageMoved, setPageMoved] = useState(false);
   const closeNav = useCallback(() => setNavOpen(false), []);
   const closePanel = useCallback(() => {
     setPanel('none');
@@ -149,8 +159,25 @@ function App() {
     return () => document.removeEventListener('keydown', onKey);
   }, [openPanel]);
 
+  // Ctrl/Cmd+K (di mana saja) atau "/" (di luar kolom isian) membuka palet perintah.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      const el = e.target as HTMLElement | null;
+      const typing = !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+      const hotkey = (k === 'k' && (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey) || (k === '/' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey);
+      if (!hotkey || e.repeat) return;
+      if (document.querySelector('[role="dialog"]:not([data-testid="palette"])')) return;
+      e.preventDefault();
+      setPaletteOpen((o) => !o);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
   const navigate = useCallback((next: View) => {
     setView(next);
+    setPageMoved(true);
     setNavOpen(false);
     window.scrollTo(0, 0);
   }, []);
@@ -188,35 +215,43 @@ function App() {
     }
   }, [deleteTx, restoreEntry, showToast, t]);
 
-  const { recurring, markDone } = usePlans();
-  const due = dueRules(recurring, todayISO());
-
-  const handleRecordDue = useCallback(async (rule: Recurring, date: string) => {
-    try {
-      await addOne(
-        { date, type: rule.type, category: rule.category, account: rule.account, description: rule.description, total: rule.total },
-        sheetConnected ? 'sheet' : 'local',
-      );
-      markDone(rule.id, monthKey(date));
-      showToast({ kind: 'success', message: t('due.toast.recorded', { name: rule.description }) });
-    } catch (err) {
-      console.error('Gagal mencatat transaksi berulang:', err);
-      showToast({ kind: 'error', message: t('due.toast.failed') });
-    }
-  }, [addOne, sheetConnected, markDone, showToast, t]);
-
-  const handleReconcile = useCallback(async (payloads: TransactionPayload[]) => {
-    for (const p of payloads) await addOne(p, sheetConnected ? 'sheet' : 'local');
-    setReconcileOpen(false);
-    showToast({ kind: 'success', message: t('recon.toast', { n: payloads.length }) });
-  }, [addOne, sheetConnected, showToast, t]);
-
+  const { data: investData, setValue: setInvestValue } = useInvest();
   // Top up/tarik = dua baris Transfer. Satu kali simpan bila bisa, supaya tidak ada transfer setengah jadi.
   const handleInvestMove = useCallback(async (payloads: TransactionPayload[]) => {
     const target = sheetConnected ? 'sheet' : 'local';
     if (target === 'sheet' && !sheetReady) for (const p of payloads) await addOne(p, target);
     else await importTransactions(payloads, target);
   }, [addOne, importTransactions, sheetConnected, sheetReady]);
+
+  const { recurring, markDone } = usePlans();
+  const due = dueRules(recurring, todayISO());
+
+  const handleRecordDue = useCallback(async (rule: Recurring, date: string) => {
+    try {
+      if (rule.toAccount) {
+        // Top up investasi rutin: dua baris transfer, lalu nilai platform ikut naik bila pengguna sudah pernah mengisinya.
+        await handleInvestMove(movePayloads('topup', rule.account, rule.toAccount, rule.total, date, rule.description));
+        const next = syncAfterMove(investData.valuations[rule.toAccount], date, 'topup', rule.total);
+        if (next !== null) setInvestValue(rule.toAccount, date, next);
+      } else {
+        await addOne(
+          { date, type: rule.type, category: rule.category, account: rule.account, description: rule.description, total: rule.total },
+          sheetConnected ? 'sheet' : 'local',
+        );
+      }
+      markDone(rule.id, monthKey(date));
+      showToast({ kind: 'success', message: t('due.toast.recorded', { name: rule.description }) });
+    } catch (err) {
+      console.error('Gagal mencatat transaksi berulang:', err);
+      showToast({ kind: 'error', message: t('due.toast.failed') });
+    }
+  }, [addOne, sheetConnected, markDone, showToast, t, handleInvestMove, investData, setInvestValue]);
+
+  const handleReconcile = useCallback(async (payloads: TransactionPayload[]) => {
+    for (const p of payloads) await addOne(p, sheetConnected ? 'sheet' : 'local');
+    setReconcileOpen(false);
+    showToast({ kind: 'success', message: t('recon.toast', { n: payloads.length }) });
+  }, [addOne, sheetConnected, showToast, t]);
 
   const handleSkipDue = useCallback((rule: Recurring) => {
     markDone(rule.id, monthKey(todayISO()));
@@ -326,13 +361,14 @@ function App() {
     }));
   }, [notify, t, tp]);
 
+  const [intro, setIntro] = useState(shouldShowIntro);
   const heading =
     view === 'overview'
       ? {
           title: t('shell.nav.overview'),
-          subtitle: new Date().toLocaleDateString(locale(), {
+          subtitle: `${t(greetingKey(new Date().getHours()))} · ${new Date().toLocaleDateString(locale(), {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-          }),
+          })}`,
         }
       : view === 'transactions'
         ? { title: t('shell.nav.transactions'), subtitle: t('shell.app.subtitle.transactions') }
@@ -368,6 +404,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-paper text-slate-900">
+      {intro && <Onboarding onDone={() => setIntro(false)} />}
       {reconcileOpen && (
         <Suspense fallback={null}>
           <ReconcileDialog
@@ -376,6 +413,17 @@ function App() {
             startingBalanceSet={startingSet}
             onClose={() => setReconcileOpen(false)}
             onSave={handleReconcile}
+          />
+        </Suspense>
+      )}
+      {paletteOpen && (
+        <Suspense fallback={null}>
+          <CommandPalette
+            open
+            onClose={() => setPaletteOpen(false)}
+            onNavigate={navigate}
+            onRecord={() => openPanel('form')}
+            onReconcile={() => { setStartingSet(readSafeSettings().adjust !== 0); setReconcileOpen(true); }}
           />
         </Suspense>
       )}
@@ -413,6 +461,14 @@ function App() {
             </span>
             <span className="font-display text-base font-bold tracking-tight">Secukupnya.fund</span>
           </div>
+          <button
+            onClick={() => setPaletteOpen(true)}
+            className="ml-auto grid h-10 w-10 place-items-center rounded-lg text-slate-600 hover:bg-slate-100"
+            aria-label={t('pal.open')}
+            data-testid="palette-open-m"
+          >
+            <Search className="h-5 w-5" />
+          </button>
         </div>
 
         <main className="mx-auto max-w-5xl px-4 pb-32 pt-6 sm:px-8 sm:pt-10 lg:pb-10">
@@ -421,15 +477,28 @@ function App() {
               <h1 className="font-display text-[1.75rem] font-semibold leading-tight tracking-tight text-slate-900 sm:text-4xl">{heading.title}</h1>
               <p className="mt-1 text-sm text-slate-500">{heading.subtitle}</p>
             </div>
+            <div className="hidden items-center gap-2 lg:flex">
+            <button
+              onClick={() => setPaletteOpen(true)}
+              aria-keyshortcuts="Control+K"
+              aria-label={t('pal.open')}
+              className="flex h-10 items-center gap-2 rounded-lg border border-line bg-card px-3 text-sm font-medium text-slate-600 transition-colors hover:border-brand/40 hover:text-slate-900"
+              data-testid="palette-open"
+            >
+              <Search className="h-4 w-4" aria-hidden="true" />
+              {t('pal.open.short')}
+              <kbd aria-hidden="true" className="rounded border border-line px-1.5 text-[10px] font-semibold text-slate-500">Ctrl K</kbd>
+            </button>
             <button
               onClick={() => openPanel('form')}
               aria-keyshortcuts="n"
-              className="hidden h-10 shrink-0 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-semibold text-white shadow-xs transition-all hover:bg-brand-600 active:scale-[0.98] lg:flex"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-semibold text-white shadow-xs transition-all hover:bg-brand-600 active:scale-[0.98]"
             >
               <Plus className="h-4 w-4" />
               {t('shell.action.record')}
               <kbd aria-hidden="true" className="ml-1 rounded border border-white/40 px-1.5 text-[10px] font-semibold text-white/90">N</kbd>
             </button>
+            </div>
           </header>
 
           {error && view !== 'sources' && (
@@ -474,6 +543,7 @@ function App() {
           )}
 
           <Suspense fallback={<PageFallback />}>
+          <div key={view} className={pageMoved ? 'page-in' : undefined}>
           {view === 'overview' && selectedAccounts.length === 0 && <PickAccountsBanner onPick={manageAccounts} />}
           {view === 'overview' && <DueBanner due={due} onRecord={handleRecordDue} onSkip={handleSkipDue} />}
           {view === 'overview' && sheetUrl && !loading && !error && sheetVersion > 0 && !sheetSecured && (
@@ -501,6 +571,7 @@ function App() {
               onSeeAchievements={() => navigate('achievements')}
               onSeeInsights={() => navigate('report')}
               onSeeInvest={() => navigate('invest')}
+              onMore={() => setNavOpen(true)}
               onSeeAll={() => navigate('transactions')}
               onConnect={() => navigate('sources')}
               onImport={() => openPanel('import')}
@@ -577,6 +648,7 @@ function App() {
               onNotify={notify}
             />
           )}
+          </div>
           </Suspense>
         </main>
       </div>

@@ -2,6 +2,7 @@ import { useState, type FormEvent, type ReactNode } from 'react';
 import { CalendarClock, PiggyBank, Plus, Trash2, Target } from 'lucide-react';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, TRANSFER_CATEGORY } from '@/lib/categories';
 import { formatRupiah, parseRupiah } from '@/lib/format';
+import { isInvestAccount } from '@/lib/invest';
 import { parseISODate, todayISO } from '@/lib/date';
 import { dueRules, goalPercent, initialLastDone, monthlyNeed, monthKey, MAX_AMOUNT } from '@/lib/plans';
 import { useT, locale } from '@/i18n';
@@ -60,26 +61,32 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
   const ym = monthKey(today);
 
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState<'expense' | 'income'>('expense');
+  const [type, setType] = useState<'expense' | 'income' | 'invest'>('expense');
+  const [toAcc, setToAcc] = useState('');
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
   const [account, setAccount] = useState('');
   const [amount, setAmount] = useState('');
   const [day, setDay] = useState('1');
 
-  const categories = (type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES).filter((c) => c !== TRANSFER_CATEGORY);
+  const isInvest = type === 'invest';
+  const platforms = accounts.filter(isInvestAccount);
+  const banks = accounts.filter((a) => !isInvestAccount(a));
+  const sources = isInvest ? banks : accounts;
+  const chosenTo = platforms.includes(toAcc) ? toAcc : (platforms[0] ?? '');
+  const categories = (type !== 'income' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES).filter((c) => c !== TRANSFER_CATEGORY);
   const chosenCategory = categories.includes(category) ? category : categories[0];
-  const chosenAccount = accounts.includes(account) ? account : (accounts[0] ?? '');
+  const chosenAccount = sources.includes(account) ? account : (sources[0] ?? '');
   const total = parseRupiah(amount);
   const dayNum = Number(day);
-  const valid = name.trim() !== '' && total > 0 && total <= MAX_AMOUNT && Number.isInteger(dayNum) && dayNum >= 1 && dayNum <= 31;
+  const valid = name.trim() !== '' && (!isInvest || (!!chosenTo && !!chosenAccount)) && total > 0 && total <= MAX_AMOUNT && Number.isInteger(dayNum) && dayNum >= 1 && dayNum <= 31;
 
   function submit(e: FormEvent) {
     e.preventDefault();
     if (!valid) return;
     addRecurring({
-      type, description: name.trim(), category: chosenCategory, account: chosenAccount,
-      total, day: dayNum, lastDone: initialLastDone(dayNum, today),
+      type: isInvest ? 'expense' : type, description: name.trim(), category: isInvest ? TRANSFER_CATEGORY : chosenCategory, account: chosenAccount,
+      ...(isInvest ? { toAccount: chosenTo } : {}), total, day: dayNum, lastDone: initialLastDone(dayNum, today),
     });
     setName('');
     setAmount('');
@@ -100,7 +107,7 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-slate-900">{r.description}</p>
                   <p className="truncate text-xs text-slate-500">
-                    {t('recurring.every', { day: r.day })} · {r.category}{r.account ? ` · ${r.account}` : ''}
+                    {t('recurring.every', { day: r.day })} · {r.toAccount ? `${r.account} → ${r.toAccount}` : `${r.category}${r.account ? ` · ${r.account}` : ''}`}
                   </p>
                   <span
                     className={`mt-1 inline-block rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${
@@ -111,7 +118,7 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
                   </span>
                 </div>
                 <p className={`text-sm font-bold tabular-nums ${r.type === 'expense' ? 'text-slate-900' : 'text-emerald-600'}`}>
-                  {r.type === 'expense' ? '−' : '+'}{money(r.total)}
+                  {r.toAccount ? '' : r.type === 'expense' ? '−' : '+'}{money(r.total)}
                 </p>
                 <button
                   onClick={() => {
@@ -130,8 +137,8 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
 
       {open ? (
         <form onSubmit={submit} className="mt-4 space-y-3 rounded-xl border border-slate-200 bg-slate-50/50 p-4" aria-label={t('recurring.add')}>
-          <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
-            {(['expense', 'income'] as const).map((k) => (
+          <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1">
+            {(['expense', 'income', 'invest'] as const).map((k) => (
               <button
                 key={k}
                 type="button"
@@ -139,7 +146,7 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
                 onClick={() => setType(k)}
                 className={`rounded-lg py-2 text-xs font-bold ${type === k ? 'bg-card shadow-xs text-slate-900' : 'text-slate-500'}`}
               >
-                {t(k === 'expense' ? 'shell.type.expense' : 'shell.type.income')}
+                {t(k === 'expense' ? 'shell.type.expense' : k === 'income' ? 'shell.type.income' : 'recurring.type.invest')}
               </button>
             ))}
           </div>
@@ -147,14 +154,22 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
             <input className="form-input" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} required />
           </Label>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Label text={t('forms.field.category')}>
-              <select className="form-input" value={chosenCategory} onChange={(e) => setCategory(e.target.value)}>
-                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </Label>
-            <Label text={t('forms.field.account')}>
-              <select className="form-input" value={chosenAccount} onChange={(e) => setAccount(e.target.value)}>
-                {accounts.map((a) => <option key={a} value={a}>{a}</option>)}
+            {isInvest ? (
+              <Label text={t('recurring.invest.to')}>
+                <select className="form-input" value={chosenTo} onChange={(e) => setToAcc(e.target.value)} data-testid="recurring-to">
+                  {platforms.map((a) => <option key={a} value={a}>{a}</option>)}
+                </select>
+              </Label>
+            ) : (
+              <Label text={t('forms.field.category')}>
+                <select className="form-input" value={chosenCategory} onChange={(e) => setCategory(e.target.value)}>
+                  {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </Label>
+            )}
+            <Label text={t(isInvest ? 'recurring.invest.from' : 'forms.field.account')}>
+              <select className="form-input" value={chosenAccount} onChange={(e) => setAccount(e.target.value)} data-testid="recurring-from">
+                {sources.map((a) => <option key={a} value={a}>{a}</option>)}
               </select>
             </Label>
             <Label text={t('forms.field.amount')}>
@@ -164,7 +179,8 @@ function RecurringSection({ accounts }: { accounts: string[] }) {
               <input className="form-input" type="number" min={1} max={31} value={day} onChange={(e) => setDay(e.target.value)} required />
             </Label>
           </div>
-          <p className="text-xs text-slate-500">{t('recurring.startHint')}</p>
+          {isInvest && platforms.length === 0 && <p className="text-xs font-semibold text-amber-800" data-testid="recurring-none">{t('recurring.invest.none')}</p>}
+          <p className="text-xs text-slate-500">{isInvest ? t('recurring.invest.hint') : t('recurring.startHint')}</p>
           <div className="flex gap-2">
             <button type="submit" disabled={!valid} className="rounded-xl bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-50">
               {t('recurring.add')}

@@ -12,9 +12,9 @@ export interface ThemeColors {
 }
 
 export const THEMES: Record<CardTheme, ThemeColors> = {
-  wine: { from: '#6A795D', to: '#3B4631', text: '#ffffff', muted: '#E6EDD3', accent: '#D5DEB0' },
-  sun: { from: '#FCF0DA', to: '#B2BD7E', text: '#262B1F', muted: '#3F4733', accent: '#262B1F' },
-  mint: { from: '#5E6140', to: '#33361F', text: '#ffffff', muted: '#E8EACB', accent: '#D5DEB0' },
-  night: { from: '#2E3827', to: '#171C13', text: '#ffffff', muted: '#DCE4C8', accent: '#B2BD7E' },
+  wine: { from: '#1E4D3A', to: '#0E281E', text: '#ffffff', muted: '#DCEBDD', accent: '#A8C7A5' },
+  sun: { from: '#EEF4E8', to: '#A8C7A5', text: '#12251B', muted: '#2F4A3A', accent: '#12251B' },
+  mint: { from: '#2F6B4F', to: '#174032', text: '#ffffff', muted: '#E1F0E4', accent: '#BFE0C4' },
+  night: { from: '#16251D', to: '#08130D', text: '#ffffff', muted: '#D5E4D8', accent: '#8FC49B' },
   rose: { from: '#9A6212', to: '#573406', text: '#ffffff', muted: '#F7E0B4', accent: '#F7E0B4' },
 };

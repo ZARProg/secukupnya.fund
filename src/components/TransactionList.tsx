@@ -12,6 +12,8 @@ interface TransactionListProps {
   onDelete: (tx: Transaction) => Promise<void>;
   onEdit?: (tx: Transaction) => void;
   limit?: number;
+  /** Gaya ringkas untuk Beranda: baris rata tanpa judul tanggal, tanggal di bawah nominal, ketuk baris untuk mengubah. */
+  compact?: boolean;
   emptyTitle?: string;
   emptyHint?: string;
 }
@@ -25,11 +27,20 @@ function dayLabel(iso: string): string {
   return parseISODate(iso).toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'long' });
 }
 
+/** Tanggal pendek di bawah nominal: Hari ini / Kemarin / 18 Agu. */
+function shortDay(iso: string): string {
+  if (!iso) return tr('shell.list.undatedDay');
+  const label = dayLabel(iso);
+  if (iso === todayISO() || label === tr('shell.list.yesterday')) return label;
+  return parseISODate(iso).toLocaleDateString(locale(), { day: 'numeric', month: 'short' });
+}
+
 export function TransactionList({
   transactions,
   onDelete,
   onEdit,
   limit,
+  compact,
   emptyTitle,
   emptyHint,
 }: TransactionListProps) {
@@ -63,6 +74,58 @@ export function TransactionList({
   }
 
   const rows = limit ? transactions.slice(0, limit) : transactions;
+
+  if (compact) {
+    return (
+      <ul className="divide-y divide-line/70">
+        {rows.map((tx) => {
+          const meta = getCategoryMeta(tx.category, tx.type);
+          const Icon = meta.icon;
+          const isExpense = tx.type === 'expense';
+          const name = tx.description || tx.category;
+          const body = (
+            <>
+              <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${meta.bg}`}>
+                <Icon className={`h-5 w-5 ${meta.color}`} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15px] font-semibold leading-snug text-slate-900">{name}</span>
+                <span className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500">
+                  <span className="truncate">{tx.category}</span>
+                  {tx.account && <AccountAvatar name={tx.account} size="xs" />}
+                </span>
+              </span>
+              <span className="shrink-0 text-right">
+                <span className={`block text-[15px] font-bold tabular-nums ${isExpense ? 'text-slate-900' : 'text-emerald-600'}`}>
+                  {isExpense ? '−' : '+'}{rupiahLabel(tx.total)}
+                </span>
+                <span className="mt-0.5 block text-xs text-slate-500">{shortDay(tx.date)}</span>
+              </span>
+            </>
+          );
+          return (
+            <li key={tx.id} className="group flex items-center gap-1">
+              {onEdit ? (
+                <button type="button" onClick={() => onEdit(tx)} className="-mx-2 flex min-w-0 flex-1 items-center gap-3.5 rounded-2xl px-2 py-3 text-left transition-colors hover:bg-brand/[0.04] active:bg-brand/[0.07]" aria-label={t('edit.aria', { name })}>
+                  {body}
+                </button>
+              ) : (
+                <div className="flex min-w-0 flex-1 items-center gap-3.5 py-3">{body}</div>
+              )}
+              <button
+                onClick={() => handleDelete(tx)}
+                disabled={deletingId !== null}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-all hover:bg-red-50 hover:text-red-700 focus-visible:text-red-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 max-sm:sr-only lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
+                aria-label={t('shell.list.delete', { name })}
+              >
+                {deletingId === tx.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
 
   // Daftar sudah urut tanggal menurun, jadi cukup mulai grup baru saat tanggalnya berganti.
   const dayTotals = new Map<string, number>();

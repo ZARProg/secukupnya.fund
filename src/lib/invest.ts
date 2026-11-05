@@ -179,3 +179,13 @@ export function valueSeries(list: Valuation[] | undefined, n = 24): Valuation[] 
 
 /** Warna segmen grafik, diambil dari warna lencana platform (kelas bg-[#...]) supaya cocok dengan logonya. */
 export const platformColor = (name: string) => /bg-\[#[0-9A-Fa-f]{6}\]/.exec(getAccountMeta(name).avatar)?.[0] ?? 'bg-brand';
+
+/**
+ * Nilai baru yang disimpan setelah setoran/penarikan pada `date`, atau null bila tidak perlu:
+ * belum ada nilai dari pengguna, atau tanggalnya lebih lama dari nilai terakhir (supaya riwayat tidak kacau).
+ */
+export function syncAfterMove(list: Valuation[] | undefined, date: string, kind: MoveKind, amount: number): number | null {
+  const last = latestValuation(list);
+  if (!last || date < last.date) return null;
+  return valueAfterMove(last.value, kind, amount);
+}

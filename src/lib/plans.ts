@@ -1,4 +1,5 @@
 import { parseISODate } from '@/lib/date';
+import { ACCOUNT_CATALOG } from '@/lib/categories';
 
 export const MAX_AMOUNT = 1_000_000_000_000;
 
@@ -8,6 +9,8 @@ export interface Recurring {
   description: string;
   category: string;
   account: string;
+  /** Bila diisi, aturan ini top up investasi: uang pindah dari `account` ke platform ini (dicatat sebagai transfer). */
+  toAccount?: string;
   total: number;
   /** Tanggal jatuh tempo tiap bulan (1-31). Di bulan yang lebih pendek dipakai hari terakhir bulan itu. */
   day: number;
@@ -47,9 +50,10 @@ export function cleanRecurring(value: unknown): Recurring[] {
       typeof r.day === 'number' && Number.isInteger(r.day) && r.day >= 1 && r.day <= 31 &&
       typeof r.lastDone === 'string' && (r.lastDone === '' || MONTH.test(r.lastDone))
     ) {
+      const to = typeof r.toAccount === 'string' && r.type === 'expense' && ACCOUNT_CATALOG.some((a) => a.name === r.toAccount && a.kind === 'invest') ? r.toAccount : undefined;
       out.push({
         id: r.id, type: r.type, description: r.description, category: r.category,
-        account: r.account, total: r.total, day: r.day, lastDone: r.lastDone,
+        account: r.account, ...(to ? { toAccount: to } : {}), total: r.total, day: r.day, lastDone: r.lastDone,
       });
     }
   }

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ArrowDownToLine, ArrowUpFromLine, Pencil, Plus, Trash2, TrendingDown, TrendingUp } from 'lucide-react';
 import { useT } from '@/i18n';
 import { AccountAvatar } from '@/components/AccountAvatar';
+import { MoneyText } from '@/components/MoneyText';
 import { InvestDialog, type InvestMode, type MoveInput } from '@/components/InvestDialog';
 import type { ToastState } from '@/components/Toast';
 import { useInvest } from '@/hooks/useInvest';
@@ -79,11 +80,10 @@ export function InvestPage({ balances, selectedAccounts, onChangeAccounts, onMov
 
   return (
     <div className="space-y-5" data-testid="invest-page">
-      <section className="relative rounded-3xl bg-brand p-7 text-white shadow-sm sm:p-9" aria-label={t('inv.hero.label')}>
-        <div aria-hidden="true" className="pointer-events-none absolute inset-2 rounded-[0.8rem] border border-[#F8E69F]/30" />
+      <section className="relative rounded-3xl bg-brand p-6 text-white sm:p-8" aria-label={t('inv.hero.label')}>
         <p className="text-sm font-semibold text-white">{t('inv.hero.label')}</p>
         <p className="mt-1 font-display text-5xl font-medium leading-none tracking-tight tabular-nums sm:text-6xl" data-testid="invest-total">
-          {money(sum.value)}
+          <MoneyText value={money(sum.value)} />
         </p>
         {hasMoney ? (
           <div className="mt-3 space-y-1.5 text-sm text-white">

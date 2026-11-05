@@ -5,6 +5,6 @@
     var dark = m === 'dark' || (m !== 'light' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#151810' : '#6A795D');
+    if (meta) meta.setAttribute('content', dark ? '#0E1511' : '#1E4D3A');
   } catch (e) { /* tetap tema terang */ }
 })();

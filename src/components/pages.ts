@@ -20,6 +20,7 @@ export const RecapPage = lazyPage(() => import('./RecapPage').then((m) => ({ def
 export const AchievementsPage = lazyPage(() => import('./AchievementsPage').then((m) => ({ default: m.AchievementsPage })));
 export const SettingsPage = lazyPage(() => import('./SettingsPage').then((m) => ({ default: m.SettingsPage })));
 export const RecordPanel = lazyPage(() => import('./RecordPanel').then((m) => ({ default: m.RecordPanel })));
+export const CommandPalette = lazyPage(() => import('./CommandPalette').then((m) => ({ default: m.CommandPalette })));
 export const ReconcileDialog = lazyPage(() => import('./ReconcileDialog').then((m) => ({ default: m.ReconcileDialog })));
 
 /** Ambil panel yang hampir pasti dipakai saat browser menganggur, setelah halaman pertama tampil. */

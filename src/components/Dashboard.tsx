@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { Download, FileSpreadsheet, Link2, PencilLine } from 'lucide-react';
+import { Download, FileSpreadsheet, Link2, MoreHorizontal, PencilLine, Plus, Scale, TrendingUp, type LucideIcon } from 'lucide-react';
 import { AccountStrip } from '@/components/AccountStrip';
 import { StatsCards } from '@/components/StatsCards';
 import { DailyChart } from '@/components/DailyChart';
@@ -26,6 +26,8 @@ interface DashboardProps {
   onSeeAll: () => void;
   onSeeInsights?: () => void;
   onSeeInvest?: () => void;
+  /** Buka menu navigasi penuh (tombol Lainnya). */
+  onMore?: () => void;
   engagement?: Engagement;
   onSeeAchievements?: () => void;
   onConnect: () => void;
@@ -38,7 +40,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({
-  transactions, accounts, loading, onDelete, onEdit, onSeeAll, onSeeInsights, onSeeInvest, engagement, onSeeAchievements, onConnect, onImport, onAdd, onTemplate, onSelectAccount, onManageAccounts, onReconcile,
+  transactions, accounts, loading, onDelete, onEdit, onSeeAll, onSeeInsights, onSeeInvest, onMore, engagement, onSeeAchievements, onConnect, onImport, onAdd, onTemplate, onSelectAccount, onManageAccounts, onReconcile,
 }: DashboardProps) {
   const { t } = useT();
   const [chartTab, setChartTab] = useState<'expense' | 'income'>('expense');
@@ -60,6 +62,14 @@ export function Dashboard({
       {/* Mobile: urutan disusun dengan order (saldo, rekening, investasi, aman dipakai, ...). Desktop: kolom utama + kolom samping. */}
       <div className="max-lg:order-1 lg:col-span-2">
         <StatsCards transactions={transactions} />
+        <QuickActions
+          actions={[
+            { icon: Plus, label: t('qa.record'), run: onAdd, testId: 'qa-record' },
+            { icon: TrendingUp, label: t('qa.invest'), run: onSeeInvest ?? onAdd, testId: 'qa-invest' },
+            { icon: Scale, label: t('qa.reconcile'), run: onReconcile ?? onAdd, testId: 'qa-reconcile' },
+            { icon: MoreHorizontal, label: t('qa.more'), run: onMore ?? onAdd, testId: 'qa-more' },
+          ]}
+        />
       </div>
 
       <div className={rail}>
@@ -101,7 +111,7 @@ export function Dashboard({
               </button>
             }
           >
-            <TransactionList transactions={listed} onDelete={onDelete} onEdit={onEdit} limit={6} />
+            <TransactionList transactions={listed} onDelete={onDelete} onEdit={onEdit} limit={6} compact />
           </Panel>
         </div>
       </div>
@@ -128,6 +138,25 @@ export function Dashboard({
         )}
       </div>
     </div>
+  );
+}
+
+/** Empat aksi cepat di bawah kartu saldo (HP). Desktop sudah punya tombol Catat dan sidebar. */
+function QuickActions({ actions }: { actions: { icon: LucideIcon; label: string; run: () => void; testId: string }[] }) {
+  const { t } = useT();
+  return (
+    <ul className="mt-5 grid grid-cols-4 gap-2 lg:hidden" aria-label={t('qa.label')}>
+      {actions.map(({ icon: Icon, label, run, testId }) => (
+        <li key={testId}>
+          <button type="button" onClick={run} data-testid={testId} className="group flex w-full flex-col items-center gap-2 rounded-2xl py-1 text-center active:scale-95 transition-transform">
+            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-card text-brand-700 shadow-card ring-1 ring-line transition-colors group-hover:bg-brand-100">
+              <Icon className="h-6 w-6" aria-hidden="true" />
+            </span>
+            <span className="text-xs font-semibold text-slate-700">{label}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }
 

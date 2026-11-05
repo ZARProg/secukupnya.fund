@@ -53,7 +53,7 @@ export function BottomNav({ view, onNavigate, onRecord }: BottomNavProps) {
   return (
     <nav
       aria-label={t('shell.sidebar.pages')}
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 rounded-t-3xl border-t border-line bg-card/95 shadow-[0_-4px_20px_rgb(18_37_27/0.06)] pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
     >
       <ul className="mx-auto flex max-w-md items-center px-1">
         {LEFT.map(renderTab)}
@@ -61,7 +61,7 @@ export function BottomNav({ view, onNavigate, onRecord }: BottomNavProps) {
           <button
             onClick={onRecord}
             aria-label={t('shell.action.record')}
-            className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-white shadow-lg ring-4 ring-paper transition-colors hover:bg-brand-600 active:scale-95"
+            className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-white shadow-lg ring-4 ring-card transition-colors hover:bg-brand-600 active:scale-95"
           >
             <Plus className="h-6 w-6" />
           </button>

@@ -62,6 +62,8 @@ export const id = {
   'inv.glance.title': 'Investasi',
   'inv.glance.hint': 'Lihat rincian',
   'inv.alloc': 'Komposisi',
+  'inv.glance.stale': 'Nilai {platform} sudah lebih dari {days} hari. Perbarui.',
+  'inv.glance.missing': 'Isi nilai {platform} agar untung/rugi akurat.',
   'inv.hist.title': 'Riwayat nilai',
   'inv.hist.delete': 'Hapus nilai tanggal {date}',
   'inv.hist.empty': 'Belum ada nilai yang tercatat.',
@@ -70,6 +72,12 @@ export const id = {
   'safe.legend.free': 'Aman dipakai',
   'safe.legend.bills': 'Tagihan & cicilan',
   'safe.legend.goals': 'Target & kebutuhan',
+  'recurring.type.invest': 'Top up investasi',
+  'recurring.invest.from': 'Dari rekening',
+  'recurring.invest.to': 'Ke platform',
+  'recurring.invest.none': 'Pilih dulu BIBIT, AJAIB, atau PLUANG di menu Investasi.',
+  'recurring.invest.badge': 'Top up',
+  'recurring.invest.hint': 'Dicatat sebagai transfer saat kamu menekan Catat. Bukan pengeluaran.',
 } as const;
 
 export const en: Record<keyof typeof id, string> = {
@@ -135,6 +143,8 @@ export const en: Record<keyof typeof id, string> = {
   'inv.glance.title': 'Investments',
   'inv.glance.hint': 'See details',
   'inv.alloc': 'Allocation',
+  'inv.glance.stale': '{platform} value is over {days} days old. Update it.',
+  'inv.glance.missing': 'Enter the {platform} value so gain/loss is accurate.',
   'inv.hist.title': 'Value history',
   'inv.hist.delete': 'Delete value from {date}',
   'inv.hist.empty': 'No values recorded yet.',
@@ -143,4 +153,10 @@ export const en: Record<keyof typeof id, string> = {
   'safe.legend.free': 'Safe to spend',
   'safe.legend.bills': 'Bills & installments',
   'safe.legend.goals': 'Goals & needs',
+  'recurring.type.invest': 'Investment top-up',
+  'recurring.invest.from': 'From account',
+  'recurring.invest.to': 'To platform',
+  'recurring.invest.none': 'First choose BIBIT, AJAIB or PLUANG in the Investments menu.',
+  'recurring.invest.badge': 'Top-up',
+  'recurring.invest.hint': 'Recorded as a transfer when you press Record. Not counted as spending.',
 };

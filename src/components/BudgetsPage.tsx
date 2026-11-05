@@ -2,9 +2,8 @@ import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pencil, Check } from 'lucide-react';
 import { EXPENSE_CATEGORIES, getCategoryMeta } from '@/lib/categories';
 import { formatRupiah, parseRupiah, rupiahLabel } from '@/lib/format';
-import { toLocalISO } from '@/lib/date';
+import { toLocalISO, todayISO } from '@/lib/date';
 import { useT, type MessageKey } from '@/i18n';
-import { rich } from '@/i18n/rich';
 import { budgetStatus, monthLabel, monthReport, monthsWithData, shiftMonth, type BudgetStatus, type Month } from '@/lib/report';
 import { useBudgets } from '@/hooks/useBudgets';
 import { MAX_BUDGET } from '@/lib/plans';
@@ -56,6 +55,52 @@ export function BudgetsPage({ transactions }: { transactions: Transaction[] }) {
       </div>
       <BudgetPanel spentByCategory={report.categories} month={month} />
     </div>
+  );
+}
+
+/** Ringkasan anggaran bulan itu: cincin persen, sisa, laju harian aman, dan jumlah kategori bermasalah. */
+function BudgetHero({ used, budget, month, over, warn }: { used: number; budget: number; month: Month; over: number; warn: number }) {
+  const { t } = useT();
+  const today = todayISO();
+  const current = today.slice(0, 7);
+  const [y, m] = month.split('-').map(Number);
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const daysLeft = month === current ? daysInMonth - Number(today.slice(8, 10)) + 1 : 0;
+  const left = budget - used;
+  const ratio = budget > 0 ? used / budget : 0;
+  const pct = Math.round(ratio * 100);
+  const tone = ratio > 1 ? 'stroke-red-600' : ratio >= 0.8 ? 'stroke-amber-500' : 'stroke-emerald-500';
+  const R = 44;
+  const C = 2 * Math.PI * R;
+  return (
+    <section className="flex items-center gap-5 rounded-2xl border border-line bg-card p-5 shadow-card sm:gap-7 sm:p-6" aria-label={t('forms.budget.title')} data-testid="budget-hero">
+      <div className="relative h-[6.5rem] w-[6.5rem] shrink-0 sm:h-28 sm:w-28">
+        <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90" role="img" aria-label={t('bud.ring.label', { pct })}>
+          <circle cx="50" cy="50" r={R} fill="none" strokeWidth="9" className="stroke-slate-200" />
+          <circle
+            cx="50" cy="50" r={R} fill="none" strokeWidth="9" strokeLinecap="round" className={`${tone} transition-[stroke-dashoffset] duration-700 ease-out`}
+            strokeDasharray={C} strokeDashoffset={C * (1 - Math.min(1, ratio))}
+          />
+        </svg>
+        <span className="absolute inset-0 grid place-items-center font-display text-2xl font-medium tabular-nums text-slate-900" aria-hidden="true">{pct}%</span>
+      </div>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-slate-600">{t(left < 0 ? 'bud.hero.over' : 'bud.hero.left')}</p>
+        <p className={`font-display text-3xl font-medium tabular-nums tracking-tight sm:text-4xl ${left < 0 ? 'text-red-700' : 'text-slate-900'}`} data-testid="budget-hero-left">
+          {rupiahLabel(Math.abs(left))}
+        </p>
+        <p className="mt-1 text-sm text-slate-600">{t('bud.hero.of', { spent: rupiahLabel(used), budget: rupiahLabel(budget) })}</p>
+        <p className="mt-1 text-sm text-slate-600">
+          {month > current ? t('bud.hero.future') : month < current ? t('bud.hero.done') : left > 0 && daysLeft > 0 ? t('bud.hero.pace', { amount: rupiahLabel(Math.floor(left / daysLeft)), n: daysLeft }) : ''}
+        </p>
+        {(over > 0 || warn > 0) && (
+          <p className="mt-2 flex flex-wrap gap-1.5 text-xs font-semibold">
+            {over > 0 && <span className="rounded-full bg-red-50 px-2.5 py-1 text-red-800">{t('bud.hero.overN', { n: over })}</span>}
+            {warn > 0 && <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-900">{t('bud.hero.warn', { n: warn })}</span>}
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -111,7 +156,13 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
     setEditing(false);
   }
 
+  const budgetedNames = Object.keys(budgets).filter((c) => budgets[c] > 0);
+  const overN = budgetedNames.filter((c) => budgetStatus(spent.get(c) ?? 0, budgets[c]) === 'over').length;
+  const warnN = budgetedNames.filter((c) => budgetStatus(spent.get(c) ?? 0, budgets[c]) === 'warn').length;
+
   return (
+    <>
+    {!editing && totalBudget > 0 && <BudgetHero used={totalSpentBudgeted} budget={totalBudget} month={month} over={overN} warn={warnN} />}
     <Panel
       title={t('forms.budget.title')}
       action={
@@ -126,16 +177,6 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
         )
       }
     >
-      {!editing && totalBudget > 0 && (
-        <p className="mb-4 text-sm text-slate-600">
-          {rich(
-            t('forms.budget.summary', {
-              spent: rupiahLabel(totalSpentBudgeted), budget: rupiahLabel(totalBudget), month: monthLabel(month),
-            }),
-            { b: (c) => <strong className="tabular-nums text-slate-900">{c}</strong> },
-          )}
-        </p>
-      )}
       {!editing && totalBudget === 0 && (
         <p className="mb-4 text-sm text-slate-500">
           {t('forms.budget.intro')}
@@ -185,7 +226,7 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
                     </span>
                   )}
                 </div>
-                {!editing && (
+                {!editing && !!budget && (
                   <>
                     <div
                       className="h-2 overflow-hidden rounded-full bg-slate-100"
@@ -215,6 +256,7 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
           })}
         </ul>
       )}
+      {!editing && totalBudget > 0 && visible.some((n) => !budgets[n]) && <p className="mt-4 text-xs text-slate-500">{t('bud.none.hint')}</p>}
       {error && <p role="alert" className="mt-3 text-xs font-medium text-red-600">{error}</p>}
       {editing && (
         <button onClick={() => setEditing(false)} className="mt-4 text-xs font-semibold text-slate-500 hover:text-slate-700">
@@ -222,5 +264,6 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
         </button>
       )}
     </Panel>
+    </>
   );
 }
