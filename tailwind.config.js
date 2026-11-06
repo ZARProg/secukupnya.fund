@@ -33,9 +33,9 @@ export default {
       borderRadius: { xl: '0.875rem', '2xl': '1.25rem', '3xl': '1.75rem' },
       // Tailwind v3 belum punya ukuran xs/2xs (itu fitur v4), jadi didefinisikan di sini.
       boxShadow: {
-        '2xs': '0 1px 0 0 rgb(18 37 27 / 0.04)',
-        xs: '0 1px 2px 0 rgb(18 37 27 / 0.06)',
-        card: '0 1px 2px rgb(18 37 27 / 0.04)',
+        '2xs': '0 1px 0 0 rgb(20 22 15 / 0.04)',
+        xs: '0 1px 2px 0 rgb(20 22 15 / 0.06)',
+        card: '0 1px 2px rgb(20 22 15 / 0.04)',
       },
       backdropBlur: { xs: '2px' },
     },

@@ -290,3 +290,8 @@ Menu **Perencanaan → Investasi**. Pilih aplikasi (BIBIT, AJAIB, PLUANG), lalu:
 - Transaksi terakhir berbentuk baris datar dengan tanggal di bawah nominal.
 - Donat pengeluaran per kategori dengan legenda persen.
 - Layar pengenalan 3 slide untuk pengguna baru. Lewati dengan `?intro=0`.
+
+## Tampilan lime (Paytin)
+
+- Palet diganti: lime #C8F060 + hitam #14160F + putih, latar terang kehijauan. Kartu saldo hitam dengan aksen lime, navigasi bawah berupa pil hitam melayang.
+- Kategori baru: Shopping, Hobby (pengeluaran) dan Side Job (pemasukan), lengkap dengan kata kunci catat cepat.

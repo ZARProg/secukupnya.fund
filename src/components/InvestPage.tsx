@@ -80,7 +80,7 @@ export function InvestPage({ balances, selectedAccounts, onChangeAccounts, onMov
 
   return (
     <div className="space-y-5" data-testid="invest-page">
-      <section className="relative rounded-3xl bg-brand p-6 text-white sm:p-8" aria-label={t('inv.hero.label')}>
+      <section className="relative rounded-3xl bg-night p-6 text-white sm:p-8" aria-label={t('inv.hero.label')}>
         <p className="text-sm font-semibold text-white">{t('inv.hero.label')}</p>
         <p className="mt-1 font-display text-5xl font-medium leading-none tracking-tight tabular-nums sm:text-6xl" data-testid="invest-total">
           <MoneyText value={money(sum.value)} />

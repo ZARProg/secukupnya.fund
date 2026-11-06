@@ -1,7 +1,7 @@
 /** Tema tampilan: terang, gelap, atau ikut perangkat. Disimpan per perangkat, tidak ikut sinkron. */
 export type ThemeMode = 'light' | 'dark' | 'auto';
 const KEY = 'budgettracker.theme.v1';
-export const THEME_COLOR = { light: '#1E4D3A', dark: '#0E1511' } as const;
+export const THEME_COLOR = { light: '#14160F', dark: '#0D0F0A' } as const;
 
 export function getThemeMode(): ThemeMode {
   try {

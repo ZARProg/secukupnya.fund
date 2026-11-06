@@ -30,31 +30,31 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
 
   return (
     <div role="dialog" aria-modal="true" aria-label={t('intro.label')} data-testid="intro"
-      className="fixed inset-0 z-[70] flex flex-col bg-[#0E281E] px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] text-white">
+      className="fixed inset-0 z-[70] flex flex-col bg-lime px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] text-night">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold tabular-nums text-white/80">0{i + 1}/0{SLIDES.length}</span>
+          <span className="text-sm font-semibold tabular-nums text-night/80">0{i + 1}/0{SLIDES.length}</span>
           <div className="flex flex-1 gap-1.5" aria-hidden="true">
             {SLIDES.map((_, n) => (
-              <span key={n} className={`h-1 flex-1 rounded-full ${n <= i ? 'bg-white' : 'bg-white/25'}`} />
+              <span key={n} className={`h-1 flex-1 rounded-full ${n <= i ? 'bg-night' : 'bg-night/20'}`} />
             ))}
           </div>
-          <button type="button" onClick={finish} data-testid="intro-skip" className="rounded-lg px-2 py-2 text-sm font-semibold text-white/80 hover:text-white">
+          <button type="button" onClick={finish} data-testid="intro-skip" className="rounded-lg px-2 py-2 text-sm font-semibold text-night/80 hover:text-night">
             {t('intro.skip')}
           </button>
         </div>
 
         <div className="flex flex-1 items-center justify-center" aria-hidden="true">
-          <div className="grid h-44 w-44 place-items-center rounded-[2.5rem] bg-white/10 ring-1 ring-white/15">
-            <Icon className="h-20 w-20 text-[#BFE0C4]" strokeWidth={1.5} />
+          <div className="grid h-44 w-44 place-items-center rounded-[2.5rem] bg-white/45 ring-1 ring-night/10">
+            <Icon className="h-20 w-20 text-night" strokeWidth={1.5} />
           </div>
         </div>
 
         <h2 className="font-display text-4xl font-bold leading-[1.1]">{t(title)}</h2>
-        <p className="mt-3 text-base leading-relaxed text-white/75">{t(body)}</p>
+        <p className="mt-3 text-base leading-relaxed text-night/75">{t(body)}</p>
 
         <button ref={ref} type="button" onClick={() => (last ? finish() : setI(i + 1))} data-testid="intro-next"
-          className="mt-8 w-full rounded-full bg-white py-4 text-base font-bold text-[#0E281E] transition-transform active:scale-[0.98]">
+          className="mt-8 w-full rounded-full bg-night py-4 text-base font-bold text-white transition-transform active:scale-[0.98]">
           {t(last ? 'intro.start' : 'intro.next')}
         </button>
       </div>

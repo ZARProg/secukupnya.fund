@@ -103,7 +103,7 @@ export function DailyChart({ transactions }: { transactions: Transaction[] }) {
             <div className="pointer-events-none relative flex h-full items-end gap-1 sm:gap-2" aria-hidden="true">
               {days.map((d, i) => {
                 const height = d.total ? Math.max(3, (d.total / scaleMax) * 100) : 0;
-                const color = d.total > DAILY_TARGET ? 'bg-ochre' : d.isToday ? 'bg-brand-700' : 'bg-brand';
+                const color = d.total > DAILY_TARGET ? 'bg-ochre' : d.isToday ? 'bg-slate-900' : 'bg-brand-400';
                 return (
                   <div key={d.date} className="flex h-full min-w-0 flex-1 items-end">
                     <span className={`block w-full rounded-t-md transition-[opacity,transform] duration-150 ${color} ${active !== null && active !== i ? 'opacity-45' : ''} ${active === i ? 'scale-x-110' : ''}`} style={{ height: `${height}%` }} />
@@ -136,9 +136,9 @@ export function DailyChart({ transactions }: { transactions: Transaction[] }) {
       <p className="mt-3 text-sm font-semibold text-slate-700" aria-live="polite" data-testid="daily-caption">{caption}</p>
 
       <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-[11px] text-slate-500">
-        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-brand" />{t('ux.daily.legend.under')}</li>
+        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-brand-400" />{t('ux.daily.legend.under')}</li>
         <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-ochre" />{t('ux.daily.legend.over')}</li>
-        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-brand-700" />{t('ux.daily.legend.today')}</li>
+        <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-slate-900" />{t('ux.daily.legend.today')}</li>
         <li className="flex items-center gap-1.5"><span className="h-0 w-4 border-t border-dashed border-slate-700/60" />{t('shell.daily.limit', { amount: rupiahLabel(DAILY_TARGET) })}</li>
       </ul>
     </div>

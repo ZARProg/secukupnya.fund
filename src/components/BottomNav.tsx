@@ -34,12 +34,12 @@ export function BottomNav({ view, onNavigate, onRecord }: BottomNavProps) {
           onClick={() => onNavigate(v)}
           aria-current={active ? 'page' : undefined}
           className={`flex min-h-14 w-full flex-col items-center justify-center gap-0.5 px-1 text-[11px] font-semibold transition-colors ${
-            active ? 'text-brand-800' : 'text-slate-500 active:text-slate-800'
+            active ? 'text-lime' : 'text-white/65 active:text-white'
           }`}
         >
           <span
             className={`flex h-7 w-12 items-center justify-center rounded-full transition-colors ${
-              active ? 'bg-brand-200' : ''
+              active ? 'bg-lime text-night' : ''
             }`}
           >
             <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.4 : 2} />
@@ -53,15 +53,15 @@ export function BottomNav({ view, onNavigate, onRecord }: BottomNavProps) {
   return (
     <nav
       aria-label={t('shell.sidebar.pages')}
-      className="fixed inset-x-0 bottom-0 z-30 rounded-t-3xl border-t border-line bg-card/95 shadow-[0_-4px_20px_rgb(18_37_27/0.06)] pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
+      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 mx-auto max-w-md rounded-[2rem] bg-night shadow-[0_10px_30px_rgb(20_22_15/0.35)] lg:hidden"
     >
-      <ul className="mx-auto flex max-w-md items-center px-1">
+      <ul className="flex items-center px-2">
         {LEFT.map(renderTab)}
         <li className="flex w-20 justify-center">
           <button
             onClick={onRecord}
             aria-label={t('shell.action.record')}
-            className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-white shadow-lg ring-4 ring-card transition-colors hover:bg-brand-600 active:scale-95"
+            className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-lime text-night shadow-lg ring-4 ring-night transition-transform active:scale-95"
           >
             <Plus className="h-6 w-6" />
           </button>

@@ -64,7 +64,7 @@ export function NetWorthPage({ balances, transactions, ready, onToast }: NetWort
   return (
     <div className="space-y-5" data-testid="networth-page">
       <section
-        className="relative rounded-3xl bg-brand p-6 text-white sm:p-8"
+        className="relative rounded-3xl bg-night p-6 text-white sm:p-8"
         aria-label={t('nw.hero.label')}
       >
         <div className="flex flex-wrap items-center gap-2">
@@ -225,10 +225,10 @@ function ChartSvg({ pts }: { pts: NetSnapshot[] }) {
           </g>
         ))}
         {min < 0 && max > 0 && <line x1={L} x2={W - R} y1={y(0)} y2={y(0)} stroke="#555143" strokeWidth="1" />}
-        <path d={area} fill="#1E4D3A" fillOpacity="0.08" />
-        <path d={line} fill="none" stroke="#1E4D3A" strokeWidth="2" strokeLinejoin="round" />
+        <path d={area} fill="#14160F" fillOpacity="0.08" />
+        <path d={line} fill="none" stroke="#14160F" strokeWidth="2" strokeLinejoin="round" />
         {pts.map((p) => (
-          <circle key={p.date} cx={x(p.date)} cy={y(p.net)} r="3.5" fill={p.estimated > 0 ? '#fff' : '#1E4D3A'} stroke="#1E4D3A" strokeWidth="2">
+          <circle key={p.date} cx={x(p.date)} cy={y(p.net)} r="3.5" fill={p.estimated > 0 ? '#fff' : '#14160F'} stroke="#14160F" strokeWidth="2">
             <title>{`${shortDate(p.date)}: ${rupiahSigned(p.net)}${p.estimated > 0 ? ` (${t('nw.estimate.badge')})` : ''}`}</title>
           </circle>
         ))}

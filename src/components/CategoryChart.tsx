@@ -4,7 +4,7 @@ import { rupiahLabel } from '@/lib/format';
 import { useT } from '@/i18n';
 import type { Transaction } from '@/lib/transactions';
 
-const SLICES = ['#1E4D3A', '#4F8A66', '#A8C7A5', '#C9821A', '#8A9A8F'];
+const SLICES = ['#14160F', '#C8F060', '#85B533', '#C9821A', '#9AA088'];
 
 /** Donat ringkas: 4 kategori teratas + sisanya. Daftar di bawah tetap jadi sumber info (donat aria-hidden). */
 function Donut({ entries, total, type }: { entries: [string, number][]; total: number; type: 'expense' | 'income' }) {

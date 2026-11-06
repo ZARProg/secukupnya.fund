@@ -73,6 +73,8 @@ const KEYWORDS: Record<string, string[]> = {
     'grab', 'gojek', 'ojek', 'ojol', 'bensin', 'pertamax', 'pertalite', 'parkir', 'tol', 'krl', 'mrt', 'lrt', 'transjakarta',
     'busway', 'bus', 'taksi', 'taxi', 'kereta', 'angkot', 'ongkos', 'bbm',
   ],
+  Shopping: ['shopee', 'tokopedia', 'tokped', 'lazada', 'blibli', 'tiktokshop', 'baju', 'kaos', 'celana', 'sepatu', 'tas', 'fashion', 'skincare', 'olshop', 'checkout'],
+  Hobby: ['hobi', 'hobby', 'mancing', 'gundam', 'koleksi', 'figure', 'lukis', 'kamera', 'gitar', 'sepeda', 'olahraga', 'gym', 'futsal', 'badminton'],
   Entertainment: ['nonton', 'bioskop', 'netflix', 'spotify', 'game', 'steam', 'konser', 'youtube', 'disney', 'vidio', 'karaoke', 'wisata'],
   Service: [
     'listrik', 'pln', 'token', 'pulsa', 'kuota', 'internet', 'wifi', 'indihome', 'pdam', 'laundry', 'cukur', 'salon', 'servis',
@@ -82,9 +84,10 @@ const KEYWORDS: Record<string, string[]> = {
 
 const INCOME_KEYWORDS: Record<string, string[]> = {
   Salary: ['gaji', 'salary'],
+  'Side Job': ['sampingan', 'freelance', 'side job', 'sidejob', 'proyekan', 'project', 'upah', 'komisi', 'jasa desain'],
   Bonus: ['bonus', 'thr'],
 };
-const INCOME_WORDS = ['gaji', 'salary', 'bonus', 'thr', 'pemasukan', 'income', 'diterima', 'terima', 'refund', 'cashback'];
+const INCOME_WORDS = ['sampingan', 'freelance', 'upah', 'komisi', 'gaji', 'salary', 'bonus', 'thr', 'pemasukan', 'income', 'diterima', 'terima', 'refund', 'cashback'];
 
 const TAG_ALIASES: Record<string, string> = {
   food: 'Food & Drink', makan: 'Food & Drink', drink: 'Food & Drink', minum: 'Food & Drink',
@@ -94,6 +97,8 @@ const TAG_ALIASES: Record<string, string> = {
   fun: 'Entertainment', hiburan: 'Entertainment', entertainment: 'Entertainment',
   service: 'Service', jasa: 'Service', tagihan: 'Service',
   paylater: 'Paylater',
+  shopping: 'Shopping', belanjaan: 'Shopping', hobby: 'Hobby', hobi: 'Hobby',
+  sidejob: 'Side Job', freelance: 'Side Job', sampingan: 'Side Job',
   salary: 'Salary', gaji: 'Salary', bonus: 'Bonus', others: 'Others', lain: 'Others', lainnya: 'Others',
 };
 

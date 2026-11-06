@@ -159,3 +159,6 @@
     transition-duration: 0.01ms !important;
   }
 }
+/* Mode gelap: brand jadi lime, jadi teks di atasnya harus gelap. */
+:root[data-theme='dark'] .bg-brand.text-white { color: rgb(var(--c-night)); }
+:root[data-theme='dark'] .bg-brand.text-white svg { color: inherit; }

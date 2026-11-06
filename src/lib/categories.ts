@@ -1,6 +1,6 @@
 import {
   Film, UtensilsCrossed, ShoppingCart, Cookie, Bus, Wrench,
-  Briefcase, Gift, Coins, CircleDollarSign, ArrowLeftRight, CreditCard, Landmark, Scale,
+  Briefcase, Gift, ShoppingBag, Palette, Laptop, Coins, CircleDollarSign, ArrowLeftRight, CreditCard, Landmark, Scale,
   type LucideIcon,
 } from 'lucide-react';
 import { tr } from '@/i18n';
@@ -60,10 +60,12 @@ export const EXPENSE_CATEGORIES: string[] = [
   'Snacks',
   'Transportation',
   'Service',
+  'Shopping',
+  'Hobby',
   'Paylater',
 ];
 
-export const INCOME_CATEGORIES: string[] = ['Salary', 'Bonus', 'Others'];
+export const INCOME_CATEGORIES: string[] = ['Salary', 'Side Job', 'Bonus', 'Others'];
 
 export const EXPENSE_CATEGORY_META: Record<string, CategoryMeta> = {
   Entertainment: { label: 'Entertainment', icon: Film, color: 'text-brand-700', bg: 'bg-brand-100' },
@@ -72,11 +74,14 @@ export const EXPENSE_CATEGORY_META: Record<string, CategoryMeta> = {
   Snacks: { label: 'Snacks', icon: Cookie, color: 'text-brand-700', bg: 'bg-brand-100' },
   Transportation: { label: 'Transportation', icon: Bus, color: 'text-brand-700', bg: 'bg-brand-100' },
   Service: { label: 'Service', icon: Wrench, color: 'text-brand-700', bg: 'bg-brand-100' },
+  Shopping: { label: 'Shopping', icon: ShoppingBag, color: 'text-brand-700', bg: 'bg-brand-100' },
+  Hobby: { label: 'Hobby', icon: Palette, color: 'text-brand-700', bg: 'bg-brand-100' },
   Paylater: { label: 'Paylater', icon: CreditCard, color: 'text-brand-700', bg: 'bg-brand-100' },
 };
 
 export const INCOME_CATEGORY_META: Record<string, CategoryMeta> = {
   Salary: { label: 'Salary', icon: Briefcase, color: 'text-brand-800', bg: 'bg-brand-200' },
+  'Side Job': { label: 'Side Job', icon: Laptop, color: 'text-brand-800', bg: 'bg-brand-200' },
   Bonus: { label: 'Bonus', icon: Gift, color: 'text-brand-800', bg: 'bg-brand-200' },
   Others: { label: 'Others', icon: Coins, color: 'text-brand-800', bg: 'bg-brand-200' },
 };

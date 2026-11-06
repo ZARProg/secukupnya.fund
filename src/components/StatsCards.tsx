@@ -27,7 +27,7 @@ export function StatsCards({ transactions }: StatsProps) {
   const monthPositive = stats.monthBalance >= 0;
 
   return (
-    <section aria-label={t('shell.stats.label')} className="relative overflow-hidden rounded-3xl bg-brand p-6 text-white sm:p-8">
+    <section aria-label={t('shell.stats.label')} className="relative overflow-hidden rounded-3xl bg-night p-6 text-white sm:p-8">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
@@ -57,14 +57,14 @@ export function StatsCards({ transactions }: StatsProps) {
             })}
           </p>
         </div>
-        <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/12 text-white/90">
+        <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-lime text-night">
           <BarChart3 className="h-5 w-5" />
         </span>
       </div>
 
       <dl className="mt-6 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-white/10 px-4 py-3">
-          <dt className="flex items-center gap-1.5 text-xs font-medium text-white/85"><ArrowDownLeft className="h-3.5 w-3.5" aria-hidden="true" />{t('ux.stats.monthIncome')}</dt>
+        <div className="rounded-2xl bg-lime px-4 py-3 text-night">
+          <dt className="flex items-center gap-1.5 text-xs font-semibold text-night/80"><ArrowDownLeft className="h-3.5 w-3.5" aria-hidden="true" />{t('ux.stats.monthIncome')}</dt>
           <dd className="mt-1 text-lg font-bold tabular-nums">{rupiahLabel(month.income)}</dd>
         </div>
         <div className="rounded-2xl bg-white/10 px-4 py-3">
@@ -91,7 +91,7 @@ export function StatsCards({ transactions }: StatsProps) {
           aria-valuenow={Math.min(stats.todayExpense, DAILY_TARGET)}
           aria-label={t('shell.stats.progress')}
         >
-          <div className={`h-full rounded-full ${over ? 'bg-[#F5D573]' : 'bg-[#BFE0C4]'}`} style={{ width: `${pct}%` }} />
+          <div className={`h-full rounded-full ${over ? 'bg-[#F5D573]' : 'bg-lime'}`} style={{ width: `${pct}%` }} />
         </div>
       </div>
     </section>
