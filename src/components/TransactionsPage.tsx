@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Bookmark, ChevronDown, Download, Search, SlidersHorizontal, X } from 'lucide-react';
 import { FilterSheet } from '@/components/FilterSheet';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { TagBar } from '@/components/TagBar';
+import { tagTotals } from '@/lib/tags';
 import { TransactionList } from '@/components/TransactionList';
 import { isNonSpendingCategory } from '@/lib/categories';
 import { formatRupiah, parseRupiah, rupiahLabel } from '@/lib/format';
@@ -43,6 +45,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
   const setQuery = (v: string) => setF((p) => ({ ...p, query: v }));
   const setMonth = (v: string) => setF((p) => ({ ...p, month: v }));
   const setCategory = (v: string) => setF((p) => ({ ...p, category: v }));
+  const tags = useMemo(() => tagTotals(transactions), [transactions]);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const isPhone = useMediaQuery('(max-width: 639px)');
@@ -368,6 +371,7 @@ export function TransactionsPage({ transactions, accounts, onDelete, onEdit, acc
       </div>
 
       <div className="px-4 pb-1 pt-4 sm:px-5">
+        {tags.length > 0 && <div className="mb-3"><TagBar tags={tags} active={query} onPick={setQuery} /></div>}
         <TransactionList
           transactions={filtered.slice(0, visible)}
           onDelete={onDelete}

@@ -7,6 +7,7 @@ import { useT, type MessageKey } from '@/i18n';
 import { budgetStatus, monthLabel, monthReport, monthsWithData, shiftMonth, type BudgetStatus, type Month } from '@/lib/report';
 import { useBudgets } from '@/hooks/useBudgets';
 import { MAX_BUDGET } from '@/lib/plans';
+import { effectiveBudgets, getRollover, setRollover } from '@/lib/rollover';
 import type { Transaction } from '@/lib/transactions';
 
 const STATUS_STYLE: Record<BudgetStatus, { bar: string; text: string; label: MessageKey | null }> = {
@@ -24,6 +25,9 @@ export function BudgetsPage({ transactions }: { transactions: Transaction[] }) {
   const earliest = months.length ? months[months.length - 1] : currentMonth;
   const [month, setMonth] = useState<Month>(currentMonth);
   const report = useMemo(() => monthReport(transactions, month), [transactions, month]);
+  const prevMonth = shiftMonth(month, -1);
+  const prevReport = useMemo(() => monthReport(transactions, prevMonth), [transactions, prevMonth]);
+  const prevHasData = months.includes(prevMonth);
 
   return (
     <div className="space-y-5">
@@ -53,7 +57,7 @@ export function BudgetsPage({ transactions }: { transactions: Transaction[] }) {
           </button>
         )}
       </div>
-      <BudgetPanel spentByCategory={report.categories} month={month} />
+      <BudgetPanel spentByCategory={report.categories} prevSpentByCategory={prevReport.categories} prevHasData={prevHasData} month={month} />
     </div>
   );
 }
@@ -116,9 +120,12 @@ function Panel({ title, children, action }: { title: string; children: React.Rea
   );
 }
 
-function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: string; total: number }[]; month: Month }) {
+function BudgetPanel({ spentByCategory, prevSpentByCategory, prevHasData, month }: { spentByCategory: { category: string; total: number }[]; prevSpentByCategory: { category: string; total: number }[]; prevHasData: boolean; month: Month }) {
   const { t } = useT();
-  const { budgets, setBudget } = useBudgets();
+  const { budgets: baseBudgets, setBudget } = useBudgets();
+  const [rollover, setRolloverState] = useState(getRollover);
+  const prevSpent = useMemo(() => new Map(prevSpentByCategory.map((c) => [c.category, c.total])), [prevSpentByCategory]);
+  const { eff: budgets, carry } = useMemo(() => effectiveBudgets(baseBudgets, prevSpent, rollover, prevHasData), [baseBudgets, prevSpent, rollover, prevHasData]);
   const [editing, setEditing] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
@@ -139,7 +146,7 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
   const totalSpentBudgeted = Object.keys(budgets).reduce((s, c) => s + (spent.get(c) ?? 0), 0);
 
   function startEdit() {
-    setDrafts(Object.fromEntries(names.map((n) => [n, budgets[n] ? formatRupiah(String(budgets[n])) : ''])));
+    setDrafts(Object.fromEntries(names.map((n) => [n, baseBudgets[n] ? formatRupiah(String(baseBudgets[n])) : ''])));
     setError(null);
     setEditing(true);
   }
@@ -242,7 +249,8 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
                       />
                     </div>
                     {budget ? (
-                      <p className={`mt-1 text-xs font-medium ${style.text}`}>
+                      <p className={`mt-1 text-xs font-medium ${style.text}`} data-testid={carry[name] ? `carry-${name}` : undefined}>
+                        {carry[name] ? `+${rupiahLabel(carry[name])} ${t('bud.carry.short')} · ` : ''}
                         {status === 'over'
                           ? t('forms.budget.overBy', { label: style.label ? t(style.label) : '', amount: rupiahLabel(used - budget) })
                           : t('forms.budget.left', { label: style.label ? t(style.label) : '', amount: rupiahLabel(budget - used) })}
@@ -255,6 +263,12 @@ function BudgetPanel({ spentByCategory, month }: { spentByCategory: { category: 
             );
           })}
         </ul>
+      )}
+      {!editing && (
+        <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
+          <input type="checkbox" data-testid="rollover-toggle" checked={rollover} onChange={(e) => { setRollover(e.target.checked); setRolloverState(e.target.checked); }} className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[rgb(var(--c-brand-500))]" />
+          <span><span className="font-semibold">{t('bud.carry.title')}</span><span className="block text-xs text-slate-500">{t('bud.carry.hint')}</span></span>
+        </label>
       )}
       {!editing && totalBudget > 0 && visible.some((n) => !budgets[n]) && <p className="mt-4 text-xs text-slate-500">{t('bud.none.hint')}</p>}
       {error && <p role="alert" className="mt-3 text-xs font-medium text-red-600">{error}</p>}

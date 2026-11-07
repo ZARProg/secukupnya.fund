@@ -9,11 +9,16 @@ import { saveBlob } from './download';
 export const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
 export async function readWorkbook(file: File): Promise<RawSheet[]> {
-  if (!/\.xlsx$/i.test(file.name)) {
+  const isCsv = /\.csv$/i.test(file.name);
+  if (!isCsv && !/\.xlsx$/i.test(file.name)) {
     throw new Error(tr('importer.err.onlyXlsx'));
   }
   if (file.size > MAX_FILE_BYTES) {
     throw new Error(tr('importer.err.tooLarge'));
+  }
+  if (isCsv) {
+    const { csvToSheets } = await import('./importCsv');
+    return csvToSheets(await file.text());
   }
   try {
     return (await readExcelFile(file)) as RawSheet[];

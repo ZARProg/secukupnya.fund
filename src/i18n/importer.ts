@@ -3,8 +3,8 @@ export const id = {
   // Panel impor
   'importer.guide.sheetName': 'Panduan',
   'importer.reading': 'Membaca {name}…',
-  'importer.drop.title': 'Pilih file Excel atau seret ke sini',
-  'importer.drop.hint': 'Format .xlsx, maksimal 5 MB',
+  'importer.drop.title': 'Pilih file Excel/CSV atau seret ke sini',
+  'importer.drop.hint': '.xlsx atau .csv (termasuk mutasi bank), maksimal 5 MB. CSV tanpa petunjuk jenis dianggap pengeluaran.',
   'importer.template.title': 'Belum punya file? Pakai template',
   'importer.template.download': 'Unduh template',
   'importer.template.failed': 'Template gagal dibuat.',
@@ -57,7 +57,7 @@ export const id = {
   'importer.cta_other': 'Impor {n} transaksi ke {dest}',
 
   // Pesan hasil baca file (importExcel.ts / excelFile.ts)
-  'importer.err.onlyXlsx': 'Hanya file .xlsx yang didukung. Simpan ulang dari Excel atau Google Sheets sebagai .xlsx.',
+  'importer.err.onlyXlsx': 'Hanya file .xlsx atau .csv yang didukung. Simpan ulang dari Excel atau Google Sheets.',
   'importer.err.tooLarge': 'File terlalu besar (maksimal 5 MB).',
   'importer.err.unreadable': 'File tidak bisa dibaca. Pastikan ini file .xlsx yang valid dan tidak diberi password.',
   'importer.issue.noHeader': 'Sheet dilewati: header tidak dikenali (butuh kolom Tanggal dan Total).',
@@ -106,8 +106,8 @@ export const id = {
 export const en: Record<keyof typeof id, string> = {
   'importer.guide.sheetName': 'Guide',
   'importer.reading': 'Reading {name}…',
-  'importer.drop.title': 'Choose an Excel file or drag it here',
-  'importer.drop.hint': '.xlsx format, 5 MB max',
+  'importer.drop.title': 'Choose an Excel/CSV file or drag it here',
+  'importer.drop.hint': '.xlsx or .csv (bank statements work too), 5 MB max. CSV with no type hint is treated as expense.',
   'importer.template.title': "Don't have a file? Use the template",
   'importer.template.download': 'Download template',
   'importer.template.failed': 'Could not create the template.',
@@ -159,7 +159,7 @@ export const en: Record<keyof typeof id, string> = {
   'importer.cta_one': 'Import {n} transaction to {dest}',
   'importer.cta_other': 'Import {n} transactions to {dest}',
 
-  'importer.err.onlyXlsx': 'Only .xlsx files are supported. Re-save from Excel or Google Sheets as .xlsx.',
+  'importer.err.onlyXlsx': 'Only .xlsx or .csv files are supported. Re-save from Excel or Google Sheets.',
   'importer.err.tooLarge': 'The file is too large (5 MB max).',
   'importer.err.unreadable': 'The file could not be read. Make sure it is a valid .xlsx file without a password.',
   'importer.issue.noHeader': 'Sheet skipped: header not recognized (needs Date and Total columns).',

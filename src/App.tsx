@@ -37,6 +37,10 @@ import { useDailyLimit } from '@/hooks/useDailyLimit';
 import { locale, useT, type MessageKey } from '@/i18n';
 import { rich } from '@/i18n/rich';
 import { Onboarding } from '@/components/Onboarding';
+import { BackupReminder } from '@/components/BackupReminder';
+import { RecapPrompt } from '@/components/RecapPrompt';
+import { toLocalISO } from '@/lib/date';
+import { touchFirstSeen } from '@/lib/backupReminder';
 import { shouldShowIntro } from '@/lib/intro';
 
 type Panel = 'none' | 'form' | 'import';
@@ -361,7 +365,19 @@ function App() {
     }));
   }, [notify, t, tp]);
 
+  const hasPrevMonth = useMemo(() => {
+    const cur = toLocalISO(new Date()).slice(0, 7);
+    const [y, m] = cur.split('-').map(Number);
+    const prev = m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, '0')}`;
+    return transactions.some((tx) => tx.date.startsWith(prev));
+  }, [transactions]);
   const [intro, setIntro] = useState(shouldShowIntro);
+  useEffect(() => {
+    touchFirstSeen();
+    const open = () => setIntro(true);
+    window.addEventListener('budgettracker:intro', open);
+    return () => window.removeEventListener('budgettracker:intro', open);
+  }, []);
   const heading =
     view === 'overview'
       ? {
@@ -545,6 +561,8 @@ function App() {
           <Suspense fallback={<PageFallback />}>
           <div key={view} className={pageMoved ? 'page-in' : undefined}>
           {view === 'overview' && selectedAccounts.length === 0 && <PickAccountsBanner onPick={manageAccounts} />}
+          {view === 'overview' && <RecapPrompt hasPrevData={hasPrevMonth} onOpen={() => navigate('recap')} />}
+          {view === 'overview' && <BackupReminder hasData={transactions.length > 0} onOpen={() => navigate('sources')} />}
           {view === 'overview' && <DueBanner due={due} onRecord={handleRecordDue} onSkip={handleSkipDue} />}
           {view === 'overview' && sheetUrl && !loading && !error && sheetVersion > 0 && !sheetSecured && (
             <SecurityBanner url={sheetUrl} onOpen={() => navigate('sources')} />

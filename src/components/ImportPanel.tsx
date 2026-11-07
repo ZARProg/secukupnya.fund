@@ -208,7 +208,7 @@ export function ImportPanel({
           <input
             ref={inputRef}
             type="file"
-            accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             className="sr-only"
             disabled={phase === 'reading'}
             onChange={(e) => handleFile(e.target.files?.[0])}

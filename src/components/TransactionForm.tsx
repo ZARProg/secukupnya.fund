@@ -1,3 +1,4 @@
+import { AmountKeypad } from '@/components/AmountKeypad';
 import { useState, FormEvent, useMemo } from 'react';
 import { Loader2, TriangleAlert, Calendar, Tag, Wallet, FileText, DollarSign, ArrowRight, Receipt } from 'lucide-react';
 import { formatRupiah, parseRupiah, rupiahLabel } from '@/lib/format';
@@ -62,6 +63,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
     editing ? editing.account : accounts.includes(mem.lastAccount) ? mem.lastAccount : (accounts[0] ?? ''),
   );
   const [description, setDescription] = useState(editing?.description ?? '');
+  const [keypad, setKeypad] = useState(false);
   const [totalDisplay, setTotalDisplay] = useState(editing ? formatRupiah(String(editing.total)) : '');
   const [fromChoice, setFromAccount] = useState(accounts[0] ?? '');
   const [toChoice, setToAccount] = useState(accounts[1] ?? '');
@@ -383,6 +385,7 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
             maxLength={100}
             className="form-input"
           />
+          <p className="mt-1 text-xs text-slate-500">{t('tags.hint')}</p>
         </Field>
 
         <Field label={t(isTransfer ? 'forms.field.amountTransfer' : 'forms.field.amount')} icon={<DollarSign className="h-4 w-4" />}>
@@ -400,6 +403,9 @@ export function TransactionForm({ editing = null, onUpdate, sheetAvailable, acco
               className="form-input pl-10 text-base font-bold tabular-nums"
             />
           </div>
+          <button type="button" data-testid="keypad-toggle" aria-pressed={keypad} onClick={() => setKeypad((v) => !v)}
+            className="mt-1.5 text-xs font-semibold text-brand-600 hover:underline lg:hidden">{t(keypad ? 'keypad.hide' : 'keypad.show')}</button>
+          {keypad && <div className="lg:hidden"><AmountKeypad value={totalAmount} onChange={(n) => setTotalDisplay(n ? formatRupiah(String(n)) : '')} /></div>}
         </Field>
 
         {canSplit && (

@@ -1,3 +1,4 @@
+import { markBackup } from '@/lib/backupReminder';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { DatabaseBackup, Download, RefreshCw, Upload } from 'lucide-react';
 import { Badge, Card } from '@/components/Card';
@@ -41,6 +42,7 @@ export function BackupCard({ sheetUrl, sheetVersion, authRequired, onNotify }: B
 
   function download() {
     saveFile(`secukupnya-backup-${stamp()}.json`, JSON.stringify(buildBackup(localStorage, includeConn), null, 1));
+    markBackup();
     onNotify('success', t('backup.toast.downloaded'));
   }
 

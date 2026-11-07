@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react';
-import { CalendarClock, ChevronLeft, ChevronRight, Loader2, Target } from 'lucide-react';
+import { CalendarClock, CalendarPlus, ChevronLeft, ChevronRight, Loader2, Target } from 'lucide-react';
 import { useT, locale } from '@/i18n';
 import { usePlans } from '@/hooks/usePlans';
+import { useDebts } from '@/hooks/useDebts';
+import { buildIcs } from '@/lib/ics';
+import { saveBlob } from '@/lib/download';
 import { usePrivacy } from '@/hooks/usePrivacy';
 import { buildCalendar, monthGrid, upcomingBills, type ScheduledItem } from '@/lib/calendar';
 import { parseISODate, todayISO } from '@/lib/date';
@@ -34,6 +37,7 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
   const { t, tp } = useT();
   const { money } = usePrivacy();
   const { recurring, goals } = usePlans();
+  const { debts } = useDebts();
   const today = todayISO();
   const thisMonth = today.slice(0, 7);
 
@@ -190,6 +194,11 @@ export function CalendarPage({ transactions, onRecord, onSkip }: CalendarPagePro
                 ))}
               </ul>
             )}
+            <button type="button" data-testid="ics-export" onClick={() => saveBlob(new Blob([buildIcs({ recurring, goals, debts, today })], { type: 'text/calendar;charset=utf-8' }), 'secukupnya-pengingat.ics')}
+              className="mt-3 flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-semibold text-brand-600 hover:bg-brand-50">
+              <CalendarPlus className="h-4 w-4" aria-hidden="true" /> {t('ics.export')}
+            </button>
+            <p className="mt-1 text-xs text-slate-500">{t('ics.hint')}</p>
           </section>
         </div>
       </div>

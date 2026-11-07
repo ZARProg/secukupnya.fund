@@ -1,5 +1,6 @@
 import { normalizeSelection } from './accounts';
 import { cleanEntries } from './activity';
+import { cleanCustom } from './customCategories';
 import { cleanDebts } from './debts';
 import { cleanSavedFilters } from './filters';
 import { cleanLocal } from './localStore';
@@ -38,7 +39,7 @@ export const LEGACY_SYNC_KEYS: readonly string[] = SYNC_KEYS.filter((k) => k !==
 
 /** Tambahan khusus backup: data yang hanya ada di browser ini. */
 const BACKUP_ONLY_KEYS = [
-  `${P}local.v1`, `${P}hide.v1`, `${P}lang.v1`, `${P}engage.v1`, `${P}quick.v1`, `${P}recordtab.v1`, `${P}activity.v1`, `${P}dupignore.v1`, `${P}nwhistory.v1`,
+  `${P}local.v1`, `${P}hide.v1`, `${P}lang.v1`, `${P}engage.v1`, `${P}quick.v1`, `${P}recordtab.v1`, `${P}activity.v1`, `${P}dupignore.v1`, `${P}nwhistory.v1`, `${P}rollover.v1`, `${P}cats.v1`,
 ] as const;
 
 export const BACKUP_KEYS: readonly string[] = [...SYNC_KEYS, ...BACKUP_ONLY_KEYS];
@@ -105,6 +106,7 @@ export function cleanValue(key: string, raw: string): string | null {
     case 'recordtab.v1':
       return raw === 'quick' || raw === 'full' ? raw : null;
     case 'hide.v1':
+    case 'rollover.v1':
       return raw === '1' || raw === 'true' || raw === '0' || raw === 'false' ? raw : null;
     case 'dailyLimit.v1': {
       const n = Number(raw);
@@ -135,6 +137,7 @@ export function cleanValue(key: string, raw: string): string | null {
       const iv = cleanInvest(v);
       return isEmptyInvest(iv) ? null : JSON.stringify(iv);
     }
+    case 'cats.v1': return list(cleanCustom(v));
     case 'rules.v1': return list(cleanRules(v));
     case 'savedFilters.v1': return list(cleanSavedFilters(v));
     case 'local.v1': return list(cleanLocal(v));

@@ -295,3 +295,14 @@ Menu **Perencanaan → Investasi**. Pilih aplikasi (BIBIT, AJAIB, PLUANG), lalu:
 
 - Palet diganti: lime #C8F060 + hitam #14160F + putih, latar terang kehijauan. Kartu saldo hitam dengan aksen lime, navigasi bawah berupa pil hitam melayang.
 - Kategori baru: Shopping, Hobby (pengeluaran) dan Side Job (pemasukan), lengkap dengan kata kunci catat cepat.
+
+## Fitur lanjutan (November 2026)
+
+- **Pengingat cadangan**: banner di Beranda setelah 14 hari tanpa cadangan (bisa ditunda 7 hari). Dihitung dari unduhan cadangan di Sumber data.
+- **Keypad nominal** di form Catat (HP) dengan tombol +10rb/+50rb/+100rb.
+- **Tag**: tulis `#tag` di keterangan. Deretan tag muncul di Transaksi dan bisa diketuk untuk memfilter. Tidak mengubah skema Sheets.
+- **Impor CSV** (selain .xlsx), termasuk mutasi bank: kolom Debit/Kredit, akhiran DB/CR, nominal bertanda minus, pemisah `,` `;` atau tab. Tanpa petunjuk jenis, nominal dianggap pengeluaran.
+- **Rollover anggaran** (opsional, di Anggaran): sisa bulan lalu per kategori ditambahkan ke bulan ini, satu bulan saja.
+- **Kalender .ics**: tagihan rutin, cicilan, dan tenggat target, masing-masing dengan pengingat sehari sebelumnya.
+- **Kategori kustom** di Pengaturan (maks. 20), ikut cadangan.
+- **Ajakan recap** tanggal 1–5 untuk bulan lalu, dan tombol **Lihat pengenalan** di Pengaturan.

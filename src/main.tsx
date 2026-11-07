@@ -14,7 +14,10 @@ import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { registerServiceWorker } from './lib/pwa.ts';
 import { LockGate } from './components/LockGate.tsx';
 import { applyTheme, getThemeMode, watchSystemTheme } from './lib/theme.ts';
+import { initCustomCategories } from './lib/customCategories.ts';
 import './index.css';
+
+initCustomCategories();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
